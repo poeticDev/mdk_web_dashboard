@@ -1,0 +1,72 @@
+{
+  "mediaData": [
+    {
+      "key": "primaryKey",
+      "roomId": [
+        "0-004-0111"
+      ],
+      "target": [
+        "wall_hub",
+        "class_hub"
+      ],
+      "title": "title",
+      "type": "mediaType",
+      "url": "url",
+      "fileName": "fileName",
+      "from": "mediaFrom",
+      "fit": "boxFit",
+      "orderNum": "orderNum",
+      "lastUpdated": "timeInKST",
+      "isDead": false
+    },
+    {
+      "key": "primaryKey",
+      "roomId": [
+        "0-004-0111"
+      ],
+      "target": [
+        "wall_hub",
+        "class_hub"
+      ],
+      "title": "title",
+      "type": "mediaType",
+      "url": "url",
+      "fileName": "fileName",
+      "from": "mediaFrom",
+      "fit": "boxFit",
+      "orderNum": "orderNum",
+      "lastUpdated": "timeInKST",
+      "isDead": false
+    }
+  ],
+  "messageData": [
+    {
+      "key": "primaryKey",
+      "roomId": [
+        "0-004-0111"
+      ],
+      "target": [
+        "wall_hub",
+        "class_hub"
+      ],
+      "until": "timeInKST",
+      "type": "MessageType : normal, warning, check, announce",
+      "content": "전달사항",
+      "lastUpdated": "timeInKST"
+    },
+    {
+      "key": "primaryKey",
+      "roomId": [
+        "0-004-0111"
+      ],
+      "target": [
+        "wall_hub",
+        "class_hub"
+      ],
+      "until": "timeInKST",
+      "type": "announce",
+      "content": "전달사항",
+      "lastUpdated": "timeInKST"
+    }
+  ]
+}
