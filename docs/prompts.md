@@ -16,9 +16,9 @@
 - [x] 컨트롤러를 getIt 레이지 싱글톤으로 등록하고 UI에서 provider를 구독하도록 연결한다.
 
 ## 4. API 연동 및 리포지토리
-- [ ] `lib/core/auth/auth_repository.dart`에 `/api/login`, `/api/me`, `/api/logout` 호출 메서드를 작성하고 `withCredentials` 설정을 검증한다.
-- [ ] 400/401 응답 시 사용자 메시지, 500 시 "서버에서 오류가 발생했습니다."를 반환하도록 오류 매핑을 구현한다.
-- [ ] 로그인 성공 시 sid 쿠키는 브라우저에 위임하고, 응답의 사용자 정보를 `AuthState`에 반영한다.
+- [x] `lib/core/auth/auth_repository.dart`에 `/api/login`, `/api/me`, `/api/logout` 호출 메서드를 작성하고 `withCredentials` 설정을 검증한다.
+- [x] 400/401 응답 시 사용자 메시지, 500 시 "서버에서 오류가 발생했습니다."를 반환하도록 오류 매핑을 구현한다.
+- [x] 로그인 성공 시 sid 쿠키는 브라우저에 위임하고, 응답의 사용자 정보를 `AuthState`에 반영한다.
 
 ## 5. 라우팅과 가드
 - [ ] `lib/routes/app_router.dart`에서 `/login`, `/dashboard` 경로를 정의하고 AutoRoute/go_router 가드를 구현한다.

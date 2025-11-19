@@ -134,7 +134,7 @@ class _LoginHeader extends StatelessWidget {
             width: _logoSize,
             height: _logoSize,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(_logoSize / 4),
             ),
             child: const Icon(
@@ -390,7 +390,7 @@ Color _feedbackBackgroundColor(LoginFeedbackType type, ColorScheme scheme) {
   if (type == LoginFeedbackType.error) {
     return scheme.errorContainer;
   }
-  return scheme.surfaceVariant;
+  return scheme.surfaceContainerHighest;
 }
 
 Color _feedbackForegroundColor(LoginFeedbackType type, ColorScheme scheme) {
@@ -400,7 +400,7 @@ Color _feedbackForegroundColor(LoginFeedbackType type, ColorScheme scheme) {
   if (type == LoginFeedbackType.error) {
     return scheme.onErrorContainer;
   }
-  return scheme.onSurfaceVariant;
+  return scheme.onSurface;
 }
 
 IconData _feedbackIcon(LoginFeedbackType type) {

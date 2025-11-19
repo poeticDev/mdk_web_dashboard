@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'login_credentials.freezed.dart';
 
 @freezed
-class LoginCredentials with _$LoginCredentials {
+abstract class LoginCredentials with _$LoginCredentials {
   const LoginCredentials._();
 
   const factory LoginCredentials({
@@ -11,6 +11,5 @@ class LoginCredentials with _$LoginCredentials {
     required String password,
   }) = _LoginCredentials;
 
-  bool get isValid =>
-      username.trim().isNotEmpty && password.trim().isNotEmpty;
+  bool get isValid => username.trim().isNotEmpty && password.trim().isNotEmpty;
 }

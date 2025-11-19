@@ -23,11 +23,8 @@ Map<String, dynamic> _$AuthUserToJson(_AuthUser instance) => <String, dynamic>{
 };
 
 const _$UserRoleEnumMap = {
-  UserRole.staff: 'staff',
-  UserRole.faculty: 'faculty',
-  UserRole.professor: 'professor',
-  UserRole.student: 'student',
-  UserRole.assistant: 'assistant',
   UserRole.admin: 'admin',
+  UserRole.operator: 'operator',
+  UserRole.viewer: 'viewer',
   UserRole.unknown: 'unknown',
 };

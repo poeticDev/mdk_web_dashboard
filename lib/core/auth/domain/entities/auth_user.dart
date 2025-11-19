@@ -3,18 +3,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'auth_user.freezed.dart';
 part 'auth_user.g.dart';
 
-enum UserRole {
-  staff,
-  faculty,
-  professor,
-  student,
-  assistant,
-  admin,
-  unknown,
-}
+enum UserRole { admin, operator, viewer, unknown }
 
 @freezed
-class AuthUser with _$AuthUser {
+abstract class AuthUser with _$AuthUser {
   const factory AuthUser({
     required String id,
     required String username,

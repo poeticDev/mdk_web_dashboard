@@ -4,7 +4,7 @@ import 'package:web_dashboard/core/auth/domain/entities/auth_user.dart';
 part 'auth_state.freezed.dart';
 
 @freezed
-class AuthState with _$AuthState {
+abstract class AuthState with _$AuthState {
   const AuthState._();
 
   const factory AuthState({
