@@ -21,9 +21,9 @@
 - [x] 로그인 성공 시 sid 쿠키는 브라우저에 위임하고, 응답의 사용자 정보를 `AuthState`에 반영한다.
 
 ## 5. 라우팅과 가드
-- [ ] `lib/routes/app_router.dart`에서 `/login`, `/dashboard` 경로를 정의하고 AutoRoute/go_router 가드를 구현한다.
-- [ ] 인증되지 않은 접근은 `/login`, 이미 로그인된 사용자의 `/login` 접근은 `/dashboard`로 리디렉트한다.
-- [ ] API 401 감지 시 AuthState를 초기화하고 `/login?expired=true`로 이동시키는 헬퍼를 둔다.
+- [x] `lib/routes/app_router.dart`에서 `/login`, `/dashboard` 경로를 정의하고 AutoRoute/go_router 가드를 구현한다.
+- [x] 인증되지 않은 접근은 `/login`, 이미 로그인된 사용자의 `/login` 접근은 `/dashboard`로 리디렉트한다.
+- [x] API 401 감지 시 AuthState를 초기화하고 `/login?expired=true`로 이동시키는 흐름을 구성한다.
 
 ## 6. 테스트 & 검증
 - [ ] 로그인 성공, 잘못된 비밀번호, 비활성 사용자, 세션 만료, 보호 페이지 우회, 로그인 상태의 `/login` 접근 등 시나리오별 단위/위젯 테스트를 작성한다.

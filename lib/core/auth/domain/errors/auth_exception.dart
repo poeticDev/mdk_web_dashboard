@@ -4,13 +4,17 @@ class AuthException implements Exception {
   final String message;
   final String? code;
 
+  static const String sessionExpiredMessage = '세션이 만료되었습니다. 다시 로그인해주세요.';
+
   factory AuthException.invalidCredentials() => const AuthException(
     '아이디 또는 비밀번호가 올바르지 않습니다.',
     code: 'invalid_credentials',
   );
 
-  factory AuthException.sessionExpired() =>
-      const AuthException('세션이 만료되었습니다. 다시 로그인해주세요.', code: 'session_expired');
+  factory AuthException.sessionExpired() => const AuthException(
+    AuthException.sessionExpiredMessage,
+    code: 'session_expired',
+  );
 
   factory AuthException.sessionLimitExceeded() => const AuthException(
     '동시 접속 한도를 초과했습니다. 다른 세션을 종료한 뒤 다시 시도하세요.',

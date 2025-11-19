@@ -45,4 +45,11 @@ class LoginController extends _$LoginController {
   void resetForm() {
     state = const LoginFormState();
   }
+
+  void showSessionExpiredMessage() {
+    state = state.copyWith(
+      errorMessage: AuthException.sessionExpiredMessage,
+      isSubmitting: false,
+    );
+  }
 }

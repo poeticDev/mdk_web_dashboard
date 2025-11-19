@@ -24,6 +24,10 @@ class AuthController extends _$AuthController {
         isLoadingMe: false,
       );
     } on AuthException catch (error) {
+      if (error.code == 'session_expired') {
+        handleSessionExpired();
+        return;
+      }
       state = state.copyWith(
         isLoadingMe: false,
         errorMessage: error.message,
@@ -70,7 +74,8 @@ class AuthController extends _$AuthController {
     state = state.copyWith(
       currentUser: null,
       isAuthenticated: false,
-      errorMessage: '세션이 만료되었습니다. 다시 로그인해주세요.',
+      errorMessage: AuthException.sessionExpiredMessage,
+      isLoadingMe: false,
     );
   }
 }

@@ -49,16 +49,43 @@ class LoginViewData {
       feedbackMessage != null && feedbackMessage!.isNotEmpty;
 }
 
-class LoginPage extends ConsumerWidget {
-  const LoginPage({super.key});
+class LoginPage extends ConsumerStatefulWidget {
+  const LoginPage({super.key, this.isSessionExpired = false});
+
+  final bool isSessionExpired;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  bool _sessionNoticeDisplayed = false;
+
+  @override
+  void didUpdateWidget(covariant LoginPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.isSessionExpired && oldWidget.isSessionExpired) {
+      _sessionNoticeDisplayed = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final LoginFormState formState = ref.watch(loginControllerProvider);
     final LoginViewData data = LoginViewData.fromState(formState);
     final LoginController controller = ref.read(
       loginControllerProvider.notifier,
     );
+    final bool shouldScheduleSessionNotice =
+        widget.isSessionExpired &&
+        !_sessionNoticeDisplayed &&
+        formState.errorMessage == null;
+    if (shouldScheduleSessionNotice) {
+      _sessionNoticeDisplayed = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.showSessionExpiredMessage();
+      });
+    }
     return Scaffold(
       body: Container(
         width: double.infinity,
