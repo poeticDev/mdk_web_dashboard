@@ -1,8 +1,7 @@
-import 'package:dio/browser.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
+import 'package:web_dashboard/common/network/http_client_adapter_factory.dart';
 
 class DioClientFactory {
   const DioClientFactory();
@@ -16,12 +15,7 @@ class DioClientFactory {
         headers: <String, Object>{'Content-Type': 'application/json'},
       ),
     );
-    if (kIsWeb) {
-      dio.httpClientAdapter = BrowserHttpClientAdapter()
-        ..withCredentials = true;
-    } else {
-      dio.httpClientAdapter = IOHttpClientAdapter();
-    }
+    dio.httpClientAdapter = createHttpClientAdapter();
     dio.interceptors.add(
       LogInterceptor(
         requestBody: true,
