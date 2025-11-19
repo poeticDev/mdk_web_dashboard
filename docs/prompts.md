@@ -26,9 +26,9 @@
 - [x] API 401 감지 시 AuthState를 초기화하고 `/login?expired=true`로 이동시키는 흐름을 구성한다.
 
 ## 6. 테스트 & 검증
-- [ ] 로그인 성공, 잘못된 비밀번호, 비활성 사용자, 세션 만료, 보호 페이지 우회, 로그인 상태의 `/login` 접근 등 시나리오별 단위/위젯 테스트를 작성한다.
-- [ ] 테스트 명명은 AAA 패턴과 `inputX`/`mockX`/`expectedX` 변수 규칙을 따른다.
-- [ ] `flutter test --coverage`로 80% 이상을 유지하고, `flutter analyze`로 린트 상태를 확인한다.
+- [x] 로그인 성공, 잘못된 비밀번호, 비활성 사용자, 세션 만료, 보호 페이지 우회, 로그인 상태의 `/login` 접근 등 시나리오별 단위/위젯 테스트를 작성한다.
+- [x] 테스트 명명은 AAA 패턴과 `inputX`/`mockX`/`expectedX` 변수 규칙을 따른다.
+- [x] `flutter test --coverage`로 80% 이상을 유지하고, `flutter analyze`로 린트 상태를 확인한다.
 
 ## 7. Codex 자동화 프롬프트
 - [ ] "로그인 페이지 설계문서를 기반으로 login_page.dart를 생성해줘." 등 문서 기반 명령을 정리해 Codex CLI에 전달한다.
