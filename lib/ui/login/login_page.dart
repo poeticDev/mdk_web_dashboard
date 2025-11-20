@@ -266,7 +266,7 @@ class _LoginCardTitle extends StatelessWidget {
           style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
-        Text('사내 계정으로 인증한 후 관제 대시보드에 접근하세요.', style: textTheme.bodyMedium),
+        Text('계정 발급은 관리자에게 요청하세요.', style: textTheme.bodyMedium),
       ],
     );
   }

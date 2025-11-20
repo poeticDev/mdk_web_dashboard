@@ -36,7 +36,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Pretendard Variable',
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2C5364)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff334479)),
       ),
       routerConfig: router,
     );
