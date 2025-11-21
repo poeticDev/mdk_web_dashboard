@@ -34,7 +34,6 @@ class AppColors {
   factory AppColors.light(ThemeBrand brand) {
     switch (brand) {
       case ThemeBrand.defaultBrand:
-      default:
         return const AppColors(
           primary: Color(0xFF626AE8),
           primaryVariant: Color(0xff334479),
@@ -52,7 +51,6 @@ class AppColors {
   factory AppColors.dark(ThemeBrand brand) {
     switch (brand) {
       case ThemeBrand.defaultBrand:
-      default:
         return const AppColors(
           primary: Color(0xFF626AE8),
           primaryVariant: Color(0xff334479),
