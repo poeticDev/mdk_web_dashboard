@@ -16,12 +16,6 @@ const String _serviceTagline = '보안을 위해 계정 정보를 입력하세�
 const String _loginButtonLabel = '로그인';
 const BorderRadius _cardRadius = BorderRadius.all(Radius.circular(16));
 const EdgeInsets _cardPaddingInsets = EdgeInsets.all(_cardPadding);
-const LinearGradient _backgroundGradient = LinearGradient(
-  colors: <Color>[Color(0xFF0F2027), Color(0xFF2C5364)],
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-);
-
 enum LoginFeedbackType { neutral, success, error }
 
 class LoginViewData {
@@ -89,7 +83,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(gradient: _backgroundGradient),
+        decoration: BoxDecoration(
+          gradient: _loginBackgroundGradient(Theme.of(context).colorScheme),
+        ),
         child: SafeArea(
           child: _LoginBody(
             data: data,
@@ -342,6 +338,8 @@ class _LoginFeedbackBanner extends StatelessWidget {
       return const SizedBox.shrink();
     }
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final TextStyle baseStyle =
+        Theme.of(context).textTheme.bodyMedium ?? const TextStyle();
     final Color backgroundColor = _feedbackBackgroundColor(
       data.feedbackType,
       colors,
@@ -364,7 +362,7 @@ class _LoginFeedbackBanner extends StatelessWidget {
           Expanded(
             child: Text(
               data.feedbackMessage ?? '',
-              style: TextStyle(
+              style: baseStyle.copyWith(
                 color: foregroundColor,
                 fontWeight: FontWeight.w600,
               ),
@@ -438,4 +436,15 @@ IconData _feedbackIcon(LoginFeedbackType type) {
     return Icons.error_outline;
   }
   return Icons.info_outline;
+}
+
+LinearGradient _loginBackgroundGradient(ColorScheme scheme) {
+  return LinearGradient(
+    colors: <Color>[
+      scheme.primary,
+      scheme.secondary,
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
 }
