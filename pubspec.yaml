@@ -51,6 +51,7 @@ dependencies:
   loading_indicator: ^3.1.1
   responsive_framework: ^1.5.1
   dotted_line: ^3.2.3
+  adaptive_theme: ^3.7.2
 
 
   ### State Managing
