@@ -1,66 +1,91 @@
+import 'dart:ui' show FontVariation;
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// 플랫폼별 TextTheme 설정을 담당
-/// - 웹: GoogleFonts (웹폰트)
-/// - 모바일: asset 폰트 (예: Pretendard)
+/// - 웹/모바일 모두 asset 기반 variable font 사용
 class AppTypography {
+  static const String defaultFontFamily = 'Pretendard Variable';
+  static const List<FontVariation> boldFontVariations = <FontVariation>[
+    FontVariation('wght', 700),
+  ];
+  static const List<FontVariation> semiBoldFontVariations = <FontVariation>[
+    FontVariation('wght', 600),
+  ];
+  static const List<FontVariation> mediumFontVariations = <FontVariation>[
+    FontVariation('wght', 500),
+  ];
+  static const List<FontVariation> regularFontVariations = <FontVariation>[
+    FontVariation('wght', 400),
+  ];
+
   final TextTheme textTheme;
 
   const AppTypography._(this.textTheme);
 
-  /// 웹 환경용 (GoogleFonts 기반)
-  factory AppTypography.web() {
-    final base = ThemeData.light().textTheme;
-    final font = GoogleFonts.nanumGothic;
-  
+  /// 웹 환경: 헤드라인 가독성을 위한 소폭 스케일 업
+  factory AppTypography.web({String fontFamily = defaultFontFamily}) {
+    final TextTheme base = ThemeData.light().textTheme;
     return AppTypography._(
-      base.copyWith(
-        displayLarge: font(textStyle: base.displayLarge),
-        displayMedium: font(textStyle: base.displayMedium),
-        displaySmall: font(textStyle: base.displaySmall),
-        headlineLarge: font(textStyle: base.headlineLarge),
-        headlineMedium: font(textStyle: base.headlineMedium),
-        headlineSmall: font(textStyle: base.headlineSmall),
-        titleLarge: font(textStyle: base.titleLarge),
-        titleMedium: font(textStyle: base.titleMedium),
-        titleSmall: font(textStyle: base.titleSmall),
-        bodyLarge: font(textStyle: base.bodyLarge),
-        bodyMedium: font(textStyle: base.bodyMedium),
-        bodySmall: font(textStyle: base.bodySmall),
-        labelLarge: font(textStyle: base.labelLarge),
-        labelMedium: font(textStyle: base.labelMedium),
-        labelSmall: font(textStyle: base.labelSmall),
-      ),
+      _buildTextTheme(base, fontFamily: fontFamily, headlineScale: 1.04),
     );
   }
 
   /// 모바일/데스크톱 앱용 (asset 폰트 기반)
-  factory AppTypography.mobile({String fontFamily = 'Pretendard Variable'}) {
-    final base = ThemeData.light().textTheme;
+  factory AppTypography.mobile({String fontFamily = defaultFontFamily}) {
+    final TextTheme base = ThemeData.light().textTheme;
+    return AppTypography._(_buildTextTheme(base, fontFamily: fontFamily));
+  }
 
-    TextStyle apply(TextStyle? style) {
-      return (style ?? const TextStyle()).copyWith(fontFamily: fontFamily);
+  static TextTheme _buildTextTheme(
+    TextTheme base, {
+    required String fontFamily,
+    double headlineScale = 1.0,
+  }) {
+    TextStyle apply(
+      TextStyle? style,
+      List<FontVariation> variations, {
+      double scale = 1.0,
+    }) {
+      final TextStyle resolved = style ?? const TextStyle();
+      final double? fontSize = resolved.fontSize == null
+          ? null
+          : resolved.fontSize! * scale;
+      return resolved.copyWith(
+        fontFamily: fontFamily,
+        fontVariations: variations,
+        fontSize: fontSize,
+      );
     }
 
-    return AppTypography._(
-      base.copyWith(
-        displayLarge: apply(base.displayLarge),
-        displayMedium: apply(base.displayMedium),
-        displaySmall: apply(base.displaySmall),
-        headlineLarge: apply(base.headlineLarge),
-        headlineMedium: apply(base.headlineMedium),
-        headlineSmall: apply(base.headlineSmall),
-        titleLarge: apply(base.titleLarge),
-        titleMedium: apply(base.titleMedium),
-        titleSmall: apply(base.titleSmall),
-        bodyLarge: apply(base.bodyLarge),
-        bodyMedium: apply(base.bodyMedium),
-        bodySmall: apply(base.bodySmall),
-        labelLarge: apply(base.labelLarge),
-        labelMedium: apply(base.labelMedium),
-        labelSmall: apply(base.labelSmall),
+    return base.copyWith(
+      displayLarge: apply(
+        base.displayLarge,
+        boldFontVariations,
+        scale: headlineScale,
       ),
+      displayMedium: apply(
+        base.displayMedium,
+        boldFontVariations,
+        scale: headlineScale,
+      ),
+      displaySmall: apply(base.displaySmall, boldFontVariations),
+      headlineLarge: apply(
+        base.headlineLarge,
+        boldFontVariations,
+        scale: headlineScale,
+      ),
+      headlineMedium: apply(base.headlineMedium, semiBoldFontVariations),
+      headlineSmall: apply(base.headlineSmall, semiBoldFontVariations),
+      titleLarge: apply(base.titleLarge, boldFontVariations),
+      titleMedium: apply(base.titleMedium, semiBoldFontVariations),
+      titleSmall: apply(base.titleSmall, mediumFontVariations),
+      bodyLarge: apply(base.bodyLarge, mediumFontVariations),
+      bodyMedium: apply(base.bodyMedium, mediumFontVariations),
+      bodySmall: apply(base.bodySmall, regularFontVariations),
+      labelLarge: apply(base.labelLarge, mediumFontVariations),
+      labelMedium: apply(base.labelMedium, regularFontVariations),
+      labelSmall: apply(base.labelSmall, regularFontVariations),
     );
   }
 }

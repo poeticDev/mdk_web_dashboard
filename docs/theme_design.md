@@ -16,11 +16,15 @@
 먼저 현재 제공된 샘플코드를 읽어보렴.
 
 2. 작업 단계
+2.1 앱컬러
 이 프로젝트에 이미 존재하는 색상 설정을 기반으로
 AppColors.light / AppColors.dark의 값을 채워줘.
 
 규칙:
 - AppColors에 정의된 각 필드의 기존 색상은 변경하지 않는다.
 - 현재 프로젝트에서 사용 중이지만, AppColors에 의미상 매핑되지 않는 값이 있다면 AppColors에 새로 정의한다. (예: border, divider 등).
-- AppColors.light / AppColors.dark 내부의 TODO를 모두 채워줘.
 - 하지만 ColorScheme에 꼭 써먹을 수 있는 의미 있는 필드만 추가해줘.
+
+2.2 앱 타이포
+폰트 전략은 다음과 같아.
+- 웹: GoogleFonts 기반 Pretendard (또는 비슷한 폰트) 사용

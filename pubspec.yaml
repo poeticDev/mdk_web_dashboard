@@ -38,7 +38,6 @@ dependencies:
   ### Design
   cupertino_icons: ^1.0.8
   font_awesome_flutter: ^10.8.0
-  google_fonts: ^6.2.1
   animated_toggle_switch: ^0.8.3
   dropdown_search: ^6.0.2
   omni_datetime_picker: ^2.1.1
