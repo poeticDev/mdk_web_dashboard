@@ -9,11 +9,13 @@ class ThemeToggle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(themeControllerProvider);
-    final isDark = controller.isDarkMode(context);
+    final bool isDark = controller.isDarkMode(context);
+    final String tooltip = isDark ? '라이트 모드로 전환' : '다크 모드로 전환';
+    final IconData icon = isDark ? Icons.dark_mode : Icons.light_mode;
 
     return IconButton(
-      tooltip: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
-      icon: Icon(isDark ? Icons.dark_mode : Icons.light_mode),
+      tooltip: tooltip,
+      icon: Icon(icon),
       onPressed: () => controller.toggle(context),
     );
   }

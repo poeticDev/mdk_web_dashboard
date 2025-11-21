@@ -17,10 +17,21 @@ class ThemeController {
     return AdaptiveTheme.getThemeMode();
   }
 
-  /// 현재 모드가 다크인지 여부 (UI에서 상태 표시용)
+  /// 현재 적용 중인 ThemeMode (system도 내부 상태에 따라 light/dark로 해석)
+  AdaptiveThemeMode effectiveMode(BuildContext context) {
+    final adaptive = AdaptiveTheme.of(context);
+    final AdaptiveThemeMode mode = adaptive.mode;
+    if (mode == AdaptiveThemeMode.system) {
+      final Brightness brightness = Theme.of(context).brightness;
+      return brightness == Brightness.dark
+          ? AdaptiveThemeMode.dark
+          : AdaptiveThemeMode.light;
+    }
+    return mode;
+  }
+
   bool isDarkMode(BuildContext context) {
-    final mode = AdaptiveTheme.of(context).mode;
-    return mode == AdaptiveThemeMode.dark;
+    return effectiveMode(context) == AdaptiveThemeMode.dark;
   }
 
   /// light ↔ dark 토글 (system은 처음 토글 시 dark로 보냄)
@@ -50,7 +61,6 @@ class ThemeController {
   }) async {
     final isWeb = isWebOverride;
     final mode = AdaptiveTheme.of(context).mode;
-
     final lightTheme = AppTheme.light(brand: brand, isWebOverride: isWeb);
     final darkTheme = AppTheme.dark(brand: brand, isWebOverride: isWeb);
 
@@ -64,6 +74,7 @@ class ThemeController {
         AdaptiveTheme.of(context).setDark();
         break;
       case AdaptiveThemeMode.system:
+        // 현재는 defaultBrand만 사용. 확장 대비 setSystem 유지.
         AdaptiveTheme.of(context).setTheme(light: lightTheme, dark: darkTheme);
         AdaptiveTheme.of(context).setSystem();
         break;
