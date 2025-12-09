@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
 
-const EdgeInsets _pagePadding = EdgeInsets.symmetric(horizontal: 32, vertical: 24);
 const double _sectionSpacing = 32;
 const double _topBarSpacing = 12;
 const double _avatarRadius = 22;
@@ -33,7 +33,8 @@ class _ClassroomDetailPageState extends State<ClassroomDetailPage> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: _pagePadding,
+          // 공통 helper 기본값으로 화면 간 패딩 정책을 공유한다.
+          padding: context.responsivePagePadding(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

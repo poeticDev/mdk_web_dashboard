@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 
 const double _panelSpacing = 16;
 const EdgeInsets _panelPadding = EdgeInsets.all(24);
-const double _wideLayoutBreakpoint = 960;
 const BorderRadius _tileRadius = BorderRadius.all(Radius.circular(16));
 
 class ClassroomDetailHeaderSection extends StatelessWidget {
@@ -20,20 +20,21 @@ class ClassroomDetailHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final bool isWide = constraints.maxWidth >= _wideLayoutBreakpoint;
+    return ResponsiveLayoutBuilder(
+      builder: (BuildContext context, DeviceFormFactor formFactor) {
+        // 모바일은 단일 컬럼, 그 이상은 가로 3:2 레이아웃으로 전환한다.
+        final bool isWideLayout = formFactor != DeviceFormFactor.mobile;
         // Summary와 제어 패널을 해상도에 따라 3:2 비율로 배치한다.
         return Flex(
-          direction: isWide ? Axis.horizontal : Axis.vertical,
+          direction: isWideLayout ? Axis.horizontal : Axis.vertical,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _buildSummaryChild(isWide),
+            _buildSummaryChild(isWideLayout),
             SizedBox(
-              width: isWide ? _panelSpacing : 0,
-              height: isWide ? 0 : _panelSpacing,
+              width: isWideLayout ? _panelSpacing : 0,
+              height: isWideLayout ? 0 : _panelSpacing,
             ),
-            _buildControlChild(isWide),
+            _buildControlChild(isWideLayout),
           ],
         );
       },

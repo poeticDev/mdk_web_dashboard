@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -7,7 +8,13 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('관제 대시보드')),
-      body: const Center(child: Text('대시보드 콘텐츠를 여기에 구성하세요.')),
+      body: Padding(
+        // 공통 responsive 패딩을 사용해 화면별 여백 일관성을 유지한다.
+        padding: context.responsivePagePadding(),
+        child: const Center(
+          child: Text('대시보드 콘텐츠를 여기에 구성하세요.'),
+        ),
+      ),
     );
   }
 }

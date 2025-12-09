@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/core/auth/application/login_controller.dart';
 import 'package:web_dashboard/core/auth/domain/state/login_form_state.dart';
 
@@ -116,24 +117,30 @@ class _LoginBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final double cardWidth = _resolveCardWidth(constraints.maxWidth);
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            const _LoginHeader(),
-            Expanded(
-              child: Center(
-                child: _LoginCard(
-                  width: cardWidth,
-                  data: data,
-                  onUsernameChanged: onUsernameChanged,
-                  onPasswordChanged: onPasswordChanged,
-                  onSubmit: onSubmit,
+        final DeviceFormFactor formFactor = context.deviceFormFactor;
+        final EdgeInsets bodyPadding = context.responsivePagePadding();
+        final double cardWidth = _resolveCardWidth(formFactor, constraints.maxWidth);
+        return Padding(
+          // 페이지 공통 패딩을 적용해 로그인 화면도 전역 규칙을 따른다.
+          padding: bodyPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              const _LoginHeader(),
+              Expanded(
+                child: Center(
+                  child: _LoginCard(
+                    width: cardWidth,
+                    data: data,
+                    onUsernameChanged: onUsernameChanged,
+                    onPasswordChanged: onPasswordChanged,
+                    onSubmit: onSubmit,
+                  ),
                 ),
               ),
-            ),
-            _LoginFooter(versionLabel: data.versionLabel),
-          ],
+              _LoginFooter(versionLabel: data.versionLabel),
+            ],
+          ),
         );
       },
     );
@@ -397,15 +404,23 @@ class _LoginFooter extends StatelessWidget {
   }
 }
 
-double _resolveCardWidth(double viewportWidth) {
-  if (viewportWidth >= _cardMaxWidth) {
-    return _cardMaxWidth;
+double _resolveCardWidth(DeviceFormFactor formFactor, double viewportWidth) {
+  // Breakpoint 별로 카드 폭을 조절해 과도한 여백/압축을 방지한다.
+  switch (formFactor) {
+    case DeviceFormFactor.fourK:
+    case DeviceFormFactor.desktop:
+      return _cardMaxWidth;
+    case DeviceFormFactor.tablet:
+      final double tabletWidth = (viewportWidth * 0.75)
+          .clamp(_cardMinWidth, _cardMaxWidth)
+          .toDouble();
+      return tabletWidth;
+    case DeviceFormFactor.mobile:
+      final double mobileWidth = (viewportWidth * _cardWidthRatio)
+          .clamp(_cardMinWidth, _cardMaxWidth)
+          .toDouble();
+      return mobileWidth;
   }
-  final double scaledWidth = viewportWidth * _cardWidthRatio;
-  if (scaledWidth <= _cardMinWidth) {
-    return _cardMinWidth;
-  }
-  return scaledWidth;
 }
 
 Color _feedbackBackgroundColor(LoginFeedbackType type, ColorScheme scheme) {
