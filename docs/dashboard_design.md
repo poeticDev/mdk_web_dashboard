@@ -1,0 +1,87 @@
+# 대시보드 UI 설계 요약
+
+본 문서는 `docs/samples/1.png`, `docs/samples/2.png` 와이어프레임을 기준으로 전체 강의실 대시보드(전체 화면)와 개별 강의실 화면을 구현하기 위한 설계 및 진행 순서를 정리한다.
+
+## 1. 전체 강의실 화면 (samples/1.png)
+
+### 1.1 화면 구조
+1. **헤더 바**  
+   - 좌측: 페이지 타이틀(`관리 강의실 전체 보기`).  
+   - 우측: 알림/사용자 메뉴(아이콘). 추후 공통 AppBar 위젯으로 추출.
+2. **상단 메트릭 카드 영역**  
+   - 현재 시각/날짜 표시(실시간).  
+   - 전체 강의실 수, 사용 중, 미사용, 미연동 카드.  
+   - 검색 필드(건물/호수/학과명).  
+   - 이 영역은 `Wrap` 또는 `ResponsiveGrid`로 구현, 각 카드는 재사용 가능한 `StatusMetricCard` 위젯으로 만든다.
+3. **강의실 카드 그리드**  
+   - 강의실별 정보 카드: 호수, 학과, 수업명, 강의자, 시간, 상태 뱃지(사용 중/미사용).  
+   - 카드 내 액션 버튼(자세히 보기) → 개별 화면으로 라우트.  
+   - 그리드는 `SliverGrid` or `GridView`로 구현하고, 반응형 레이아웃(열 수) 조정 필요.
+
+### 1.2 데이터 모델 및 상태
+- `ClassroomSummary` 모델: `id`, `building`, `room`, `department`, `status`, `courseName`, `professor`, `start`, `end`, `occupancy`.
+- 상단 메트릭은 `List<ClassroomSummary>` 기반 계산.  
+- 검색 및 필터 상태는 Riverpod `StateNotifier`로 관리.
+
+### 1.3 컴포넌트 설계
+- `DashboardHeader`: 날짜/시간 표시 + 메트릭 + 검색 필드를 포함하는 컴파운드 위젯.
+- `ClassroomCard`: 상태 뱃지, 아이콘, 버튼 등을 포함. 상태별 컬러는 `AppColors`로 매핑.
+- `StatusBadge`: 사용 중/미사용/미연동 등 상태 텍스트를 색상으로 구분.
+
+### 1.4 진행 순서
+1. **Route/Navigation**: `/dashboard` → 전체 화면 라우트 구성.
+2. **클래스 카드 데이터 모델 정의 + mock 데이터**.
+3. **상단 메트릭 카드 위젯 → 검색 필드 UI 구현**.
+4. **그리드 카드 구현**.
+5. **반응형 조정 및 Theme 연결**.
+6. **상태 관리/필터 로직 추가**.
+
+## 2. 개별 강의실 화면 (samples/2.png)
+
+### 2.1 화면 구조
+1. **상단 바**  
+   - 뒤로 가기, 페이지 타이틀(`강의실 개별 정보`), 사용자 아이콘.
+2. **강의실 요약 + 제어 패널**  
+   - 왼쪽: 강의실 이름/학과, 현재 수업 정보, 상태 뱃지.  
+   - 오른쪽: 전등/장비 ON/OFF 스위치, 환경 정보(온도/습도), 실시간 카메라 버튼.  
+   - 재실 상태 아이콘
+3. **캘린더 영역**  
+   - 주간/월간 토글, 날짜 네비게이션, 일정 블록(UI kit: `TableCalendar` or custom `CalendarGrid`).  
+   - 아래 `일정 등록` 모달/패널: 강의명, 날짜, 시간, 교수자명, 반복 여부 등 입력.
+
+### 2.2 데이터 및 상태
+- `ClassroomDetail` 모델: 요약 정보 + 환경 정보 + 장비 상태.  
+- `ScheduleEvent` 모델.  
+- 스위치/실시간 센서 값은 컨트롤러가 API 호출로 갱신하는 구조(추후 연결).
+
+### 2.3 컴포넌트 설계
+- `RoomInfoCard`: 상태 뱃지, 수업 정보.  
+- `ControlToggle`: 전등/장비 스위치.  
+- `EnvironmentInfoCard`: 온도/습도 값.  
+- `ScheduleCalendar`: 주/월 전환 가능한 캘린더 위젯.  
+- `ScheduleFormSheet`: 일정 등록/수정 폼(모달).
+
+### 2.4 진행 순서
+1. **상세 라우트 구성:** `/dashboard/:roomId` 형태.  
+2. **Room info + control panel 레이아웃 제작**.  
+3. **환경 정보 카드 및 실시간 버튼 UI 구현**.  
+4. **캘린더 위젯 도입(주간 뷰 먼저) → 월간 토글**.  
+5. **일정 등록 패널 레이아웃**.  
+6. **상태 관리/데이터 바인딩 추가**.
+
+## 3. 공통 고려 사항
+- **Theme**: `AppTheme`와 상태 뱃지 색상을 재사용. 카드/배경에서 `surface`/`surfaceElevated` 활용.
+- **타이포그래피**: `AppTypography`의 `headlineSmall`, `titleMedium`, `bodyMedium` 등 사용.
+- **Iconography**: Material Icons 기본, 필요 시 Custom Icon set 고려.
+- **Responsive Layout**: 데스크톱/태블릿/모바일 환경을 고려해 Breakpoint 정의 (예: 3, 2, 1 column).
+- **상태관리**: Riverpod Controller(`dashboardController`, `classroomDetailController`) 설계 → API 연동 전 Mock 데이터로 UI 완성.
+- **테스트 전략**:  
+  - 레이아웃/상태 위젯 테스트 (Widget tests).  
+  - Controller 단위 테스트 (데이터 필터/메트릭 계산).  
+  - Golden test로 카드/캘린더 모양 검증 검토.
+
+## 4. 향후 TODO
+- API 계약 및 데이터 모델 문서화(frontend_api.md 확장).  
+- 실시간 센서/카메라 버튼 동작 정의.  
+- 접근성(스크린 리더, 키보드 네비게이션) 가이드 포함.  
+- 다국어 지원 시 `AppLocalizations` 반영.
