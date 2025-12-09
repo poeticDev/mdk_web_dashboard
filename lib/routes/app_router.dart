@@ -5,6 +5,7 @@ import 'package:web_dashboard/core/auth/application/auth_controller.dart';
 import 'package:web_dashboard/core/auth/domain/errors/auth_exception.dart';
 import 'package:web_dashboard/routes/route_paths.dart';
 import 'package:web_dashboard/ui/dashboard/dashboard_page.dart';
+import 'package:web_dashboard/ui/classroom_detail/classroom_detail_page.dart';
 import 'package:web_dashboard/ui/login/login_page.dart';
 
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
@@ -24,6 +25,16 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         name: RouteNames.dashboard,
         builder: (BuildContext context, GoRouterState state) =>
             const DashboardPage(),
+      ),
+      
+      // 상세 강의실 화면: /dashboard/:roomId 형태로 룸 ID를 파라미터로 전달.
+      GoRoute(
+        path: RoutePaths.classroomDetail,
+        name: RouteNames.classroomDetail,
+        builder: (BuildContext context, GoRouterState state) {
+          final String roomId = state.pathParameters['roomId']!;
+          return ClassroomDetailPage(roomId: roomId);
+        },
       ),
     ],
     redirect: (BuildContext context, GoRouterState state) {
