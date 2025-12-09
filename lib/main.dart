@@ -1,11 +1,20 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:responsive_framework/responsive_framework.dart';
+
 import 'package:web_dashboard/core/auth/application/auth_controller.dart';
 import 'package:web_dashboard/di/service_locator.dart';
 import 'package:web_dashboard/routes/app_router.dart';
 import 'package:web_dashboard/theme/app_theme.dart';
+
+const List<Breakpoint> _appBreakpoints = <Breakpoint>[
+  Breakpoint(start: 0, end: 599, name: MOBILE),
+  Breakpoint(start: 600, end: 1023, name: TABLET),
+  Breakpoint(start: 1024, end: 1439, name: DESKTOP),
+  Breakpoint(start: 1440, end: double.infinity, name: '4K'),
+];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +54,11 @@ class _MyAppState extends ConsumerState<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: lightTheme,
           darkTheme: darkTheme,
+          builder: (BuildContext context, Widget? child) =>
+              ResponsiveBreakpoints.builder(
+            child: child ?? const SizedBox.shrink(),
+            breakpoints: _appBreakpoints,
+          ),
           routerConfig: router,
         );
       },
