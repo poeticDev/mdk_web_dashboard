@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 
@@ -20,40 +21,44 @@ class ClassroomDetailHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveLayoutBuilder(
-      builder: (BuildContext context, DeviceFormFactor formFactor) {
-        // 모바일은 단일 컬럼, 그 이상은 가로 3:2 레이아웃으로 전환한다.
-        final bool isWideLayout = formFactor != DeviceFormFactor.mobile;
-        // Summary와 제어 패널을 해상도에 따라 3:2 비율로 배치한다.
-        return Flex(
-          direction: isWideLayout ? Axis.horizontal : Axis.vertical,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildSummaryChild(isWideLayout),
-            SizedBox(
-              width: isWideLayout ? _panelSpacing : 0,
-              height: isWideLayout ? 0 : _panelSpacing,
-            ),
-            _buildControlChild(isWideLayout),
-          ],
-        );
-      },
+    return Column(
+      spacing: 8.0,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _RoomTitle(summary: data.summary),
+        ResponsiveLayoutBuilder(
+          builder: (BuildContext context, DeviceFormFactor formFactor) {
+            // 모바일은 단일 컬럼, 그 이상은 가로 3:2 레이아웃으로 전환한다.
+            final bool isWideLayout = formFactor != DeviceFormFactor.mobile;
+            return ResponsiveRowColumn(
+              layout: isWideLayout
+                  ? ResponsiveRowColumnType.ROW
+                  : ResponsiveRowColumnType.COLUMN,
+              rowMainAxisAlignment: MainAxisAlignment.start,
+              rowCrossAxisAlignment: CrossAxisAlignment.start,
+              columnCrossAxisAlignment: CrossAxisAlignment.start,
+              rowSpacing: _panelSpacing,
+              columnSpacing: _panelSpacing,
+              children: <ResponsiveRowColumnItem>[
+                ResponsiveRowColumnItem(
+                  rowFlex: 3,
+                  child: _RoomSummaryCard(summary: data.summary),
+                ),
+                ResponsiveRowColumnItem(
+                  rowFlex: 2,
+                  child: _ControlPanelCard(
+                    toggles: data.deviceToggles,
+                    metrics: data.environmentMetrics,
+                    onToggleChanged: onToggleChanged,
+                    onCameraPressed: onCameraPressed,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
-  }
-
-  Widget _buildSummaryChild(bool isWide) {
-    final Widget child = _RoomSummaryCard(summary: data.summary);
-    return isWide ? Expanded(flex: 3, child: child) : child;
-  }
-
-  Widget _buildControlChild(bool isWide) {
-    final Widget child = _ControlPanelCard(
-      toggles: data.deviceToggles,
-      metrics: data.environmentMetrics,
-      onToggleChanged: onToggleChanged,
-      onCameraPressed: onCameraPressed,
-    );
-    return isWide ? Expanded(flex: 2, child: child) : child;
   }
 }
 
@@ -65,17 +70,12 @@ class _RoomSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 4.0,
       child: Padding(
         padding: _panelPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _RoomTitle(summary: summary),
-            const SizedBox(height: _panelSpacing),
-            _RoomSessionInfo(summary: summary),
-            const SizedBox(height: _panelSpacing),
-            _RoomOccupancyInfo(summary: summary),
-          ],
+          children: <Widget>[_RoomSessionInfo(summary: summary)],
         ),
       ),
     );
@@ -90,22 +90,23 @@ class _RoomTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Wrap(
+      direction: Axis.horizontal,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 12.0,
+      runSpacing: 8.0,
       children: <Widget>[
+        SizedBox(),
         Text(
           summary.roomName,
           style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 4),
         Text(
           summary.department,
           style: textTheme.titleMedium?.copyWith(
             color: textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
           ),
         ),
-        const SizedBox(height: 12),
-        _StatusBadge(status: summary.status),
       ],
     );
   }
@@ -118,25 +119,48 @@ class _RoomSessionInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double spacing = 8.0;
+    const double runSpacing = 8.0;
+
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: runSpacing,
       children: <Widget>[
-        Text(
-          summary.currentCourse,
-          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 4),
-        Text('담당: ${summary.professor}', style: textTheme.bodyMedium),
-        const SizedBox(height: 8),
-        Row(
-          children: <Widget>[
-            const Icon(Icons.schedule_rounded, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              summary.sessionTime.label(context),
-              style: textTheme.bodyMedium,
+        Wrap(
+          direction: Axis.horizontal,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: spacing,
+          runSpacing: runSpacing,
+          children: [
+            _StatusBadge(status: summary.status),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: spacing,
+              children: <Widget>[
+                const Icon(Icons.schedule_rounded, size: 18),
+                Text(
+                  summary.sessionTime.label(context),
+                  style: textTheme.bodyMedium,
+                ),
+              ],
             ),
+          ],
+        ),
+        Wrap(
+          direction: Axis.horizontal,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: spacing,
+          runSpacing: runSpacing,
+          children: [
+            Text(
+              summary.currentCourse,
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+
+            Text('담당: ${summary.professor}', style: textTheme.bodyMedium),
           ],
         ),
       ],
@@ -164,6 +188,7 @@ class _RoomOccupancyInfo extends StatelessWidget {
           children: <Widget>[
             CircleAvatar(
               backgroundColor: scheme.primary,
+
               child: const Icon(Icons.people_alt_outlined, color: Colors.white),
             ),
             const SizedBox(width: 16),
@@ -262,6 +287,7 @@ class _StatusBadge extends StatelessWidget {
     switch (status) {
       case ClassroomSessionStatus.inUse:
         return scheme.primary;
+
       case ClassroomSessionStatus.idle:
         return scheme.secondary;
       case ClassroomSessionStatus.disconnected:
