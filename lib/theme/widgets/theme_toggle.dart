@@ -12,10 +12,11 @@ class ThemeToggle extends ConsumerWidget {
     final bool isDark = controller.isDarkMode(context);
     final String tooltip = isDark ? '라이트 모드로 전환' : '다크 모드로 전환';
     final IconData icon = isDark ? Icons.dark_mode : Icons.light_mode;
+    final Color iconColor = isDark ? Colors.yellow : Colors.orangeAccent;
 
     return IconButton(
       tooltip: tooltip,
-      icon: Icon(icon),
+      icon: Icon(icon, color: iconColor),
       onPressed: () => controller.toggle(context),
     );
   }

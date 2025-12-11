@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
+import 'package:web_dashboard/theme/widgets/theme_toggle.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
 
@@ -116,6 +117,7 @@ class _DetailTopBar extends StatelessWidget {
             ],
           ),
         ),
+        ThemeToggle(),
         GestureDetector(
           onTap: () {},
           child: CircleAvatar(
@@ -157,14 +159,14 @@ ClassroomDetailHeaderData _buildMockHeaderData(String roomId) {
       ),
       const DeviceToggleStatus(
         id: 'projector',
-        label: '프로젝터',
+        label: '전체 장비',
         icon: Icons.present_to_all,
         isOn: true,
         description: 'HDMI1 입력',
       ),
       const DeviceToggleStatus(
         id: 'hvac',
-        label: '공조',
+        label: '자동 공조',
         icon: Icons.ac_unit_outlined,
         isOn: false,
         description: '자동 온도 제어',
@@ -185,13 +187,13 @@ ClassroomDetailHeaderData _buildMockHeaderData(String roomId) {
         unit: '%',
         icon: Icons.water_drop_outlined,
       ),
-      EnvironmentMetric(
-        id: 'co2',
-        label: 'CO₂',
-        value: '560',
-        unit: 'ppm',
-        icon: Icons.air_outlined,
-      ),
+      // EnvironmentMetric(
+      //   id: 'co2',
+      //   label: 'CO₂',
+      //   value: '560',
+      //   unit: 'ppm',
+      //   icon: Icons.air_outlined,
+      // ),
     ],
   );
 }
