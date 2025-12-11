@@ -34,7 +34,7 @@ class _ClassroomDetailPageState extends State<ClassroomDetailPage> {
           // 공통 helper 기본값으로 화면 간 패딩 정책을 공유한다.
           padding: context.responsivePagePadding(),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               // 상단 정보/제어 패널 외 섹션들이 순차적으로 쌓일 예정.
               _DetailTopBar(
@@ -42,10 +42,14 @@ class _ClassroomDetailPageState extends State<ClassroomDetailPage> {
                 onBackPressed: () => Navigator.of(context).maybePop(),
               ),
               const SizedBox(height: _sectionSpacing),
-              ClassroomDetailHeaderSection(
-                data: _headerData,
-                onToggleChanged: _handleToggleChanged,
-                onCameraPressed: () => _showComingSoonSnackBar(context),
+
+              Container(
+                constraints: BoxConstraints(maxWidth: 1024),
+                child: ClassroomDetailHeaderSection(
+                  data: _headerData,
+                  onToggleChanged: _handleToggleChanged,
+                  onCameraPressed: () => _showComingSoonSnackBar(context),
+                ),
               ),
             ],
           ),

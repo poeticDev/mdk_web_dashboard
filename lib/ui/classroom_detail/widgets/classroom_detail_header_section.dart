@@ -29,66 +29,52 @@ class ClassroomDetailHeaderSection extends StatelessWidget {
         // 모바일은 단일 컬럼, 그 이상은 가로 3:2 레이아웃으로 전환한다.
         final bool isWideLayout = formFactor != DeviceFormFactor.mobile;
         return Column(
+          spacing: _panelSpacing,
           children: [
             _RoomTitle(summary: data.summary, isWideLayout: isWideLayout),
-            // SizedBox(
-            //   height: isWideLayout ? _headerHeight : null,
-            //   child: ResponsiveRowColumn(
-            //     layout: isWideLayout
-            //         ? ResponsiveRowColumnType.ROW
-            //         : ResponsiveRowColumnType.COLUMN,
-            //     rowMainAxisAlignment: MainAxisAlignment.start,
-            //     rowCrossAxisAlignment: CrossAxisAlignment.start,
-            //     columnCrossAxisAlignment: CrossAxisAlignment.start,
-            //     rowSpacing: _panelSpacing,
-            //     columnSpacing: _panelSpacing,
-            //     children: <ResponsiveRowColumnItem>[
-            //       ResponsiveRowColumnItem(
-            //         rowFlex: 3,
-            //         child: _RoomSummaryCard(summary: data.summary),
-            //       ),
-            //       ResponsiveRowColumnItem(
-            //         child: SizedBox(
-            //           width: 180,
-            //           child: Column(
-            //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             spacing: 4.0,
-            //             children: data.deviceToggles
-            //                 .map(
-            //                   (DeviceToggleStatus toggle) => _DeviceToggleRow(
-            //                     toggle: toggle,
-            //                     onChanged: (bool value) =>
-            //                         onToggleChanged?.call(toggle.id, value),
-            //                   ),
-            //                 )
-            //                 .toList(),
-            //           ),
-            //         ),
-            //       ),
+            SizedBox(
+              height: isWideLayout ? _headerHeight : null,
+              child: ResponsiveRowColumn(
+                layout: isWideLayout
+                    ? ResponsiveRowColumnType.ROW
+                    : ResponsiveRowColumnType.COLUMN,
+                rowMainAxisAlignment: MainAxisAlignment.center,
+                rowCrossAxisAlignment: CrossAxisAlignment.center,
+                // columnCrossAxisAlignment: CrossAxisAlignment.start,
+                rowSpacing: _panelSpacing,
+                columnSpacing: _panelSpacing,
+                children: <ResponsiveRowColumnItem>[
+                  ResponsiveRowColumnItem(
+                    rowFlex: 3,
+                    child: _RoomSummaryCard(summary: data.summary),
+                  ),
+                  ResponsiveRowColumnItem(
+                    child: SizedBox(
+                      width: 180,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        spacing: 4.0,
+                        children: data.deviceToggles
+                            .map(
+                              (DeviceToggleStatus toggle) => _DeviceToggleRow(
+                                toggle: toggle,
+                                onChanged: (bool value) =>
+                                    onToggleChanged?.call(toggle.id, value),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ),
 
-            //       // ...data.deviceToggles.map(
-            //       //   (DeviceToggleStatus toggle) => ResponsiveRowColumnItem(
-
-            //       //     child: _DeviceToggleRow(
-            //       //       toggle: toggle,
-            //       //       onChanged: (bool value) =>
-            //       //           onToggleChanged?.call(toggle.id, value),
-            //       //     ),
-            //       //   ),
-            //       // ),
-            //       // ResponsiveRowColumnItem(
-            //       //   rowFlex: 2,
-            //       //   child: _ControlPanelCard(
-            //       //     toggles: data.deviceToggles,
-            //       //     metrics: data.environmentMetrics,
-            //       //     onToggleChanged: onToggleChanged,
-            //       //     onCameraPressed: onCameraPressed,
-            //       //   ),
-            //       // ),
-            //     ],
-            //   ),
-            // ),
+                  ...data.environmentMetrics.map(
+                    (EnvironmentMetric metric) => ResponsiveRowColumnItem(
+                      child: _EnvironmentTile(metric: metric),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         );
       },
@@ -112,38 +98,50 @@ class _RoomTitle extends StatelessWidget {
           : ResponsiveRowColumnType.COLUMN,
       rowSpacing: _panelSpacing,
       columnSpacing: _panelSpacing,
+      rowMainAxisAlignment: MainAxisAlignment.spaceBetween,
 
       children: [
         ResponsiveRowColumnItem(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                summary.roomName,
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
+          child: SizedBox(
+            width: isWideLayout ? 300 : null,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  summary.roomName,
+                  style: textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              Text(
-                summary.department,
-                style: textTheme.titleMedium?.copyWith(
-                  color: textTheme.headlineSmall?.color?.withValues(alpha: 0.9),
+                Text(
+                  summary.department,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: textTheme.headlineSmall?.color?.withValues(
+                      alpha: 0.9,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        if (isWideLayout)
-        
-          ResponsiveRowColumnItem(child: Spacer()),
-
-        ResponsiveRowColumnItem(child: _RoomOccupancyInfo(summary: summary)),
-        ResponsiveRowColumnItem(
-          child: ElevatedButton(
+        ResponsiveRowColumnItem(child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: _panelSpacing,
+          children: [
+            _RoomOccupancyInfo(summary: summary),
+            ElevatedButton(
             onPressed: () {},
             child: Text('실시간 카메라 보기', style: textTheme.bodyMedium),
           ),
-        ),
+          ],
+        )),
+        // ResponsiveRowColumnItem(
+        //   child: ElevatedButton(
+        //     onPressed: () {},
+        //     child: Text('실시간 카메라 보기', style: textTheme.bodyMedium),
+        //   ),
+        // ),
       ],
     );
   }
@@ -156,61 +154,55 @@ class _RoomSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[_RoomSessionInfo(summary: summary)],
-      ),
-    );
-  }
-}
-
-class _RoomSessionInfo extends StatelessWidget {
-  const _RoomSessionInfo({required this.summary});
-
-  final ClassroomSummaryInfo summary;
-
-  @override
-  Widget build(BuildContext context) {
     const double spacing = 8.0;
     const double runSpacing = 8.0;
 
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: runSpacing,
-      children: <Widget>[
-        Wrap(
-          direction: Axis.horizontal,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: spacing,
-          runSpacing: runSpacing,
-          children: [
-            _StatusBadge(status: summary.status),
-            const Icon(Icons.schedule_rounded, size: 18),
-            Text(
-              summary.sessionTime.label(context),
-              style: textTheme.bodyMedium,
-            ),
-          ],
-        ),
-        Wrap(
-          direction: Axis.horizontal,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: spacing,
-          runSpacing: runSpacing,
-          children: [
-            Text(
-              summary.currentCourse,
-              style: textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
 
-            Text('담당: ${summary.professor}', style: textTheme.bodyMedium),
-          ],
-        ),
-      ],
+    return CustomCard(
+      child: 
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: runSpacing,
+            children: <Widget>[
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: spacing,
+                  children: [
+                    _StatusBadge(status: summary.status),
+                    Text(
+                      summary.sessionTime.label(context),
+                      style: textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: spacing,
+                  children: [
+                    Text(
+                      summary.currentCourse,
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+          
+                    Text(summary.professor, style: textTheme.bodyMedium),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -322,25 +314,7 @@ class _ControlPanelCard extends StatelessWidget {
       padding: _panelPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            '제어 패널',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
-          ),
-
-          const SizedBox(height: _panelSpacing),
-          Text('환경 정보', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 12),
-          _EnvironmentGrid(metrics: metrics),
-          const SizedBox(height: _panelSpacing),
-          OutlinedButton.icon(
-            onPressed: onCameraPressed,
-            icon: const Icon(Icons.videocam_outlined),
-            label: const Text('실시간 카메라 열기'),
-          ),
-        ],
+        children: <Widget>[_EnvironmentGrid(metrics: metrics)],
       ),
     );
   }
@@ -497,12 +471,10 @@ class _EnvironmentTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final Color cardColor = Theme.of(context).colorScheme.surface;
-    return Container(
-      width: 160,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(borderRadius: _tileRadius, color: cardColor),
+    return CustomCard(
+      padding: _panelPadding,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Row(
             children: <Widget>[
@@ -511,7 +483,6 @@ class _EnvironmentTile extends StatelessWidget {
               Text(metric.label, style: textTheme.labelLarge),
             ],
           ),
-          const SizedBox(height: 12),
           Text(
             '${metric.value}${metric.unit}',
             style: textTheme.headlineSmall?.copyWith(
