@@ -9,10 +9,7 @@ const double _topBarSpacing = 12;
 const double _avatarRadius = 22;
 
 class ClassroomDetailPage extends StatefulWidget {
-  const ClassroomDetailPage({
-    required this.roomId,
-    super.key,
-  });
+  const ClassroomDetailPage({required this.roomId, super.key});
 
   final String roomId;
 
@@ -75,17 +72,14 @@ class _ClassroomDetailPageState extends State<ClassroomDetailPage> {
   }
 
   void _showComingSoonSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('실시간 카메라 연동은 준비 중입니다.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('실시간 카메라 연동은 준비 중입니다.')));
   }
 }
 
 class _DetailTopBar extends StatelessWidget {
-  const _DetailTopBar({
-    required this.roomLabel,
-    required this.onBackPressed,
-  });
+  const _DetailTopBar({required this.roomLabel, required this.onBackPressed});
 
   final String roomLabel;
   final VoidCallback onBackPressed;
@@ -107,13 +101,12 @@ class _DetailTopBar extends StatelessWidget {
             children: <Widget>[
               Text(
                 '강의실 개별 정보',
-                style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 4),
-              Text(
-                roomLabel,
-                style: textTheme.bodyMedium,
-              ),
+              Text(roomLabel, style: textTheme.bodyMedium),
             ],
           ),
         ),
@@ -122,8 +115,9 @@ class _DetailTopBar extends StatelessWidget {
           onTap: () {},
           child: CircleAvatar(
             radius: _avatarRadius,
-            backgroundColor:
-                Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.12),
             child: const Icon(Icons.person_outline),
           ),
         ),
@@ -163,13 +157,6 @@ ClassroomDetailHeaderData _buildMockHeaderData(String roomId) {
         icon: Icons.present_to_all,
         isOn: true,
         description: 'HDMI1 입력',
-      ),
-      const DeviceToggleStatus(
-        id: 'hvac',
-        label: '자동 공조',
-        icon: Icons.ac_unit_outlined,
-        isOn: false,
-        description: '자동 온도 제어',
       ),
     ],
     environmentMetrics: const <EnvironmentMetric>[

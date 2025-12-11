@@ -4,6 +4,8 @@ import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/common/widgets/custom_card.dart';
 
+const double _headerHeight = 132;
+
 const double _panelSpacing = 16;
 const EdgeInsets _panelPadding = EdgeInsets.all(24);
 const BorderRadius _tileRadius = BorderRadius.all(Radius.circular(16));
@@ -22,116 +24,125 @@ class ClassroomDetailHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 8.0,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _RoomTitle(summary: data.summary),
-        ResponsiveLayoutBuilder(
-          builder: (BuildContext context, DeviceFormFactor formFactor) {
-            // 모바일은 단일 컬럼, 그 이상은 가로 3:2 레이아웃으로 전환한다.
-            final bool isWideLayout = formFactor != DeviceFormFactor.mobile;
-            return ResponsiveRowColumn(
-              layout: isWideLayout
-                  ? ResponsiveRowColumnType.ROW
-                  : ResponsiveRowColumnType.COLUMN,
-              rowMainAxisAlignment: MainAxisAlignment.start,
-              rowCrossAxisAlignment: CrossAxisAlignment.start,
-              columnCrossAxisAlignment: CrossAxisAlignment.start,
-              rowSpacing: _panelSpacing,
-              columnSpacing: _panelSpacing,
-              children: <ResponsiveRowColumnItem>[
-                ResponsiveRowColumnItem(
-                  rowFlex: 3,
-                  child: _RoomSummaryCard(summary: data.summary),
-                ),
-                ResponsiveRowColumnItem(
-                  child: SizedBox(
-                    width: 180,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 4.0,
-                      children: data.deviceToggles
-                          .map(
-                            (DeviceToggleStatus toggle) => _DeviceToggleRow(
-                              toggle: toggle,
-                              onChanged: (bool value) =>
-                                  onToggleChanged?.call(toggle.id, value),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ),
+    return ResponsiveLayoutBuilder(
+      builder: (BuildContext context, DeviceFormFactor formFactor) {
+        // 모바일은 단일 컬럼, 그 이상은 가로 3:2 레이아웃으로 전환한다.
+        final bool isWideLayout = formFactor != DeviceFormFactor.mobile;
+        return Column(
+          children: [
+            _RoomTitle(summary: data.summary, isWideLayout: isWideLayout),
+            // SizedBox(
+            //   height: isWideLayout ? _headerHeight : null,
+            //   child: ResponsiveRowColumn(
+            //     layout: isWideLayout
+            //         ? ResponsiveRowColumnType.ROW
+            //         : ResponsiveRowColumnType.COLUMN,
+            //     rowMainAxisAlignment: MainAxisAlignment.start,
+            //     rowCrossAxisAlignment: CrossAxisAlignment.start,
+            //     columnCrossAxisAlignment: CrossAxisAlignment.start,
+            //     rowSpacing: _panelSpacing,
+            //     columnSpacing: _panelSpacing,
+            //     children: <ResponsiveRowColumnItem>[
+            //       ResponsiveRowColumnItem(
+            //         rowFlex: 3,
+            //         child: _RoomSummaryCard(summary: data.summary),
+            //       ),
+            //       ResponsiveRowColumnItem(
+            //         child: SizedBox(
+            //           width: 180,
+            //           child: Column(
+            //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             spacing: 4.0,
+            //             children: data.deviceToggles
+            //                 .map(
+            //                   (DeviceToggleStatus toggle) => _DeviceToggleRow(
+            //                     toggle: toggle,
+            //                     onChanged: (bool value) =>
+            //                         onToggleChanged?.call(toggle.id, value),
+            //                   ),
+            //                 )
+            //                 .toList(),
+            //           ),
+            //         ),
+            //       ),
 
-                // ...data.deviceToggles.map(
-                //   (DeviceToggleStatus toggle) => ResponsiveRowColumnItem(
+            //       // ...data.deviceToggles.map(
+            //       //   (DeviceToggleStatus toggle) => ResponsiveRowColumnItem(
 
-                //     child: _DeviceToggleRow(
-                //       toggle: toggle,
-                //       onChanged: (bool value) =>
-                //           onToggleChanged?.call(toggle.id, value),
-                //     ),
-                //   ),
-                // ),
-                ResponsiveRowColumnItem(
-                  rowFlex: 2,
-                  child: _ControlPanelCard(
-                    toggles: data.deviceToggles,
-                    metrics: data.environmentMetrics,
-                    onToggleChanged: onToggleChanged,
-                    onCameraPressed: onCameraPressed,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ],
+            //       //     child: _DeviceToggleRow(
+            //       //       toggle: toggle,
+            //       //       onChanged: (bool value) =>
+            //       //           onToggleChanged?.call(toggle.id, value),
+            //       //     ),
+            //       //   ),
+            //       // ),
+            //       // ResponsiveRowColumnItem(
+            //       //   rowFlex: 2,
+            //       //   child: _ControlPanelCard(
+            //       //     toggles: data.deviceToggles,
+            //       //     metrics: data.environmentMetrics,
+            //       //     onToggleChanged: onToggleChanged,
+            //       //     onCameraPressed: onCameraPressed,
+            //       //   ),
+            //       // ),
+            //     ],
+            //   ),
+            // ),
+          ],
+        );
+      },
     );
   }
 }
 
 class _RoomTitle extends StatelessWidget {
-  const _RoomTitle({required this.summary});
+  const _RoomTitle({required this.summary, required this.isWideLayout});
+
+  final bool isWideLayout;
 
   final ClassroomSummaryInfo summary;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return ResponsiveRowColumn(
+      layout: isWideLayout
+          ? ResponsiveRowColumnType.ROW
+          : ResponsiveRowColumnType.COLUMN,
+      rowSpacing: _panelSpacing,
+      columnSpacing: _panelSpacing,
+
       children: [
-        Wrap(
-          direction: Axis.horizontal,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 12.0,
-          runSpacing: 8.0,
-          children: <Widget>[
-            Text(
-              summary.roomName,
-              style: textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+        ResponsiveRowColumnItem(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                summary.roomName,
+                style: textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-            Text(
-              summary.department,
-              style: textTheme.titleMedium?.copyWith(
-                color: textTheme.headlineSmall?.color?.withValues(alpha: 0.9),
+              Text(
+                summary.department,
+                style: textTheme.titleMedium?.copyWith(
+                  color: textTheme.headlineSmall?.color?.withValues(alpha: 0.9),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        Row(
-          spacing: 12.0,
-          children: [
-            _RoomOccupancyInfo(summary: summary),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('실시간 카메라 보기', style: textTheme.bodyMedium),
-            ),
-          ],
+        if (isWideLayout)
+        
+          ResponsiveRowColumnItem(child: Spacer()),
+
+        ResponsiveRowColumnItem(child: _RoomOccupancyInfo(summary: summary)),
+        ResponsiveRowColumnItem(
+          child: ElevatedButton(
+            onPressed: () {},
+            child: Text('실시간 카메라 보기', style: textTheme.bodyMedium),
+          ),
         ),
       ],
     );
@@ -176,16 +187,10 @@ class _RoomSessionInfo extends StatelessWidget {
           runSpacing: runSpacing,
           children: [
             _StatusBadge(status: summary.status),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: spacing,
-              children: <Widget>[
-                const Icon(Icons.schedule_rounded, size: 18),
-                Text(
-                  summary.sessionTime.label(context),
-                  style: textTheme.bodyMedium,
-                ),
-              ],
+            const Icon(Icons.schedule_rounded, size: 18),
+            Text(
+              summary.sessionTime.label(context),
+              style: textTheme.bodyMedium,
             ),
           ],
         ),
