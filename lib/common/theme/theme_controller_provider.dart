@@ -5,5 +5,5 @@ import 'package:mdk_app_theme/mdk_app_theme.dart';
 /// `mdk_app_theme`.
 final Provider<ThemeController> themeControllerProvider =
     Provider<ThemeController>((Ref ref) {
-  return ThemeController();
-});
+      return ThemeController();
+    });
