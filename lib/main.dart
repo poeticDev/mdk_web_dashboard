@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:mdk_app_theme/theme_utilities.dart';
 
 import 'package:web_dashboard/core/auth/application/auth_controller.dart';
 import 'package:web_dashboard/di/service_locator.dart';
 import 'package:web_dashboard/routes/app_router.dart';
-import 'package:web_dashboard/theme/app_theme.dart';
 
 const List<Breakpoint> _appBreakpoints = <Breakpoint>[
   Breakpoint(start: 0, end: 599, name: MOBILE),
@@ -18,15 +18,21 @@ const List<Breakpoint> _appBreakpoints = <Breakpoint>[
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final AdaptiveThemeMode? savedThemeMode = await AdaptiveTheme.getThemeMode();
+  final AdaptiveThemeMode initialThemeMode =
+      await AdaptiveTheme.getThemeMode() ?? AdaptiveThemeMode.light;
   await initDependencies();
-  runApp(ProviderScope(child: MyApp(initialThemeMode: savedThemeMode)));
+  ThemeRegistry.instance.ensureDefaults();
+  runApp(
+    ProviderScope(
+      child: MyApp(initialThemeMode: initialThemeMode),
+    ),
+  );
 }
 
 class MyApp extends ConsumerStatefulWidget {
-  const MyApp({super.key, this.initialThemeMode});
+  const MyApp({super.key, required this.initialThemeMode});
 
-  final AdaptiveThemeMode? initialThemeMode;
+  final AdaptiveThemeMode initialThemeMode;
 
   @override
   ConsumerState<MyApp> createState() => _MyAppState();
@@ -48,7 +54,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return AdaptiveTheme(
       light: AppTheme.light(),
       dark: AppTheme.dark(),
-      initial: AdaptiveThemeMode.light,
+      initial: widget.initialThemeMode,
       builder: (ThemeData lightTheme, ThemeData darkTheme) {
         return MaterialApp.router(
           title: 'MDK Web Dashboard',

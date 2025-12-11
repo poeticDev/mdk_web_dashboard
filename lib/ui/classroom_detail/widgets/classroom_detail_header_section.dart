@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
-import 'package:web_dashboard/ui/widgets/custom_card.dart';
+import 'package:web_dashboard/common/widgets/custom_card.dart';
 
 const double _panelSpacing = 16;
 const EdgeInsets _panelPadding = EdgeInsets.all(24);

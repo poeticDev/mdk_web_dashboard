@@ -696,6 +696,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.1"
+  mdk_app_theme:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: "0e2d4bed681cb91b774a0e14b26143cb692c9071"
+      url: "git@github.com:poeticDev/mdk_app_theme.git"
+    source: git
+    version: "0.1.0-dev.0"
   media_kit:
     dependency: "direct main"
     description:

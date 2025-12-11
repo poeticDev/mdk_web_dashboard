@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
-import 'package:web_dashboard/theme/widgets/theme_toggle.dart';
+import 'package:web_dashboard/common/widgets/app_theme_toggle.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
 
@@ -117,7 +117,7 @@ class _DetailTopBar extends StatelessWidget {
             ],
           ),
         ),
-        ThemeToggle(),
+        const AppThemeToggle(),
         GestureDetector(
           onTap: () {},
           child: CircleAvatar(

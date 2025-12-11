@@ -58,6 +58,10 @@ dependencies:
   flutter_riverpod: ^3.0.3
   riverpod_annotation: ^3.0.3
   go_router: ^17.0.0
+  mdk_app_theme:
+    git:
+      url: git@github.com:poeticDev/mdk_app_theme.git
+      ref: main
 
   ### Network
   mqtt_client: ^10.11.1
@@ -103,11 +107,6 @@ flutter:
   assets:
     - assets/test/
     - assets/env/
-  fonts:
-    - family: Pretendard Variable
-      fonts:
-        - asset: assets/font/PretendardVariable.ttf
-          weight: 400
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
