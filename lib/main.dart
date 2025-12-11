@@ -44,10 +44,11 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final GoRouter router = ref.watch(appRouterProvider);
+
     return AdaptiveTheme(
       light: AppTheme.light(),
       dark: AppTheme.dark(),
-      initial: widget.initialThemeMode ?? AdaptiveThemeMode.system,
+      initial: AdaptiveThemeMode.light,
       builder: (ThemeData lightTheme, ThemeData darkTheme) {
         return MaterialApp.router(
           title: 'MDK Web Dashboard',
