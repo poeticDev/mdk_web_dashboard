@@ -6,7 +6,6 @@ import 'package:web_dashboard/routes/page_meta.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
 
-const double _sectionSpacing = 32;
 
 class ClassroomDetailPage extends StatefulWidget {
   const ClassroomDetailPage({required this.roomId, super.key});

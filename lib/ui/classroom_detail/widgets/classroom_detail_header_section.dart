@@ -125,17 +125,19 @@ class _RoomTitle extends StatelessWidget {
             ),
           ),
         ),
-        ResponsiveRowColumnItem(child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: _panelSpacing,
-          children: [
-            _RoomOccupancyInfo(summary: summary),
-            ElevatedButton(
-            onPressed: () {},
-            child: Text('실시간 카메라 보기', style: textTheme.bodyMedium),
+        ResponsiveRowColumnItem(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: _panelSpacing,
+            children: [
+              _RoomOccupancyInfo(summary: summary),
+              ElevatedButton(
+                onPressed: () {},
+                child: Text('실시간 카메라 보기', style: textTheme.bodyMedium),
+              ),
+            ],
           ),
-          ],
-        )),
+        ),
         // ResponsiveRowColumnItem(
         //   child: ElevatedButton(
         //     onPressed: () {},
@@ -160,8 +162,7 @@ class _RoomSummaryCard extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return CustomCard(
-      child: 
-      Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Column(
@@ -194,7 +195,7 @@ class _RoomSummaryCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-          
+
                     Text(summary.professor, style: textTheme.bodyMedium),
                   ],
                 ),
@@ -294,79 +295,6 @@ class _StatusBadge extends StatelessWidget {
   }
 }
 
-class _ControlPanelCard extends StatelessWidget {
-  const _ControlPanelCard({
-    required this.toggles,
-    required this.metrics,
-    this.onToggleChanged,
-    this.onCameraPressed,
-  });
-
-  final List<DeviceToggleStatus> toggles;
-  final List<EnvironmentMetric> metrics;
-  final void Function(String toggleId, bool value)? onToggleChanged;
-  final VoidCallback? onCameraPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    // 토글 → 환경 지표 → 카메라 순서로 컨트롤 흐름을 고정해 사용자 문맥을 유지한다.
-    return CustomCard(
-      padding: _panelPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[_EnvironmentGrid(metrics: metrics)],
-      ),
-    );
-  }
-}
-
-class _VerticalDeviceToggleCard extends StatelessWidget {
-  const _VerticalDeviceToggleCard({required this.toggle, this.onChanged});
-
-  final DeviceToggleStatus toggle;
-  final ValueChanged<bool>? onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    return Tooltip(
-      message: toggle.description ?? "",
-      preferBelow: false,
-      waitDuration: const Duration(seconds: 3),
-      child: CustomCard(
-        width: 140,
-        padding: EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 2.0,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 4.0,
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Theme.of(context).colorScheme.surface,
-                  child: Icon(
-                    toggle.icon,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                Text(
-                  toggle.label,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ],
-            ),
-            Switch(value: toggle.isOn, onChanged: onChanged),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _DeviceToggleRow extends StatelessWidget {
   const _DeviceToggleRow({required this.toggle, this.onChanged});
   final DeviceToggleStatus toggle;
@@ -393,75 +321,6 @@ class _DeviceToggleRow extends StatelessWidget {
   }
 }
 
-class _DeviceToggleTile extends StatelessWidget {
-  const _DeviceToggleTile({required this.toggle, this.onChanged});
-
-  final DeviceToggleStatus toggle;
-  final ValueChanged<bool>? onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color borderColor = Theme.of(
-      context,
-    ).dividerColor.withValues(alpha: 0.6);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        borderRadius: _tileRadius,
-        border: Border.all(color: borderColor),
-      ),
-      child: Row(
-        children: <Widget>[
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            child: Icon(
-              toggle.icon,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  toggle.label,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                if (toggle.description != null)
-                  Text(
-                    toggle.description!,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-              ],
-            ),
-          ),
-          Switch(value: toggle.isOn, onChanged: onChanged),
-        ],
-      ),
-    );
-  }
-}
-
-class _EnvironmentGrid extends StatelessWidget {
-  const _EnvironmentGrid({required this.metrics});
-
-  final List<EnvironmentMetric> metrics;
-
-  @override
-  Widget build(BuildContext context) {
-    // 센서 지표 개수가 변해도 줄바꿈으로 자연스럽게 재배치한다.
-    return Wrap(
-      spacing: _panelSpacing,
-      runSpacing: _panelSpacing,
-      children: metrics
-          .map((EnvironmentMetric metric) => _EnvironmentTile(metric: metric))
-          .toList(),
-    );
-  }
-}
-
 class _EnvironmentTile extends StatelessWidget {
   const _EnvironmentTile({required this.metric});
 
@@ -470,7 +329,6 @@ class _EnvironmentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final Color cardColor = Theme.of(context).colorScheme.surface;
     return CustomCard(
       padding: _panelPadding,
       child: Column(

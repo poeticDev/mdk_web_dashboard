@@ -55,3 +55,12 @@
 - 적용 예시:
   - 기존 레이아웃(예: DefaultLayout/RootScaffold)에 이 CommonAppBar를 붙이는 샘플 코드
 - 선택사항이 있는 부분(예: 뒤로가기 버튼 숨김 vs 비활성)은, 추천안을 하나 고르고 그 이유를 짧게 설명해줘.
+
+/implementation_summary (2025-12-11)
+- `lib/common/app_bar/common_app_bar.dart`에 `CommonAppBar`를 구현했다. PreferredSizeWidget이며 내부에 `_LogoSection`, `_PageTitle`, `_ThemeToggleButton`, `_UserBanner`, `_BackButton`로 분리해두었다. 모바일 레이아웃에서는 `_UserBanner`가 CircleAvatar 아이콘만 노출되도록 compact 모드를 적용했다.
+- 라우트 기반 제목/표시 옵션은 `lib/routes/page_meta.dart`의 `AppPageMeta` enum으로 관리한다. 각 meta에 `showBackButton/showThemeToggle/showUserBanner/title` 정보가 들어 있고 `resolvePageMeta` 헬퍼로 현재 페이지 정보를 얻는다.
+- 커스터마이징을 위해 `lib/common/app_bar/common_app_bar_options.dart`에 `CommonAppBarOptions`를 정의해 요소 표시 여부나 `titleOverride`, 추가 trailing 위젯을 주입할 수 있다.
+- 테마 토글은 기존 `AppThemeToggle`(mdk_app_theme 기반)을 재사용한다. 색상/타이포/spacing은 ThemeData(ColorScheme) 값과 공통 상수(높이 72, 좌우 패딩 24, 액션 간격 16)를 사용해 하드코딩을 최소화했다.
+- 사용자 배너는 `AuthController` 상태를 읽어 이름/역할/이니셜을 표시하고, PopupMenuButton을 통해 "내 정보", "로그아웃" 메뉴 골격을 제공한다. 실제 라우팅/로그아웃은 TODO로 남겨 두었다.
+- 적용 예시는 `lib/ui/dashboard/dashboard_page.dart`와 `lib/ui/classroom_detail/classroom_detail_page.dart`에 반영했다. Scaffold에서 `appBar: const CommonAppBar(meta: AppPageMeta.dashboard)`처럼 사용하거나, detail 화면에서는 `CommonAppBar(meta: AppPageMeta.classroomDetail, options: CommonAppBarOptions(titleOverride: ...))` 형식으로 제목 커스터마이징을 할 수 있다.
+- 추천안: 뒤로가기 버튼은 각 meta 설정에 따라 자동 제어하며, 숨김 대신 아예 버튼을 제거하는 방식을 사용했다. 이유는 빈 `IconButton`을 비활성화시키는 것보다 사용자 경험이 명확하기 때문.

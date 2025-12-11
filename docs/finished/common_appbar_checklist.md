@@ -20,8 +20,8 @@
 - [x] 타이틀 ellipsis 지정, AppBar 높이 72 고정.
 
 ## 5. 적용 예시
-- [ ] Scaffold 예시 코드(예: DashboardPage)에서 CommonAppBar 사용법 추가.
+- [x] DashboardPage / ClassroomDetailPage에 CommonAppBar 적용, title override 및 옵션 사용 예시 추가.
 
 ## 6. 검증 & 문서
-- [ ] `flutter analyze` / `flutter test` 실행.
-- [ ] docs/appbar_design.md와 checklist를 동기화(완료 항목 체크, TODO 기록).
+- [x] `flutter analyze` / `flutter test` 실행 (2025-12-11, 명령 완료).
+- [x] docs/appbar_design.md에 구현 요약/사용 예시 추가.

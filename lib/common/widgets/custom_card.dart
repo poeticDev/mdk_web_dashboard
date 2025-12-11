@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class CustomCard extends StatelessWidget {
   final EdgeInsets padding;
@@ -19,8 +18,6 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-final colorScheme = Theme.of(context).colorScheme;
-
     return SizedBox(
       width: width,
       height: height,

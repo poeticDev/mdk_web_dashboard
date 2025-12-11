@@ -94,18 +94,16 @@ class _LogoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? textStyle = Theme.of(context).textTheme.titleMedium;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(image: AssetImage('assets/img/logo.png', ), fit: BoxFit.cover)
-          ),
+          decoration: const BoxDecoration(shape: BoxShape.circle),
+          clipBehavior: Clip.antiAlias,
           height: 44,
           width: 44,
-          ),
+          child: Image.asset('assets/img/logo.png', fit: BoxFit.cover),
+        ),
       ],
     );
   }
@@ -178,7 +176,7 @@ class _UserBanner extends ConsumerWidget {
               radius: 20,
               backgroundColor: Theme.of(
                 context,
-              ).colorScheme.primary.withOpacity(0.1),
+              ).colorScheme.primary.withValues(alpha: 0.1),
               child: const Icon(Icons.person_outline),
             )
           : Container(
@@ -186,7 +184,7 @@ class _UserBanner extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Theme.of(
                   context,
-                ).colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Row(
@@ -196,7 +194,7 @@ class _UserBanner extends ConsumerWidget {
                     radius: 18,
                     backgroundColor: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.2),
+                    ).colorScheme.primary.withValues(alpha: 0.2),
                     child: Text(
                       initials,
                       style: const TextStyle(fontWeight: FontWeight.bold),

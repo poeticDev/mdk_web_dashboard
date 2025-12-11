@@ -17,18 +17,18 @@ import 'package:web_dashboard/main.dart';
 
 void main() {
   testWidgets('Login page renders header text', (WidgetTester tester) async {
-    final TestWidgetsFlutterBinding binding =
-        TestWidgetsFlutterBinding.ensureInitialized();
-    binding.window.physicalSizeTestValue = const Size(1920, 1080);
-    binding.window.devicePixelRatioTestValue = 1;
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final view = tester.view;
+    view.physicalSize = const Size(1920, 1080);
+    view.devicePixelRatio = 1;
     addTearDown(() {
-      binding.window.clearPhysicalSizeTestValue();
-      binding.window.clearDevicePixelRatioTestValue();
+      view.resetPhysicalSize();
+      view.resetDevicePixelRatio();
     });
     SharedPreferences.setMockInitialValues(<String, Object>{});
     SharedPreferencesAsyncPlatform.instance ??=
         _InMemorySharedPreferencesAsync();
-  
+
     await tester.pumpWidget(
       const ProviderScope(
         child: MyApp(initialThemeMode: AdaptiveThemeMode.light),
@@ -42,36 +42,60 @@ void main() {
   });
 }
 
-final class _InMemorySharedPreferencesAsync extends SharedPreferencesAsyncPlatform {
+final class _InMemorySharedPreferencesAsync
+    extends SharedPreferencesAsyncPlatform {
   final Map<String, Object> _store = <String, Object>{};
 
   @override
-  Future<void> setString(String key, String value, SharedPreferencesOptions options) async {
+  Future<void> setString(
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) async {
     _store[key] = value;
   }
 
   @override
-  Future<void> setBool(String key, bool value, SharedPreferencesOptions options) async {
+  Future<void> setBool(
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) async {
     _store[key] = value;
   }
 
   @override
-  Future<void> setDouble(String key, double value, SharedPreferencesOptions options) async {
+  Future<void> setDouble(
+    String key,
+    double value,
+    SharedPreferencesOptions options,
+  ) async {
     _store[key] = value;
   }
 
   @override
-  Future<void> setInt(String key, int value, SharedPreferencesOptions options) async {
+  Future<void> setInt(
+    String key,
+    int value,
+    SharedPreferencesOptions options,
+  ) async {
     _store[key] = value;
   }
 
   @override
-  Future<void> setStringList(String key, List<String> value, SharedPreferencesOptions options) async {
+  Future<void> setStringList(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) async {
     _store[key] = value;
   }
 
   @override
-  Future<String?> getString(String key, SharedPreferencesOptions options) async {
+  Future<String?> getString(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
     final Object? value = _store[key];
     return value is String ? value : null;
   }
@@ -83,7 +107,10 @@ final class _InMemorySharedPreferencesAsync extends SharedPreferencesAsyncPlatfo
   }
 
   @override
-  Future<double?> getDouble(String key, SharedPreferencesOptions options) async {
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
     final Object? value = _store[key];
     return value is double ? value : null;
   }
@@ -95,14 +122,20 @@ final class _InMemorySharedPreferencesAsync extends SharedPreferencesAsyncPlatfo
   }
 
   @override
-  Future<List<String>?> getStringList(String key, SharedPreferencesOptions options) async {
+  Future<List<String>?> getStringList(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
     final Object? value = _store[key];
     return value is List<String> ? value : null;
   }
 
   @override
-  Future<void> clear(ClearPreferencesParameters parameters, SharedPreferencesOptions options) async {
-    final Set<String>? allowList = parameters.filter?.allowList;
+  Future<void> clear(
+    ClearPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final Set<String>? allowList = parameters.filter.allowList;
     if (allowList == null) {
       _store.clear();
       return;
@@ -113,19 +146,27 @@ final class _InMemorySharedPreferencesAsync extends SharedPreferencesAsyncPlatfo
   }
 
   @override
-  Future<Map<String, Object>> getPreferences(GetPreferencesParameters parameters, SharedPreferencesOptions options) async {
-    final Set<String>? allowList = parameters.filter?.allowList;
+  Future<Map<String, Object>> getPreferences(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final Set<String>? allowList = parameters.filter.allowList;
     if (allowList == null) {
       return Map<String, Object>.from(_store);
     }
     return Map<String, Object>.fromEntries(
-      _store.entries.where((MapEntry<String, Object> entry) => allowList.contains(entry.key)),
+      _store.entries.where(
+        (MapEntry<String, Object> entry) => allowList.contains(entry.key),
+      ),
     );
   }
 
   @override
-  Future<Set<String>> getKeys(GetPreferencesParameters parameters, SharedPreferencesOptions options) async {
-    final Set<String>? allowList = parameters.filter?.allowList;
+  Future<Set<String>> getKeys(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final Set<String>? allowList = parameters.filter.allowList;
     if (allowList == null) {
       return Set<String>.from(_store.keys);
     }
