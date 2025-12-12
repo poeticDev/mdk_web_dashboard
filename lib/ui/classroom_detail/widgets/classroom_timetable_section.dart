@@ -22,10 +22,13 @@ class _ClassroomTimetableSectionState
     extends ConsumerState<ClassroomTimetableSection> {
   CalendarView _calendarView = CalendarView.week;
   DateTime _focusedDate = DateTime.now();
+  final CalendarController _calendarController = CalendarController();
 
   @override
   void initState() {
     super.initState();
+    _calendarController.view = _calendarView;
+    _calendarController.displayDate = _focusedDate;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(
           classroomTimetableControllerProvider(widget.classroomId).notifier,
@@ -75,6 +78,7 @@ class _ClassroomTimetableSectionState
                 setState(() {
                   _calendarView = value;
                 });
+                _calendarController.view = value;
                 final TimetableDateRange nextRange = _currentRange();
                 controller.updateRange(nextRange);
                 controller.loadLectures(range: nextRange);
@@ -89,6 +93,7 @@ class _ClassroomTimetableSectionState
                           _focusedDate.day,
                         );
                 });
+                _calendarController.displayDate = _focusedDate;
                 final TimetableDateRange nextRange = _currentRange();
                 controller.updateRange(nextRange);
                 controller.loadLectures(range: nextRange);
@@ -97,6 +102,7 @@ class _ClassroomTimetableSectionState
                 setState(() {
                   _focusedDate = DateTime.now();
                 });
+                _calendarController.displayDate = _focusedDate;
                 final TimetableDateRange nextRange = _currentRange();
                 controller.updateRange(nextRange);
                 controller.loadLectures(range: nextRange);
@@ -111,6 +117,7 @@ class _ClassroomTimetableSectionState
             SizedBox(
               height: _calendarView == CalendarView.week ? 520 : 480,
               child: SfCalendar(
+                controller: _calendarController,
                 view: _calendarView,
                 allowedViews: const <CalendarView>[
                   CalendarView.week,

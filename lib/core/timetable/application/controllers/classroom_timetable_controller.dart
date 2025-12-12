@@ -39,6 +39,7 @@ class ClassroomTimetableController
       state = state.copyWith(
         lectures: lectures,
         isLoading: false,
+        errorMessage: lectures.isEmpty ? '표시할 일정이 없습니다.' : null,
       );
     } catch (_) {
       state = state.copyWith(
