@@ -13,12 +13,12 @@
 ## Task 2. 도메인 모델 수립
 **Description:** Clean Architecture 기준으로 강의 일정 도메인 엔티티와 값 객체를 정의한다.
 
-- [ ] `LectureType`, `LectureStatus` enum 정의
-- [ ] `LectureEntity`(필수 필드+nullable 필드 명시) 작성
-- [ ] `LectureRepository` 인터페이스 시그니처 확정 (`fetchLectures`, `createLecture` 등)
+- [x] `LectureType`, `LectureStatus` enum 정의
+- [x] `LectureEntity`(필수 필드+nullable 필드 명시) 작성
+- [x] `LectureRepository` 인터페이스 시그니처 확정 (`fetchLectures`, `createLecture` 등)
 
 **Definition of Done**
-- `lib/core/timetable/domain/**` 경로에 엔티티와 계약이 생성되고 린트 통과.
+- `lib/core/timetable/domain/**` 경로에 엔티티와 계약이 생성되고 린트 통과. ✅
 
 ## Task 3. 데이터 계층 구현
 **Description:** API DTO 및 RemoteDataSource를 작성해 서버와 통신한다.
