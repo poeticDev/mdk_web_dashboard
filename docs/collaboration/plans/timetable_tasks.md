@@ -53,12 +53,12 @@
 ## Task 6. ViewModel & CalendarDataSource
 **Description:** Controller 상태를 캘린더에 필요한 ViewModel로 변환하고 DataSource를 작성한다.
 
-- [ ] `LectureViewModel` 생성 (색상, 라벨, ID 포함)
-- [ ] `LectureColorResolver`에서 AppColors + HSL 변주 로직 구현
-- [ ] `LectureDataSource extends CalendarDataSource` 작성
+- [x] `LectureViewModel` 생성 (색상, 라벨, ID 포함)
+- [x] `LectureColorResolver`에서 AppColors + HSL 변주 로직 구현
+- [x] `LectureDataSource extends CalendarDataSource` 작성
 
 **Definition of Done**
-- `LectureDataSource`가 테스트에서 올바른 start/end/subject/color 값을 반환한다.
+- `LectureDataSource`가 테스트에서 올바른 start/end/subject/color 값을 반환한다. ✅
 
 ## Task 7. UI 레이아웃 구축
 **Description:** 강의실 상세 페이지 하단에 헤더, WeekView, MonthView를 배치한다.
