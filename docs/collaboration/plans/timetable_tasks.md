@@ -43,12 +43,12 @@
 ## Task 5. Controller & 상태 모델링
 **Description:** Riverpod 기반 Controller와 불변 상태를 정의해 UI와 UseCase를 연결한다.
 
-- [ ] `ClassroomTimetableController`와 `ClassroomTimetableState`(freezed) 작성
-- [ ] 필터(lectureType, departmentId, instructorId, classroomId) 입력 메서드 구현
-- [ ] `isLoading`, `lectures`, `selectedDateRange` 등 상태 필드 정의
+- [x] `ClassroomTimetableController`와 `ClassroomTimetableState`(freezed) 작성
+- [x] 필터(lectureType, departmentId, instructorId, classroomId) 입력 메서드 구현
+- [x] `isLoading`, `lectures`, `selectedDateRange` 등 상태 필드 정의
 
 **Definition of Done**
-- Controller에 대한 단위 테스트가 필터 입력 및 데이터 로딩 시나리오를 모두 통과한다.
+- Controller에 대한 단위 테스트가 필터 입력 및 데이터 로딩 시나리오를 모두 통과한다. ✅
 
 ## Task 6. ViewModel & CalendarDataSource
 **Description:** Controller 상태를 캘린더에 필요한 ViewModel로 변환하고 DataSource를 작성한다.

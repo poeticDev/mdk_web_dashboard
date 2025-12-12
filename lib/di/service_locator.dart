@@ -5,6 +5,12 @@ import 'package:web_dashboard/core/auth/data/datasources/auth_remote_data_source
 import 'package:web_dashboard/core/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:web_dashboard/core/auth/data/repositories/auth_repository_impl.dart';
 import 'package:web_dashboard/core/auth/domain/repositories/auth_repository.dart';
+import 'package:web_dashboard/core/timetable/data/datasources/lecture_remote_data_source.dart';
+import 'package:web_dashboard/core/timetable/data/datasources/lecture_remote_data_source.dart'
+    as timetable_remote;
+import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
+import 'package:web_dashboard/core/timetable/data/repositories/lecture_repository_impl.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
 
 final GetIt di = GetIt.instance;
 
@@ -19,5 +25,21 @@ Future<void> initDependencies() async {
   }
   if (!di.isRegistered<AuthRepository>()) {
     di.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(di()));
+  }
+  if (!di.isRegistered<LectureMapper>()) {
+    di.registerLazySingleton<LectureMapper>(() => const LectureMapper());
+  }
+  if (!di.isRegistered<LectureRemoteDataSource>()) {
+    di.registerLazySingleton<LectureRemoteDataSource>(
+      () => timetable_remote.LectureRemoteDataSourceImpl(dio: di()),
+    );
+  }
+  if (!di.isRegistered<LectureRepository>()) {
+    di.registerLazySingleton<LectureRepository>(
+      () => LectureRepositoryImpl(
+        remoteDataSource: di(),
+        mapper: di(),
+      ),
+    );
   }
 }
