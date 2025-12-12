@@ -4,11 +4,15 @@ part 'auth_user.freezed.dart';
 part 'auth_user.g.dart';
 
 enum UserRole {
+  @JsonValue('ADMIN')
   admin,
+  @JsonValue('OPERATOR')
   operator,
-  @JsonValue('limited_operator')
+  @JsonValue('LIMITED_OPERATOR')
   limitedOperator,
+  @JsonValue('VIEWER')
   viewer,
+  @JsonValue('UNKNOWN')
   unknown
 }
 

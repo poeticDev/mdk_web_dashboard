@@ -62,6 +62,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       'username': _extractUsername(source),
       'roles': _extractRoles(source['roles']),
     };
+
     return AuthUser.fromJson(normalized);
   }
 
@@ -78,7 +79,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (rawRoles is List) {
       return rawRoles
           .whereType<String>()
-          .map((String role) => role.toLowerCase())
+          .map((String role) => role.trim().toUpperCase())
           .toList();
     }
     return <String>[];
