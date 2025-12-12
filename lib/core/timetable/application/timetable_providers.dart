@@ -4,7 +4,6 @@ import 'package:web_dashboard/core/timetable/application/usecases/get_lectures_u
 import 'package:web_dashboard/core/timetable/application/usecases/save_lecture_usecase.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
-import 'package:web_dashboard/core/timetable/data/repositories/lecture_repository_impl.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
 import 'package:web_dashboard/di/service_locator.dart';
 

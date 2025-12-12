@@ -50,6 +50,12 @@ abstract class TimetableDateRange with _$TimetableDateRange {
     );
   }
 
+  factory TimetableDateRange.monthOf(DateTime anchor) {
+    final DateTime start = DateTime(anchor.year, anchor.month, 1);
+    final DateTime end = DateTime(anchor.year, anchor.month + 1, 0, 23, 59, 59);
+    return TimetableDateRange(from: start, to: end);
+  }
+
   bool contains(DateTime moment) {
     final bool startsBefore = !moment.isBefore(from);
     final bool endsAfter = !moment.isAfter(to);

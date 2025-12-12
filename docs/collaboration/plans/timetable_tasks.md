@@ -63,12 +63,12 @@
 ## Task 7. UI 레이아웃 구축
 **Description:** 강의실 상세 페이지 하단에 헤더, WeekView, MonthView를 배치한다.
 
-- [ ] 상단 헤더(주/월 토글, 날짜 네비게이션, 일정 등록 버튼) 위젯 작성
-- [ ] `SfCalendar` WeekView/MonthView 구성 및 컨트롤러 상태 바인딩
-- [ ] Today 버튼과 현재 진행 중 강의 하이라이트 구현
+- [x] 상단 헤더(주/월 토글, 날짜 네비게이션, 일정 등록 버튼) 위젯 작성
+- [x] `SfCalendar` WeekView/MonthView 구성 및 컨트롤러 상태 바인딩
+- [x] Today 버튼과 현재 진행 중 강의 하이라이트 구현
 
 **Definition of Done**
-- 데스크톱 브라우저에서 주/월 전환과 날짜 이동이 정상 동작하며, Controller 상태 변화가 즉시 반영된다.
+- 데스크톱 브라우저에서 주/월 전환과 날짜 이동이 정상 동작하며, Controller 상태 변화가 즉시 반영된다. ✅
 
 ## Task 8. 일정 CRUD 인터랙션
 **Description:** 모달/폼을 통해 일정 생성·수정·삭제를 수행하고 권한별 제어를 추가한다.

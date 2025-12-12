@@ -5,8 +5,7 @@ import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/calendar_theme_preview.dart';
-
+import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_section.dart';
 
 class ClassroomDetailPage extends StatefulWidget {
   const ClassroomDetailPage({required this.roomId, super.key});
@@ -53,7 +52,9 @@ class _ClassroomDetailPageState extends State<ClassroomDetailPage> {
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
-                child: CalendarThemePreview(),
+                child: ClassroomTimetableSection(
+                  classroomId: widget.roomId,
+                ),
               ),
             ],
           ),
