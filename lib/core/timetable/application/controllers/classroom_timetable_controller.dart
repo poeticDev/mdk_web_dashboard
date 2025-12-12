@@ -1,6 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/application/timetable_providers.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
 
@@ -10,6 +14,28 @@ part 'classroom_timetable_controller.g.dart';
 @riverpod
 class ClassroomTimetableController
     extends _$ClassroomTimetableController {
+  /// TODO: 서버 연동 완료 후 false로 변경한다.
+  static bool demoDataEnabled = true;
+  static const int _demoLecturesPerMonth = 10;
+  static const List<String> _demoCourseNames = <String>[
+    'AI 개론',
+    '스마트보안 실습',
+    '디지털 포렌식',
+    '임베디드 시스템',
+    '클라우드 인프라',
+    '데이터 시각화',
+    '네트워크 구조',
+    'UX 설계',
+    'IoT 프로그래밍',
+    '머신러닝 응용',
+  ];
+  static const List<String> _demoProfessors = <String>[
+    '김보안 교수',
+    '박AI 교수',
+    '최데이터 교수',
+    '정클라우드 교수',
+  ];
+
   @override
   ClassroomTimetableState build(String classroomId) {
     return ClassroomTimetableState.initial(classroomId);
@@ -24,18 +50,20 @@ class ClassroomTimetableController
       visibleRange: targetRange,
     );
     try {
-      final lectures = await ref
-          .read(getLecturesUseCaseProvider)
-          .execute(
-            LectureQuery(
-              from: targetRange.from,
-              to: targetRange.to,
-              classroomId: state.classroomId,
-              departmentId: state.departmentId,
-              instructorId: state.instructorId,
-              type: state.filterType,
-            ),
-          );
+      final List<LectureEntity> lectures = demoDataEnabled
+          ? _generateDemoLectures(targetRange)
+          : await ref
+              .read(getLecturesUseCaseProvider)
+              .execute(
+                LectureQuery(
+                  from: targetRange.from,
+                  to: targetRange.to,
+                  classroomId: state.classroomId,
+                  departmentId: state.departmentId,
+                  instructorId: state.instructorId,
+                  type: state.filterType,
+                ),
+              );
       state = state.copyWith(
         lectures: lectures,
         isLoading: false,
@@ -69,5 +97,52 @@ class ClassroomTimetableController
 
   void updateRange(TimetableDateRange range) {
     state = state.copyWith(visibleRange: range);
+  }
+
+  List<LectureEntity> _generateDemoLectures(
+    TimetableDateRange targetRange,
+  ) {
+    final DateTime base =
+        DateTime(targetRange.from.year, targetRange.from.month, 1);
+    final List<DateTime> monthAnchors = <DateTime>[
+      base,
+      DateTime(base.year, base.month + 1, 1),
+    ];
+    final List<LectureEntity> samples = <LectureEntity>[];
+    for (final DateTime anchor in monthAnchors) {
+      final DateTime lastDay =
+          DateTime(anchor.year, anchor.month + 1, 0);
+      for (int i = 0; i < _demoLecturesPerMonth; i++) {
+        final int day = math.min(1 + i * 3, lastDay.day);
+        final DateTime start = DateTime(
+          anchor.year,
+          anchor.month,
+          day,
+          9 + (i % 3) * 2,
+        );
+        final DateTime end = start.add(const Duration(hours: 1, minutes: 40));
+        samples.add(
+          LectureEntity(
+            id: '${anchor.month}_$i',
+            title: _demoCourseNames[i % _demoCourseNames.length],
+            type: LectureType.values[i % LectureType.values.length],
+            status: i % 6 == 0
+                ? LectureStatus.canceled
+                : LectureStatus.scheduled,
+            classroomId: state.classroomId,
+            classroomName: '공학관 ${state.classroomId}',
+            departmentName: '스마트보안학과',
+            instructorName: _demoProfessors[i % _demoProfessors.length],
+            start: start,
+            end: end,
+          ),
+        );
+      }
+    }
+    return samples
+        .where(
+          (LectureEntity lecture) => targetRange.contains(lecture.start),
+        )
+        .toList();
   }
 }

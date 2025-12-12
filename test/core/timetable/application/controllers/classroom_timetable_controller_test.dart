@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/application/timetable_providers.dart';
@@ -10,6 +10,10 @@ import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
 
 void main() {
+  setUp(() {
+    ClassroomTimetableController.demoDataEnabled = false;
+  });
+
   test('loadLectures fetches data and updates state', () async {
     final container = ProviderContainer(
       overrides:[

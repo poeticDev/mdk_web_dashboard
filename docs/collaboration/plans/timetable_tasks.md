@@ -96,6 +96,7 @@
 - [ ] `docs/collaboration/design_notes/calendar_design.md` 상태/진행률 반영
 - [ ] `README` 혹은 기능별 MD에 실행/테스트 방법 추가
 - [ ] QA 체크리스트(필터 조합, 반복 일정, 휴강 표시) 작성
+- [ ] 더미 일정 데이터 제거 및 서버 API 연결 복구(컨트롤러 `demoDataEnabled` false)
 
 **Definition of Done**
 - 문서가 최신 상태로 PR에 포함되고, QA 체크리스트가 공유된다.
