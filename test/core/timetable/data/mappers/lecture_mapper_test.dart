@@ -11,7 +11,7 @@ void main() {
   test('toEntity converts dto to domain entity', () {
     final LectureDto dto = LectureDto(
       id: '1',
-      title: 'Math',
+      title: '수학 시험',
       type: 'EXAM',
       status: 'CANCELED',
       classroomId: 'room-1',
@@ -43,7 +43,7 @@ void main() {
 
   test('toPayload copies writer input', () {
     final LectureWriteInput input = LectureWriteInput(
-      title: 'AI',
+      title: 'AI 기초',
       type: LectureType.lecture,
       status: LectureStatus.scheduled,
       classroomId: 'room-1',

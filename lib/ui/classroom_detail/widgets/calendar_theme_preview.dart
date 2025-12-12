@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-/// Simple SfCalendar sample wired to the current theme colors.
+/// 현재 테마 색상으로 SfCalendar를 미리 확인하는 샘플 섹션이다.
 class CalendarThemePreview extends StatelessWidget {
   const CalendarThemePreview({super.key});
 
@@ -21,14 +21,12 @@ class CalendarThemePreview extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Calendar Theme Preview',
-              style: textTheme.titleMedium?.copyWith(
-                color: scheme.onSurface,
-              ),
+              '캘린더 테마 미리보기',
+              style: textTheme.titleMedium?.copyWith(color: scheme.onSurface),
             ),
             const SizedBox(height: 8),
             Text(
-              'Syncfusion SfCalendar running with AppTheme colors.',
+              'AppTheme 색상이 적용된 Syncfusion SfCalendar 구성 예시입니다.',
               style: textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurface.withValues(alpha: 0.7),
               ),
@@ -89,8 +87,9 @@ class CalendarThemePreview extends StatelessWidget {
 
 List<Appointment> _buildPreviewAppointments(ColorScheme scheme) {
   final DateTime today = DateTime.now();
-  final DateTime monday =
-      today.subtract(Duration(days: today.weekday - DateTime.monday));
+  final DateTime monday = today.subtract(
+    Duration(days: today.weekday - DateTime.monday),
+  );
   final DateTime tuesday = monday.add(const Duration(days: 1));
   final DateTime wednesday = monday.add(const Duration(days: 2));
 
@@ -98,19 +97,19 @@ List<Appointment> _buildPreviewAppointments(ColorScheme scheme) {
     Appointment(
       startTime: DateTime(monday.year, monday.month, monday.day, 9),
       endTime: DateTime(monday.year, monday.month, monday.day, 11),
-      subject: 'Lecture · 402',
+      subject: '강의 · 402호',
       color: scheme.primary,
     ),
     Appointment(
       startTime: DateTime(tuesday.year, tuesday.month, tuesday.day, 13),
       endTime: DateTime(tuesday.year, tuesday.month, tuesday.day, 14, 30),
-      subject: 'Event · Workshop',
+      subject: '행사 · 워크숍',
       color: scheme.secondary,
     ),
     Appointment(
       startTime: DateTime(wednesday.year, wednesday.month, wednesday.day, 10),
       endTime: DateTime(wednesday.year, wednesday.month, wednesday.day, 12),
-      subject: 'Exam · Midterm',
+      subject: '시험 · 중간고사',
       color: scheme.error.withValues(alpha: 0.9),
     ),
   ];

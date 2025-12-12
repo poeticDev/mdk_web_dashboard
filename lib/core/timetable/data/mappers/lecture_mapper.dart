@@ -5,9 +5,11 @@ import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
 
+/// DTO ↔ 도메인 변환 책임을 담당하는 매퍼.
 class LectureMapper {
   const LectureMapper();
 
+  /// API 응답 DTO를 도메인 엔티티로 변환한다.
   LectureEntity toEntity(LectureDto dto) {
     return LectureEntity(
       id: dto.id,

@@ -3,6 +3,7 @@ import 'package:web_dashboard/common/constants/api_constants.dart';
 import 'package:web_dashboard/core/timetable/data/dtos/lecture_dto.dart';
 import 'package:web_dashboard/core/timetable/data/dtos/lecture_request_dtos.dart';
 
+/// Dio 기반 강의 일정 원격 데이터 소스.
 abstract class LectureRemoteDataSource {
   Future<List<LectureDto>> fetchLectures(LectureQueryRequest request);
   Future<LectureDto> createLecture(LecturePayloadDto payload);
@@ -10,6 +11,7 @@ abstract class LectureRemoteDataSource {
   Future<void> deleteLecture(DeleteLectureRequest request);
 }
 
+/// 실제 HTTP 통신을 수행하는 구현체.
 class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
   LectureRemoteDataSourceImpl({required Dio dio}) : _dio = dio;
 
@@ -23,8 +25,9 @@ class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
     );
     final List<dynamic> items = response.data as List<dynamic>? ?? <dynamic>[];
     return items
-        .map((dynamic item) =>
-            LectureDto.fromJson(item as Map<String, Object?>))
+        .map(
+          (dynamic item) => LectureDto.fromJson(item as Map<String, Object?>),
+        )
         .toList();
   }
 

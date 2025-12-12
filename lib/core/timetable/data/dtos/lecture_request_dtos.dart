@@ -1,3 +1,4 @@
+/// 조회 API에 전달할 쿼리 파라미터 묶음.
 class LectureQueryRequest {
   const LectureQueryRequest({
     required this.from,
@@ -30,6 +31,7 @@ class LectureQueryRequest {
   }
 }
 
+/// 생성/수정 API 요청 본문을 구성하는 DTO.
 class LecturePayloadDto {
   const LecturePayloadDto({
     required this.title,
@@ -88,6 +90,7 @@ class LecturePayloadDto {
   }
 }
 
+/// PUT /lectures/:id 호출 시 필요한 정보.
 class UpdateLectureRequest {
   const UpdateLectureRequest({
     required this.lectureId,
@@ -100,10 +103,13 @@ class UpdateLectureRequest {
   final bool applyToSeries;
 
   Map<String, Object?> toQueryParameters() {
-    return applyToSeries ? <String, Object?>{'applyToSeries': true} : <String, Object?>{};
+    return applyToSeries
+        ? <String, Object?>{'applyToSeries': true}
+        : <String, Object?>{};
   }
 }
 
+/// DELETE /lectures/:id 호출 시 반복 일괄 삭제 여부를 함께 전달한다.
 class DeleteLectureRequest {
   const DeleteLectureRequest({
     required this.lectureId,
@@ -114,6 +120,8 @@ class DeleteLectureRequest {
   final bool deleteSeries;
 
   Map<String, Object?> toQueryParameters() {
-    return deleteSeries ? <String, Object?>{'deleteSeries': true} : <String, Object?>{};
+    return deleteSeries
+        ? <String, Object?>{'deleteSeries': true}
+        : <String, Object?>{};
   }
 }

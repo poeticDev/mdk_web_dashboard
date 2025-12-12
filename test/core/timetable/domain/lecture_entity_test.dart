@@ -8,7 +8,7 @@ void main() {
     test('duration reflects start and end delta', () {
       final LectureEntity entity = LectureEntity(
         id: '1',
-        title: 'Sample',
+        title: '샘플 일정',
         type: LectureType.lecture,
         status: LectureStatus.scheduled,
         classroomId: 'room-1',
@@ -22,7 +22,7 @@ void main() {
     test('occursOn returns true for moments within the slot', () {
       final LectureEntity entity = LectureEntity(
         id: '1',
-        title: 'Sample',
+        title: '샘플 일정',
         type: LectureType.event,
         status: LectureStatus.scheduled,
         classroomId: 'room-1',

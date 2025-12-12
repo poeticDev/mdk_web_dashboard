@@ -1,3 +1,4 @@
+/// /lectures 응답 구조를 표현하는 DTO.
 class LectureDto {
   LectureDto({
     required this.id,
@@ -35,6 +36,7 @@ class LectureDto {
   final List<DateTime> recurrenceExceptions;
   final String? notes;
 
+  /// JSON 맵을 DTO로 변환한다.
   factory LectureDto.fromJson(Map<String, Object?> json) {
     final List<Object?> rawExceptions =
         json['recurrenceExceptions'] as List<Object?>? ?? <Object?>[];
@@ -61,6 +63,7 @@ class LectureDto {
     );
   }
 
+  /// API 전송용 JSON으로 직렬화한다.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       'id': id,

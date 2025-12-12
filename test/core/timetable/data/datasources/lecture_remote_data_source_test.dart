@@ -25,7 +25,7 @@ void main() {
           jsonEncode(<Map<String, Object?>>[
             <String, Object?>{
               'id': '1',
-              'title': 'Test',
+              'title': '캘린더 테스트',
               'type': 'LECTURE',
               'status': 'ACTIVE',
               'classroomId': 'room-1',
@@ -54,7 +54,7 @@ void main() {
     );
 
     expect(result.length, 1);
-    expect(result.first.title, 'Test');
+    expect(result.first.title, '캘린더 테스트');
   });
 
   test('createLecture sends POST body', () async {
@@ -63,7 +63,7 @@ void main() {
         body: ResponseBody.fromString(
           jsonEncode(<String, Object?>{
             'id': '1',
-            'title': 'New',
+            'title': '신규 일정',
             'type': 'EVENT',
             'status': 'ACTIVE',
             'classroomId': 'room-1',
@@ -76,14 +76,14 @@ void main() {
         ),
         onRequest: (RequestOptions options) {
           expect(options.method, 'POST');
-          expect(options.data['title'], 'New');
+          expect(options.data['title'], '신규 일정');
         },
       ),
     );
 
     final dto = await dataSource.createLecture(
       LecturePayloadDto(
-        title: 'New',
+        title: '신규 일정',
         type: 'EVENT',
         status: 'ACTIVE',
         classroomId: 'room-1',
@@ -101,7 +101,7 @@ void main() {
         body: ResponseBody.fromString(
           jsonEncode(<String, Object?>{
             'id': '1',
-            'title': 'Updated',
+            'title': '수정된 일정',
             'type': 'LECTURE',
             'status': 'ACTIVE',
             'classroomId': 'room-1',
@@ -125,7 +125,7 @@ void main() {
         lectureId: '1',
         applyToSeries: true,
         payload: LecturePayloadDto(
-          title: 'Updated',
+          title: '수정된 일정',
           type: 'LECTURE',
           status: 'ACTIVE',
           classroomId: 'room-1',
@@ -135,7 +135,7 @@ void main() {
       ),
     );
 
-    expect(dto.title, 'Updated');
+    expect(dto.title, '수정된 일정');
   });
 
   test('deleteLecture sends DELETE /lectures/:id', () async {

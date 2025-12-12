@@ -2,6 +2,7 @@ import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 
+/// 강의 일정 CRUD를 담당하는 도메인 레이어 계약.
 abstract class LectureRepository {
   Future<List<LectureEntity>> fetchLectures(LectureQuery query);
   Future<LectureEntity> createLecture(LectureWriteInput input);
@@ -9,6 +10,7 @@ abstract class LectureRepository {
   Future<void> deleteLecture(DeleteLectureInput input);
 }
 
+/// GET /lectures 호출을 위한 필터 파라미터.
 class LectureQuery {
   const LectureQuery({
     required this.from,
@@ -29,6 +31,7 @@ class LectureQuery {
   final LectureStatus? status;
 }
 
+/// 신규/수정 요청에 사용되는 입력 값.
 class LectureWriteInput {
   const LectureWriteInput({
     required this.title,
@@ -65,6 +68,7 @@ class LectureWriteInput {
   final String? notes;
 }
 
+/// 반복 일정 수정 시 개별/시리즈 선택을 포함한 입력 값.
 class UpdateLectureInput {
   const UpdateLectureInput({
     required this.lectureId,
@@ -77,6 +81,7 @@ class UpdateLectureInput {
   final bool applyToSeries;
 }
 
+/// 삭제 요청 시 반복 일정 범위를 제어하는 입력 값.
 class DeleteLectureInput {
   const DeleteLectureInput({
     required this.lectureId,

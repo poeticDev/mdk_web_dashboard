@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 
+/// 클라이언트에서 사용하는 강의 일정 도메인 엔티티.
 class LectureEntity {
   LectureEntity({
     required this.id,
@@ -42,8 +43,10 @@ class LectureEntity {
   final UnmodifiableListView<DateTime> recurrenceExceptions;
   final String? notes;
 
+  /// 강의 길이를 계산한다.
   Duration get duration => end.difference(start);
 
+  /// 특정 시각이 이 일정 범위에 포함되는지 검사한다.
   bool occursOn(DateTime date) {
     final bool startsBeforeOrEqual = !date.isBefore(start);
     final bool endsAfter = date.isBefore(end);

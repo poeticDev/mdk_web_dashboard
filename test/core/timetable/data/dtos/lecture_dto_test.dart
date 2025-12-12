@@ -7,7 +7,7 @@ void main() {
   test('LectureDto serializes to and from json', () {
     final LectureDto dto = LectureDto(
       id: '1',
-      title: 'Test',
+      title: '테스트 강의',
       type: 'LECTURE',
       status: 'ACTIVE',
       classroomId: 'room-1',
@@ -25,7 +25,7 @@ void main() {
         LectureDto.fromJson(jsonDecode(jsonEncode(json)) as Map<String, Object?>);
 
     expect(restored.id, '1');
-    expect(restored.title, 'Test');
+    expect(restored.title, '테스트 강의');
     expect(restored.recurrenceExceptions.length, 1);
     expect(restored.recurrenceExceptions.first.year, 2025);
   });
