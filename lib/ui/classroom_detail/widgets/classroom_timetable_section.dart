@@ -9,10 +9,7 @@ import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_re
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
 
 class ClassroomTimetableSection extends ConsumerStatefulWidget {
-  const ClassroomTimetableSection({
-    required this.classroomId,
-    super.key,
-  });
+  const ClassroomTimetableSection({required this.classroomId, super.key});
 
   final String classroomId;
 
@@ -31,8 +28,8 @@ class _ClassroomTimetableSectionState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(
-        classroomTimetableControllerProvider(widget.classroomId).notifier,
-      )
+          classroomTimetableControllerProvider(widget.classroomId).notifier,
+        )
         ..updateRange(_currentRange())
         ..loadLectures(range: _currentRange());
     });
@@ -40,8 +37,9 @@ class _ClassroomTimetableSectionState
 
   @override
   Widget build(BuildContext context) {
-    final state =
-        ref.watch(classroomTimetableControllerProvider(widget.classroomId));
+    final state = ref.watch(
+      classroomTimetableControllerProvider(widget.classroomId),
+    );
     final controller = ref.read(
       classroomTimetableControllerProvider(widget.classroomId).notifier,
     );
@@ -51,15 +49,15 @@ class _ClassroomTimetableSectionState
         ? AppColors.dark(ThemeBrand.defaultBrand)
         : AppColors.light(ThemeBrand.defaultBrand);
     final LectureColorResolver colorResolver = LectureColorResolver(appColors);
-    final List<LectureViewModel> viewModels =
-        state.lectures.map((lecture) {
+    final List<LectureViewModel> viewModels = state.lectures.map((lecture) {
       return LectureViewModel.fromEntity(
         lecture,
         color: colorResolver.resolveColor(lecture),
       );
     }).toList();
-    final LectureCalendarDataSource dataSource =
-        LectureCalendarDataSource(viewModels);
+    final LectureCalendarDataSource dataSource = LectureCalendarDataSource(
+      viewModels,
+    );
     final TimetableDateRange? range = state.visibleRange;
 
     return Card(
@@ -126,7 +124,8 @@ class _ClassroomTimetableSectionState
                 monthViewSettings: MonthViewSettings(
                   showAgenda: true,
                   appointmentDisplayCount: 3,
-                  appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                  appointmentDisplayMode:
+                      MonthAppointmentDisplayMode.appointment,
                 ),
                 timeSlotViewSettings: const TimeSlotViewSettings(
                   startHour: 8,
@@ -135,62 +134,70 @@ class _ClassroomTimetableSectionState
                 ),
                 appointmentBuilder:
                     (BuildContext context, CalendarAppointmentDetails details) {
-                  final LectureViewModel vm = details.appointments.first;
-                  final bool isOngoing =
-                      DateTime.now().isAfter(vm.start) &&
+                      final LectureViewModel vm = details.appointments.first;
+                      final bool isOngoing =
+                          DateTime.now().isAfter(vm.start) &&
                           DateTime.now().isBefore(vm.end);
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: vm.color,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isOngoing
-                            ? theme.colorScheme.onSurface
-                            : vm.color.withValues(alpha: 0.4),
-                        width: isOngoing ? 1.4 : 0.5,
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          vm.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: vm.color,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isOngoing
+                                ? theme.colorScheme.onSurface
+                                : vm.color.withValues(alpha: 0.4),
+                            width: isOngoing ? 1.4 : 0.5,
                           ),
                         ),
-                        if (vm.instructorName != null)
-                          Text(
-                            vm.instructorName!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.85),
+                        padding: const EdgeInsets.all(6),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              vm.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
+                            if (vm.instructorName != null)
+                              Text(
+                                vm.instructorName!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    },
                 onViewChanged: (ViewChangedDetails details) {
                   if (details.visibleDates.isEmpty) {
                     return;
                   }
-                  final DateTime middleDate = details.visibleDates[
-                      (details.visibleDates.length / 2).floor()];
-                  setState(() {
-                    _focusedDate = middleDate;
-                  });
+
+                  final DateTime middleDate = details
+                      .visibleDates[(details.visibleDates.length / 2).floor()];
                   final TimetableDateRange nextRange = _rangeFromVisibleDates(
                     details.visibleDates,
                   );
-                  controller.updateRange(nextRange);
-                  controller.loadLectures(range: nextRange);
+
+                  // 캘린더 레이아웃이 끝난 다음 프레임에 실행
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!mounted) return;
+
+                    setState(() {
+                      _focusedDate = middleDate;
+                    });
+
+                    controller.updateRange(nextRange);
+                    controller.loadLectures(range: nextRange);
+                  });
                 },
               ),
             ),
@@ -206,6 +213,16 @@ class _ClassroomTimetableSectionState
                   state.errorMessage ?? '알 수 없는 오류가 발생했습니다.',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.error,
+                  ),
+                ),
+              ),
+            if (!state.isLoading && !state.hasError && viewModels.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  '표시할 일정이 없습니다.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -259,7 +276,7 @@ class _TimetableHeader extends StatelessWidget {
     final String periodText = range == null
         ? ''
         : '${range!.from.year}.${range!.from.month}.${range!.from.day}'
-            ' ~ ${range!.to.year}.${range!.to.month}.${range!.to.day}';
+              ' ~ ${range!.to.year}.${range!.to.month}.${range!.to.day}';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -288,10 +305,7 @@ class _TimetableHeader extends StatelessWidget {
               ],
             ),
             const SizedBox(width: 24),
-            Text(
-              periodText,
-              style: theme.textTheme.titleMedium,
-            ),
+            Text(periodText, style: theme.textTheme.titleMedium),
             const Spacer(),
             IconButton(
               tooltip: '이전',
@@ -303,10 +317,7 @@ class _TimetableHeader extends StatelessWidget {
               onPressed: () => onNavigate(1),
               icon: const Icon(Icons.chevron_right),
             ),
-            TextButton(
-              onPressed: onToday,
-              child: const Text('오늘'),
-            ),
+            TextButton(onPressed: onToday, child: const Text('오늘')),
             const SizedBox(width: 12),
             FilledButton.icon(
               onPressed: onCreate,
