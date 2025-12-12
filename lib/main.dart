@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 import 'package:web_dashboard/core/auth/application/auth_controller.dart';
 import 'package:web_dashboard/di/service_locator.dart';
@@ -61,6 +63,16 @@ class _MyAppState extends ConsumerState<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: lightTheme,
           darkTheme: darkTheme,
+          localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            SfGlobalLocalizations.delegate,
+          ],
+          supportedLocales: const <Locale>[
+            Locale('ko'),
+            Locale('en'),
+          ],
           builder: (BuildContext context, Widget? child) =>
               ResponsiveBreakpoints.builder(
             child: child ?? const SizedBox.shrink(),

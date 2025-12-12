@@ -5,6 +5,7 @@ import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
+import 'package:web_dashboard/ui/classroom_detail/widgets/calendar_theme_preview.dart';
 
 
 class ClassroomDetailPage extends StatefulWidget {
@@ -48,6 +49,11 @@ class _ClassroomDetailPageState extends State<ClassroomDetailPage> {
                   onToggleChanged: _handleToggleChanged,
                   onCameraPressed: () => _showComingSoonSnackBar(context),
                 ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: CalendarThemePreview(),
               ),
             ],
           ),
