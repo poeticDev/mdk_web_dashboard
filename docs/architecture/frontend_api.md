@@ -11,7 +11,7 @@ MDK Nest Server가 제공하는 최소 인증/감사 로그 API 계약을 정리
 | 세션 정책 | 전역 동시 10개, 사용자당 1개, 유휴 30분, 절대 8시간(`SessionsService`). 초과 시 가장 오래된 사용자 세션이 강제 종료.
 | 요청 헤더 | `Content-Type: application/json`, `Accept: application/json`
 | 오류 포맷 | Nest 기본 `{ "statusCode": number, "message": string | string[], "error": string }`
-| 권한 등급 | `Role.Admin`, `Role.Operator`, `Role.Viewer`. 감사 로그 API는 `admin`만 접근 가능(`RolesGuard`).
+| 권한 등급 | `Role.Admin`, `Role.Operator`, `Role.LimitedOperator`, `Role.Viewer`. 감사 로그 API는 `admin`만 접근 가능(`RolesGuard`). 
 
 ### 1.1 브라우저 Fetch 기본 예시
 ```ts

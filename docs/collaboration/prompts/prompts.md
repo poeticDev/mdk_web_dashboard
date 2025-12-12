@@ -1,7 +1,7 @@
 # Login Page Production Checklist
 
 ## 1. 기획 및 요구 정리
-- [x] `docs/login_page_design.md`를 검토해 사용자 범위, UX 흐름, API 제약을 재확인한다.
+- [x] `docs/reference_guides/login_page_design.md`를 검토해 사용자 범위, UX 흐름, API 제약을 재확인한다.
 - [x] 로그인 성공 시 `/dashboard`, 실패나 미인증 시 `/login` 리다이렉트 조건을 명시한다.
 - [x] 세션 만료(30분)·401 응답 시 처리 메시지와 리디렉션 규칙(`/login?expired=true`)을 정의한다.
 

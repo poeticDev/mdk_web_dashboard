@@ -40,7 +40,7 @@
 ### 2.3 Repository & DTO
 
 - `AuthRepository` 인터페이스 + `AuthRepositoryImpl`
-- DTO는 `/api/login`, `/api/me` 응답 스펙(`docs/frontend_api.md`) 기준
+- DTO는 `/api/login`, `/api/me` 응답 스펙(`docs/architecture/frontend_api.md`) 기준
 
 ## 3. 대시보드 도메인 (설계안)
 
@@ -130,7 +130,7 @@
 | `PATCH /api/classrooms/{id}/equipment` | 전등/장비 상태 토글 |
 | `GET /api/metrics/classrooms` | 전체/사용중/미사용 카운트 |
 
-*위 endpoint들은 추후 백엔드 API와 협의 후 `docs/frontend_api.md`에 통합 예정.*
+*위 endpoint들은 추후 백엔드 API와 협의 후 `docs/architecture/frontend_api.md`에 통합 예정.*
 
 ## 5. 확장/개선 제안
 

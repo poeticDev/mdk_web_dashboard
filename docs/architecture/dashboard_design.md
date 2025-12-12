@@ -1,8 +1,8 @@
 # 대시보드 UI 설계 요약
 
-본 문서는 `docs/samples/1.png`, `docs/samples/2.png` 와이어프레임을 기준으로 전체 강의실 대시보드(전체 화면)와 개별 강의실 화면을 구현하기 위한 설계 및 진행 순서를 정리한다.
+본 문서는 `docs/reference_media/samples/1.png`, `docs/reference_media/samples/2.png` 와이어프레임을 기준으로 전체 강의실 대시보드(전체 화면)와 개별 강의실 화면을 구현하기 위한 설계 및 진행 순서를 정리한다.
 
-## 1. 전체 강의실 화면 (samples/1.png)
+## 1. 전체 강의실 화면 (docs/reference_media/samples/1.png)
 
 ### 1.1 화면 구조
 
@@ -40,7 +40,7 @@
 5. **반응형 조정 및 Theme 연결**.
 6. **상태 관리/필터 로직 추가**.
 
-## 2. 개별 강의실 화면 (samples/2.png)
+## 2. 개별 강의실 화면 (docs/reference_media/samples/2.png)
 
 ### 2.1 화면 구조
 
@@ -96,7 +96,7 @@
 3. **페이지 패딩:** 모든 주요 페이지는 `context.responsivePagePadding()`을 활용해 기본 여백 정책을 공유한다. 추가 여백이 필요하면 helper의 named parameter를 이용해 override하고, override한 이유를 주석으로 남긴다.
 4. **위젯 레이아웃:** `LayoutBuilder`가 필요한 상황에서도 우선 `ResponsiveLayoutBuilder`로 formFactor를 받아 사용하고, 반복되는 반응형 패턴은 공통 responsive 위젯(예: `ResponsiveRowColumn`, 그리드 helper)으로 추상화한다.
 5. **테스트:** 위젯 테스트에서 breakpoint 별 상태를 검증하려면 `ResponsiveBreakpoints.builder`로 테스트 위젯을 감싼 뒤 원하는 스크린 크기를 주입한다. formFactor 의존 로직이 있으면 각 케이스를 명시적으로 검증한다.
-6. **문서 참조:** 새로운 화면을 구현할 때 본 섹션과 `docs/dashboard_design.md`의 responsive 요구사항을 함께 확인해 디자인-구현 불일치를 방지한다.
+6. **문서 참조:** 새로운 화면을 구현할 때 본 섹션과 `docs/architecture/dashboard_design.md`의 responsive 요구사항을 함께 확인해 디자인-구현 불일치를 방지한다.
 
 ## 4. 향후 TODO
 

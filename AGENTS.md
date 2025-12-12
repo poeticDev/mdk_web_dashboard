@@ -54,6 +54,6 @@
 
 ## 참고 문서
 
-- `docs/flutter_rules.md`: Flutter/Dart 작업 전반의 코딩 규칙, 패키지 관리, 스타일 가이드를 반드시 준수.
-- `docs/theme_design.md`: AdaptiveTheme + AppTheme(AppColors/AppTypography) 구조 및 테마 정책.
-- `docs/login_page_design.md`: 로그인 화면 설계(UX/데이터/상태/라우팅 요구사항).
+- `docs/reference_guides/flutter_rules.md`: Flutter/Dart 작업 전반의 코딩 규칙, 패키지 관리, 스타일 가이드를 반드시 준수.
+- `docs/reference_guides/theme_design.md`: AdaptiveTheme + AppTheme(AppColors/AppTypography) 구조 및 테마 정책.
+- `docs/reference_guides/login_page_design.md`: 로그인 화면 설계(UX/데이터/상태/라우팅 요구사항).
