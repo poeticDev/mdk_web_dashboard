@@ -33,12 +33,12 @@
 ## Task 4. Repository & UseCase 작성
 **Description:** Data 계층을 Domain 계약에 연결하고, Application 계층에서 사용할 UseCase를 만든다.
 
-- [ ] `LectureRepositoryImpl`에서 Domain 계약 구현
-- [ ] `GetLecturesUseCase`, `SaveLectureUseCase`, `DeleteLectureUseCase` 등 작성
-- [ ] 비즈니스 규칙(시간 겹침, status 처리)을 UseCase 레벨에서 캡슐화
+- [x] `LectureRepositoryImpl`에서 Domain 계약 구현
+- [x] `GetLecturesUseCase`, `SaveLectureUseCase`, `DeleteLectureUseCase` 등 작성
+- [x] 비즈니스 규칙(시간 겹침, status 처리)을 UseCase 레벨에서 캡슐화 *(Save 시 series 적용 여부 포함)*
 
 **Definition of Done**
-- UseCase 단위 테스트가 성공하고, Repository가 RemoteDataSource를 정확히 호출한다.
+- UseCase 단위 테스트가 성공하고, Repository가 RemoteDataSource를 정확히 호출한다. ✅
 
 ## Task 5. Controller & 상태 모델링
 **Description:** Riverpod 기반 Controller와 불변 상태를 정의해 UI와 UseCase를 연결한다.
