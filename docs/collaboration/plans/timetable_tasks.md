@@ -73,12 +73,12 @@
 ## Task 8. 일정 CRUD 인터랙션
 **Description:** 모달/폼을 통해 일정 생성·수정·삭제를 수행하고 권한별 제어를 추가한다.
 
-- [ ] 일정 더블클릭 → 생성 모달 호출, 일정 클릭 → 상세/수정 모달 구현
-- [ ] `admin/operator/limited_operator/viewer` 별 허용 기능 분기
-- [ ] 휴강(status = CANCELED) 표시(채도 낮춤) 및 토스트 메시지 처리
+- [x] 일정 더블클릭 → 생성 모달 호출, 일정 클릭 → 상세/수정 모달 구현
+- [x] `admin/operator/limited_operator/viewer` 별 허용 기능 분기
+- [x] 휴강(status = CANCELED) 표시(채도 낮춤) 및 토스트 메시지 처리
 
 **Definition of Done**
-- CRUD 플로우 통합 테스트(모달 입력 → Repository 호출 → 상태 갱신)가 성공하고, Role 별 UI 차단이 확인된다.
+- CRUD 플로우 통합 테스트(모달 입력 → Repository 호출 → 상태 갱신)가 성공하고, Role 별 UI 차단이 확인된다. *(현재는 더미 모달 + 권한 분기까지 완료, API 연동 시점에 통합 테스트 추가 예정)*
 
 ## Task 9. API 연동 및 성능 최적화
 **Description:** onViewChanged 디바운스, from/to 캐싱, 타임존/시간 규칙을 구현한다.

@@ -235,6 +235,8 @@ class _UserBanner extends ConsumerWidget {
         return '관리자';
       case UserRole.operator:
         return '운영자';
+      case UserRole.limitedOperator:
+        return '제한 운영자';
       case UserRole.viewer:
         return '뷰어';
       case UserRole.unknown:

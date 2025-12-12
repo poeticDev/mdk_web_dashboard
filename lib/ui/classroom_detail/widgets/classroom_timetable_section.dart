@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:web_dashboard/core/auth/application/auth_controller.dart';
+import 'package:web_dashboard/core/auth/domain/entities/auth_user.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
@@ -46,8 +48,11 @@ class _ClassroomTimetableSectionState
     final controller = ref.read(
       classroomTimetableControllerProvider(widget.classroomId).notifier,
     );
+    final authState = ref.watch(authControllerProvider);
     final ThemeData theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
+    final bool canManage =
+        _canManageRoles(authState.currentUser?.roles ?? const <UserRole>[]);
     final AppColors appColors = isDark
         ? AppColors.dark(ThemeBrand.defaultBrand)
         : AppColors.light(ThemeBrand.defaultBrand);
@@ -107,11 +112,9 @@ class _ClassroomTimetableSectionState
                 controller.updateRange(nextRange);
                 controller.loadLectures(range: nextRange);
               },
-              onCreate: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('일정 등록 기능은 준비 중입니다.')),
-                );
-              },
+              canManage: canManage,
+              onCreateRequest: _handleCreateFromHeader,
+              onPermissionDenied: _showPermissionDeniedSnackBar,
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -206,6 +209,8 @@ class _ClassroomTimetableSectionState
                     controller.loadLectures(range: nextRange);
                   });
                 },
+                onTap: (CalendarTapDetails details) =>
+                    _handleCalendarTap(details, canManage),
               ),
             ),
             if (state.isLoading && viewModels.isEmpty)
@@ -256,6 +261,159 @@ class _ClassroomTimetableSectionState
       to: DateTime(end.year, end.month, end.day, 23, 59, 59),
     );
   }
+
+  void _handleCreateFromHeader() {
+    final DateTime suggestedStart = DateTime(
+      _focusedDate.year,
+      _focusedDate.month,
+      _focusedDate.day,
+      9,
+    );
+    _showCreateModal(suggestedStart);
+  }
+
+  void _handleCalendarTap(CalendarTapDetails details, bool canManage) {
+    if (details.targetElement == CalendarElement.appointment &&
+        (details.appointments?.isNotEmpty ?? false)) {
+      if (!canManage) {
+        _showPermissionDeniedSnackBar();
+        return;
+      }
+      final LectureViewModel vm =
+          details.appointments!.first as LectureViewModel;
+      _showEditModal(vm);
+      return;
+    }
+    if (details.targetElement == CalendarElement.calendarCell &&
+        details.date != null) {
+      if (!canManage) {
+        _showPermissionDeniedSnackBar();
+        return;
+      }
+      _showCreateModal(details.date!);
+    }
+  }
+
+  bool _canManageRoles(List<UserRole> roles) {
+    return roles.any(
+      (UserRole role) =>
+          role == UserRole.admin ||
+          role == UserRole.operator ||
+          role == UserRole.limitedOperator,
+    );
+  }
+
+  void _showPermissionDeniedSnackBar() {
+    _showComingSoonSnackBar('권한이 없습니다. 관리자/운영자만 가능합니다.');
+  }
+
+  Future<void> _showCreateModal(DateTime start) async {
+    final DateTime end = start.add(const Duration(hours: 1));
+    final TextEditingController titleController = TextEditingController(
+      text: '${start.month}월 ${start.day}일 일정',
+    );
+    final TextEditingController memoController = TextEditingController();
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('새 일정 등록 (더미)'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('시간: ${_formatRange(start, end)}'),
+              const SizedBox(height: 12),
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: '강의명'),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: memoController,
+                decoration: const InputDecoration(labelText: '메모'),
+                maxLines: 2,
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('취소'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _showComingSoonSnackBar('일정 등록 API는 준비 중입니다.');
+              },
+              child: const Text('등록'),
+            ),
+          ],
+        );
+      },
+    );
+    titleController.dispose();
+    memoController.dispose();
+  }
+
+  Future<void> _showEditModal(LectureViewModel vm) async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('일정 상세 (더미)'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('강의명: ${vm.title}'),
+              Text('강의실: ${vm.classroomName}'),
+              Text('시간: ${_formatRange(vm.start, vm.end)}'),
+              if (vm.instructorName != null)
+                Text('강사: ${vm.instructorName}'),
+              const SizedBox(height: 8),
+              Text('상태: ${vm.statusLabel}'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('닫기'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _showComingSoonSnackBar('휴강 처리 기능은 준비 중입니다.');
+              },
+              child: const Text('휴강 처리'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _showComingSoonSnackBar('일정 수정 API는 준비 중입니다.');
+              },
+              child: const Text('수정'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String _formatRange(DateTime start, DateTime end) {
+    return '${start.month}/${start.day} '
+        '${_twoDigits(start.hour)}:${_twoDigits(start.minute)}'
+        ' ~ ${_twoDigits(end.hour)}:${_twoDigits(end.minute)}';
+  }
+
+  String _twoDigits(int value) => value.toString().padLeft(2, '0');
+
+  void _showComingSoonSnackBar(String message) {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
 }
 
 class _TimetableHeader extends StatelessWidget {
@@ -266,7 +424,9 @@ class _TimetableHeader extends StatelessWidget {
     required this.onViewChanged,
     required this.onNavigate,
     required this.onToday,
-    required this.onCreate,
+    required this.canManage,
+    required this.onCreateRequest,
+    required this.onPermissionDenied,
   });
 
   final CalendarView view;
@@ -275,7 +435,9 @@ class _TimetableHeader extends StatelessWidget {
   final ValueChanged<CalendarView> onViewChanged;
   final ValueChanged<int> onNavigate;
   final VoidCallback onToday;
-  final VoidCallback onCreate;
+  final bool canManage;
+  final VoidCallback onCreateRequest;
+  final VoidCallback onPermissionDenied;
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +489,7 @@ class _TimetableHeader extends StatelessWidget {
             TextButton(onPressed: onToday, child: const Text('오늘')),
             const SizedBox(width: 12),
             FilledButton.icon(
-              onPressed: onCreate,
+              onPressed: canManage ? onCreateRequest : onPermissionDenied,
               icon: const Icon(Icons.add),
               label: const Text('일정 등록'),
             ),
