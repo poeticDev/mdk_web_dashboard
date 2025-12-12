@@ -23,12 +23,12 @@
 ## Task 3. 데이터 계층 구현
 **Description:** API DTO 및 RemoteDataSource를 작성해 서버와 통신한다.
 
-- [ ] `LectureDto`와 JSON 직렬화 로직 구현
-- [ ] `LectureRemoteDataSource`에서 GET/POST/PUT/DELETE 메서드 작성
-- [ ] DTO ↔ Domain 변환 Mapper 작성 및 단위 테스트 추가
+- [x] `LectureDto`와 JSON 직렬화 로직 구현
+- [x] `LectureRemoteDataSource`에서 GET/POST/PUT/DELETE 메서드 작성
+- [x] DTO ↔ Domain 변환 Mapper 작성 및 단위 테스트 추가
 
 **Definition of Done**
-- RemoteDataSource 단위 테스트가 성공하고, 모든 메서드가 stub 서버에서 기대 JSON을 송수신한다.
+- RemoteDataSource 단위 테스트가 성공하고, 모든 메서드가 stub 서버에서 기대 JSON을 송수신한다. ✅
 
 ## Task 4. Repository & UseCase 작성
 **Description:** Data 계층을 Domain 계약에 연결하고, Application 계층에서 사용할 UseCase를 만든다.
