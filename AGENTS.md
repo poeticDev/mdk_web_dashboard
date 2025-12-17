@@ -33,7 +33,9 @@
 
 ## Commit & PR Practices
 
-- 커밋 프리픽스: `Feat: ...`, `Fix: ...` 등 단일 책임으로 작성.
+- 커밋 메시지 헤더는 영문 타입 + 선택 스코프를 PascalCase로 표기하고, 본문은 한글로 작성한다. 포맷: `<Type(Scope)>:한글 요약`. 예) `Doc(timetable):시간표 API 문서 동기화`, `Feat(classroom):강의실 목록 위젯 추가`.
+- 타입 예시: `Feat`, `Fix`, `Doc`, `Refactor`, `Chore`, `Test`. 스코프는 snake_case 디렉터리나 기능명을 소문자로 표기한다.
+- 커밋 본문(Body)에는 한 줄당 하나씩 핵심 변경사항과 테스트/검증 요약을 bullet 혹은 간결한 문장으로 남긴다.
 - PR 템플릿: 변경 요약, 관련 이슈 링크, UI 변경 시 스크린샷/GIF, 실행한 명령 체크(`flutter analyze`, `flutter test`), 데이터 스키마 영향 여부 명시.
 
 ## Architecture & State
