@@ -1,17 +1,17 @@
 # 프론트 웹앱 연동용 API 레퍼런스
 
-MDK Nest Server가 제공하는 최소 인증/감사 로그 API 계약을 정리했다. 모든 예시는 개발 환경(`http://localhost:3000`) 기준이며, 서버는 `/api`를 prefix로 사용한다.
+MDK Nest Server가 제공하는 최소 인증/감사 로그 및 시간표(TimeTable) API 계약을 정리했다. 모든 예시는 개발 환경(`http://localhost:3000`) 기준이며, 서버는 `/api/v1`을 prefix로 사용한다.
 
 ## 1. 공통 규칙
 | 항목 | 값/설명 |
 | --- | --- |
-| Base URL | `http://localhost:3000/api` (Nest `main.ts`, `PORT` 기본값 3000)
+| Base URL | `http://localhost:3000/api/v1` (Nest `main.ts`, `PORT` 기본값 3000)
 | CORS 허용 출처 | `http://localhost:53982` 한정, `credentials: true` 필요 (`app.enableCors`)
-| 인증 방식 | 로그인 성공 시 `sid` HTTP-only 쿠키 발급. `SameSite=Lax`, Secure 미설정(로컬 개발 가정). 모든 보호 API는 쿠키 기반 `SessionAuthGuard` 적용.
-| 세션 정책 | 전역 동시 10개, 사용자당 1개, 유휴 30분, 절대 8시간(`SessionsService`). 초과 시 가장 오래된 사용자 세션이 강제 종료.
+| 인증 방식 | Bearer JWT 기반. 모든 시간표 API는 `Authorization: Bearer <token>` 헤더를 요구하며, 토큰 발급/갱신은 기존 로그인 모듈이 담당한다. 레거시 세션 API는 관리 콘솔 유지 목적에 한해 `sid` 쿠키를 허용한다.
+| 토큰 정책 | JWT에는 사용자 역할·권한 스코프가 포함되며, 만료 시 재로그인 또는 리프레시 토큰 플로우(구현 예정)로 갱신한다. 레거시 세션 제한(동시 접속 10개/유휴 30분/절대 8시간)은 기존 `/api` 루트에만 적용된다.
 | 요청 헤더 | `Content-Type: application/json`, `Accept: application/json`
 | 오류 포맷 | Nest 기본 `{ "statusCode": number, "message": string | string[], "error": string }`
-| 권한 등급 | `Role.Admin`, `Role.Operator`, `Role.LimitedOperator`, `Role.Viewer`. 감사 로그 API는 `admin`만 접근 가능(`RolesGuard`). 
+| 권한 등급 | `Role.Admin`, `Role.Operator`, `Role.LimitedOperator`, `Role.Viewer`. 감사 로그 API는 `admin`만 접근 가능(`RolesGuard`). 시간표 API는 JWT의 역할 기반 권한만 검증하며 세부 스코프 에러 코드는 추후 확장 예정이다.
 
 ### 1.1 브라우저 Fetch 기본 예시
 ```ts
@@ -165,3 +165,63 @@ const client = async (path: string, init: RequestInit = {}) => {
 
 ---
 필요 시 추가 API가 생기면 이 문서에 REST 경로, DTO, 상태 코드를 같은 포맷으로 확장한다.
+
+## 4. 시간표(TimeTable) API
+
+### 4.1 공통 규칙
+- Base Path: `/classrooms/{classroomId}/timetable` 및 `/lectures` (모두 `/api/v1` 하위)
+- 인증: `Authorization: Bearer <token>` 필수
+- Optimistic Locking: `version` 필드를 사용하며 수정/삭제 시 `x-expected-version` 헤더 또는 요청 body의 `expectedVersion` 전달
+- 날짜 포맷: ISO-8601(+TZ)
+- 콘텐츠 타입: `application/json`
+
+#### Lecture 엔티티 필드 (서버 기준)
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `id` | string | UUID (BaseEntity PK)
+| `title` | string | 과목 또는 이벤트명
+| `version` | int | Optimistic Lock 버전
+| `externalCode` | string? | 외부 timetabling 코드
+| `type` | enum `LectureType` | 기본 `lecture`
+| `classroomId` | string | `Classroom` FK (ManyToOne)
+| `departmentId` | string? | `Department` FK, nullable
+| `instructorId` | string? | `User` FK, nullable
+| `colorHex` | string? | `#RRGGBB`
+| `startTime` | ISO string | `timestamptz`
+| `endTime` | ISO string | `timestamptz`
+| `recurrenceRule` | string? | iCal RRULE
+| `notes` | string? | 자유 입력 메모
+| `createdAt`/`updatedAt` | ISO string | BaseEntity 타임스탬프
+
+> **참고**: Nullable 필드는 Swagger 예제에서 생략되어 있다. 프론트 로직에서는 존재 여부를 항상 체크해야 하며, `department`/`instructor` 관계는 현재 optional이다.
+
+### 4.2 `GET /classrooms/{classroomId}/timetable`
+- Query: `from`(필수), `to`(필수), `tz`(선택, 기본 `Asia/Seoul`)
+- 응답: `roomId`, `range`, `tz`, `lectures: LectureDto[]`
+- 상태 코드: 200, 400(잘못된 기간), 404(강의실 없음)
+- **향후 확장**: `view`, `expandRecurrence`, `recurrenceExpandLimit` 및 복수 필터(`departmentId`, `instructorId`, `type`, `status`)를 분석만 하고 있으니, 구현 시 이 문서를 업데이트한다는 TODO를 남겨 둔다.
+
+### 4.3 `POST /lectures`
+- Body: `title`, `type`, `classroomId`, `startTime`, `endTime`, 선택 필드(`externalCode`, `departmentId`, `instructorId`, `colorHex`, `recurrenceRule`, `notes`)
+- 응답: 201 + 생성된 `LectureDto`
+- 오류: 400(검증 실패), 404(없는 `classroomId`)
+
+### 4.4 `PATCH /lectures/{lectureId}`
+- Headers: `x-expected-version`(선택)
+- Body: 변경 필드 + `expectedVersion` 허용
+- 응답: 200 + 최신 `LectureDto`
+- 오류: 404(리소스 없음), 409(버전 충돌, 응답 `error.details.latest`에 최신 DTO 포함)
+
+### 4.5 `DELETE /lectures/{lectureId}`
+- Headers: `x-expected-version` 필수
+- 응답: 204
+- 오류: 404(리소스 없음), 409(버전 충돌)
+
+### 4.6 샘플 연동 순서
+1. `POST /lectures`로 강의 생성 후 `id`/`version` 확보
+2. `GET /classrooms/{classroomId}/timetable`로 신규 일정 확인
+3. 필요 시 `PATCH /lectures/{lectureId}` + `x-expected-version` 헤더로 수정
+4. 삭제는 `DELETE /lectures/{lectureId}` + 최신 버전 헤더 사용
+5. 재조회하여 리스트 반영 여부 확인
+
+> 다중 필터 및 세부 권한/에러 스펙은 아직 미구현 상태이므로, 구현 완료 시 4.2 섹션에 추가한다.

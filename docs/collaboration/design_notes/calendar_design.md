@@ -107,9 +107,10 @@ notes?: string;
 
 ### 3.2.1 데이터 계층 DTO
 
-* `LectureDto`는 위 필드에 `classroomId`, `departmentId`, `instructorId` 숫자/문자열 키를 명시적으로 포함한다.
+* `LectureDto`는 서버 `Lecture` 엔티티의 전체 속성을 반영한다 (`id`, `title`, `version`, `externalCode?`, `type`, `classroomId`, `departmentId?`, `instructorId?`, `colorHex?`, `startTime`, `endTime`, `recurrenceRule?`, `notes?`, `createdAt`, `updatedAt`).
 * DTO ↔ Domain 변환은 `LectureMapper`에서 수행하며, null 허용 필드는 `Option` 패턴이 아닌 nullable 속성으로 표현한다.
-* RemoteDataSource는 `GET/POST/PUT/DELETE /api/lectures`를 래핑하고, Repository는 DTO를 Domain 엔티티로 승격해 Application 계층에 제공한다.
+* RemoteDataSource는 `/api/v1` 하위의 `GET /classrooms/{classroomId}/timetable`, `POST /lectures`, `PATCH /lectures/{lectureId}`, `DELETE /lectures/{lectureId}`를 래핑하고 `Authorization: Bearer <token>` 헤더 및 `x-expected-version`(필요 시)을 자동으로 세팅한다.
+* 다중 필터(`departmentId`, `instructorId`, `type`, `status`)는 API 레벨에서 아직 동작하지 않으므로, 구현 후 DataSource에 쿼리 파라미터 옵션을 추가할 TODO를 남긴다.
 
 ---
 
@@ -187,21 +188,20 @@ class LectureDataSource extends CalendarDataSource {
 ## 4.1 조회 API (from/to 기반)
 
 ```
-GET /lectures?from=...&to=...&classroomId=...
+GET /classrooms/{classroomId}/timetable?from=...&to=...&tz=Asia/Seoul
 ```
 
 ### 필터
 
-* classroomId
-* departmentId
-* instructorId
-* type
+* 필수: `from`, `to`, `classroomId`
+* 선택: `tz` (표시용 timezone)
+* **미구현 메모**: `departmentId`, `instructorId`, `type`, `status`, recurrence 확장 파라미터(`view`, `expandRecurrence`, `recurrenceExpandLimit`)는 API가 아직 파싱만 수행하므로 실제 필터링/전개 로직이 붙는 시점에 문서를 갱신해야 한다.
 
 ### 서버 처리 기준
 
 * `startTime`이 해당 범위에 포함되는 Lecture 반환
-* 반복 일정은 DB에 저장된 recurrenceRule을 그대로 전달
-* CRUD 전체 계약은 `docs/collaboration/plans/calendar_api_change_request.md`에서 관리한다.
+* 반복 일정은 DB에 저장된 `recurrenceRule`을 그대로 전달 (전개 미구현)
+* CRUD 전체 계약은 `docs/architecture/timetable_api_brief.md` 및 본 문서 섹션 3.2.1을 기준으로 유지한다.
 
 ---
 
