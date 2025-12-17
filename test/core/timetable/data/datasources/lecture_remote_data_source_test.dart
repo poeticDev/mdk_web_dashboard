@@ -18,29 +18,42 @@ void main() {
     dataSource = LectureRemoteDataSourceImpl(dio: dio);
   });
 
-  test('fetchLectures hits GET /lectures with query params', () async {
+  test('fetchLectures hits GET timetable endpoint with query params', () async {
     adapter.enqueue(
       _FakeResponse(
         body: ResponseBody.fromString(
-          jsonEncode(<Map<String, Object?>>[
-            <String, Object?>{
-              'id': '1',
-              'title': '캘린더 테스트',
-              'type': 'LECTURE',
-              'status': 'ACTIVE',
-              'classroomId': 'room-1',
-              'classroomName': '공학관 101',
-              'startTime': '2025-01-01T09:00:00Z',
-              'endTime': '2025-01-01T10:00:00Z',
+          jsonEncode(<String, Object?>{
+            'roomId': 'room-1',
+            'range': <String, Object?>{
+              'from': '2025-01-01T00:00:00Z',
+              'to': '2025-01-07T23:59:59Z',
             },
-          ]),
+            'tz': 'Asia/Seoul',
+            'lectures': <Map<String, Object?>>[
+              <String, Object?>{
+                'id': '1',
+                'title': '캘린더 테스트',
+                'type': 'LECTURE',
+                'status': 'ACTIVE',
+                'classroomId': 'room-1',
+                'startTime': '2025-01-01T09:00:00Z',
+                'endTime': '2025-01-01T10:00:00Z',
+                'version': 1,
+                'createdAt': '2025-01-01T08:00:00Z',
+                'updatedAt': '2025-01-01T08:00:00Z',
+              },
+            ],
+          }),
           200,
           headers: <String, List<String>>{'content-type': <String>['application/json']},
         ),
         onRequest: (RequestOptions options) {
           expect(options.method, 'GET');
-          expect(options.path, ApiConstants.lectures);
-          expect(options.queryParameters['classroomId'], 'room-1');
+          expect(
+            options.path,
+            ApiConstants.classroomTimetablePath('room-1'),
+          );
+          expect(options.queryParameters['tz'], 'Asia/Seoul');
         },
       ),
     );
@@ -50,6 +63,7 @@ void main() {
         from: DateTime.utc(2025, 1, 1),
         to: DateTime.utc(2025, 1, 7),
         classroomId: 'room-1',
+        timezone: 'Asia/Seoul',
       ),
     );
 
@@ -67,9 +81,11 @@ void main() {
             'type': 'EVENT',
             'status': 'ACTIVE',
             'classroomId': 'room-1',
-            'classroomName': '공학관 101',
             'startTime': '2025-01-01T09:00:00Z',
             'endTime': '2025-01-01T10:00:00Z',
+            'version': 1,
+            'createdAt': '2025-01-01T08:00:00Z',
+            'updatedAt': '2025-01-01T08:00:00Z',
           }),
           201,
           headers: <String, List<String>>{'content-type': <String>['application/json']},
@@ -77,6 +93,7 @@ void main() {
         onRequest: (RequestOptions options) {
           expect(options.method, 'POST');
           expect(options.data['title'], '신규 일정');
+          expect(options.data['status'], isNull);
         },
       ),
     );
@@ -85,7 +102,6 @@ void main() {
       LecturePayloadDto(
         title: '신규 일정',
         type: 'EVENT',
-        status: 'ACTIVE',
         classroomId: 'room-1',
         startTime: DateTime.utc(2025, 1, 1, 9),
         endTime: DateTime.utc(2025, 1, 1, 10),
@@ -95,7 +111,7 @@ void main() {
     expect(dto.type, 'EVENT');
   });
 
-  test('updateLecture hits PUT /lectures/:id with query flag', () async {
+  test('updateLecture hits PATCH /lectures/:id with version header', () async {
     adapter.enqueue(
       _FakeResponse(
         body: ResponseBody.fromString(
@@ -105,17 +121,26 @@ void main() {
             'type': 'LECTURE',
             'status': 'ACTIVE',
             'classroomId': 'room-1',
-            'classroomName': '공학관 101',
             'startTime': '2025-01-01T09:00:00Z',
             'endTime': '2025-01-01T10:00:00Z',
+            'version': 2,
+            'createdAt': '2025-01-01T08:00:00Z',
+            'updatedAt': '2025-01-01T09:00:00Z',
           }),
           200,
           headers: <String, List<String>>{'content-type': <String>['application/json']},
         ),
         onRequest: (RequestOptions options) {
-          expect(options.method, 'PUT');
+          expect(options.method, 'PATCH');
           expect(options.path, '${ApiConstants.lectures}/1');
-          expect(options.queryParameters['applyToSeries'], true);
+          expect(
+            options.headers[ApiConstants.expectedVersionHeader],
+            1,
+          );
+          expect(
+            options.data['expectedVersion'],
+            1,
+          );
         },
       ),
     );
@@ -123,11 +148,10 @@ void main() {
     final dto = await dataSource.updateLecture(
       UpdateLectureRequest(
         lectureId: '1',
-        applyToSeries: true,
+        expectedVersion: 1,
         payload: LecturePayloadDto(
           title: '수정된 일정',
           type: 'LECTURE',
-          status: 'ACTIVE',
           classroomId: 'room-1',
           startTime: DateTime.utc(2025, 1, 1, 9),
           endTime: DateTime.utc(2025, 1, 1, 10),
@@ -138,7 +162,7 @@ void main() {
     expect(dto.title, '수정된 일정');
   });
 
-  test('deleteLecture sends DELETE /lectures/:id', () async {
+  test('deleteLecture sends DELETE with version header', () async {
     adapter.enqueue(
       _FakeResponse(
         body: ResponseBody.fromString(
@@ -149,7 +173,10 @@ void main() {
         onRequest: (RequestOptions options) {
           expect(options.method, 'DELETE');
           expect(options.path, '${ApiConstants.lectures}/99');
-          expect(options.queryParameters['deleteSeries'], true);
+          expect(
+            options.headers[ApiConstants.expectedVersionHeader],
+            3,
+          );
         },
       ),
     );
@@ -157,7 +184,7 @@ void main() {
     await dataSource.deleteLecture(
       DeleteLectureRequest(
         lectureId: '99',
-        deleteSeries: true,
+        expectedVersion: 3,
       ),
     );
   });

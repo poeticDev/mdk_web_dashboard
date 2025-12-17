@@ -4,6 +4,7 @@ class LectureQueryRequest {
     required this.from,
     required this.to,
     required this.classroomId,
+    this.timezone,
     this.departmentId,
     this.instructorId,
     this.type,
@@ -13,6 +14,7 @@ class LectureQueryRequest {
   final DateTime from;
   final DateTime to;
   final String classroomId;
+  final String? timezone;
   final String? departmentId;
   final String? instructorId;
   final String? type;
@@ -22,7 +24,7 @@ class LectureQueryRequest {
     return <String, Object?>{
       'from': from.toUtc().toIso8601String(),
       'to': to.toUtc().toIso8601String(),
-      'classroomId': classroomId,
+      if (timezone != null) 'tz': timezone,
       if (departmentId != null) 'departmentId': departmentId,
       if (instructorId != null) 'instructorId': instructorId,
       if (type != null) 'type': type,
@@ -36,92 +38,67 @@ class LecturePayloadDto {
   const LecturePayloadDto({
     required this.title,
     required this.type,
-    required this.status,
     required this.classroomId,
     required this.startTime,
     required this.endTime,
-    this.classroomName,
+    this.externalCode,
     this.departmentId,
-    this.departmentName,
     this.instructorId,
-    this.instructorName,
     this.colorHex,
     this.recurrenceRule,
-    this.recurrenceExceptions = const <DateTime>[],
     this.notes,
   });
 
   final String title;
   final String type;
-  final String status;
   final String classroomId;
-  final String? classroomName;
+  final String? externalCode;
   final String? departmentId;
-  final String? departmentName;
   final String? instructorId;
-  final String? instructorName;
   final DateTime startTime;
   final DateTime endTime;
   final String? colorHex;
   final String? recurrenceRule;
-  final List<DateTime> recurrenceExceptions;
   final String? notes;
 
-  Map<String, Object?> toJson() {
+  Map<String, Object?> toJson({int? expectedVersion}) {
     return <String, Object?>{
       'title': title,
       'type': type,
-      'status': status,
       'classroomId': classroomId,
-      'classroomName': classroomName,
+      'externalCode': externalCode,
       'departmentId': departmentId,
-      'departmentName': departmentName,
       'instructorId': instructorId,
-      'instructorName': instructorName,
       'startTime': startTime.toUtc().toIso8601String(),
       'endTime': endTime.toUtc().toIso8601String(),
       'colorHex': colorHex,
       'recurrenceRule': recurrenceRule,
-      'recurrenceExceptions': recurrenceExceptions
-          .map((DateTime date) => date.toUtc().toIso8601String())
-          .toList(),
       'notes': notes,
+      if (expectedVersion != null) 'expectedVersion': expectedVersion,
     };
   }
 }
 
-/// PUT /lectures/:id 호출 시 필요한 정보.
+/// PATCH /lectures/{id} 호출 시 필요한 정보.
 class UpdateLectureRequest {
   const UpdateLectureRequest({
     required this.lectureId,
     required this.payload,
-    this.applyToSeries = false,
+    this.expectedVersion,
   });
 
   final String lectureId;
   final LecturePayloadDto payload;
-  final bool applyToSeries;
-
-  Map<String, Object?> toQueryParameters() {
-    return applyToSeries
-        ? <String, Object?>{'applyToSeries': true}
-        : <String, Object?>{};
-  }
+  final int? expectedVersion;
 }
 
-/// DELETE /lectures/:id 호출 시 반복 일괄 삭제 여부를 함께 전달한다.
+/// DELETE /lectures/{id} 요청 파라미터.
 class DeleteLectureRequest {
   const DeleteLectureRequest({
     required this.lectureId,
-    this.deleteSeries = false,
+    required this.expectedVersion,
   });
 
   final String lectureId;
-  final bool deleteSeries;
-
-  Map<String, Object?> toQueryParameters() {
-    return deleteSeries
-        ? <String, Object?>{'deleteSeries': true}
-        : <String, Object?>{};
-  }
+  final int expectedVersion;
 }

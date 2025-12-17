@@ -24,5 +24,8 @@ class LectureCalendarDataSource extends CalendarDataSource {
   Color getColor(int index) => _get(index).color;
 
   @override
-  String? getNotes(int index) => _get(index).statusLabel;
+  String? getNotes(int index) {
+    final LectureViewModel lecture = _get(index);
+    return lecture.notes ?? lecture.statusLabel;
+  }
 }

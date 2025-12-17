@@ -66,11 +66,14 @@ class _FakeGetLecturesUseCase extends GetLecturesUseCase {
         id: '1',
         title: '테스트 강의',
         type: LectureType.lecture,
-        status: LectureStatus.scheduled,
+        lectureStatus: LectureStatus.scheduled,
         classroomId: query.classroomId,
         classroomName: '공학관 101',
         start: DateTime(2025, 1, 1, 9),
         end: DateTime(2025, 1, 1, 10),
+        version: 1,
+        createdAt: DateTime(2024, 12, 31, 23),
+        updatedAt: DateTime(2024, 12, 31, 23, 30),
       ),
     ];
   }

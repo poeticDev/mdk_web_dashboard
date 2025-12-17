@@ -10,11 +10,14 @@ void main() {
         id: '1',
         title: '샘플 일정',
         type: LectureType.lecture,
-        status: LectureStatus.scheduled,
+        lectureStatus: LectureStatus.scheduled,
         classroomId: 'room-1',
         classroomName: '공학관 101',
         start: DateTime(2025, 1, 1, 9),
         end: DateTime(2025, 1, 1, 11, 30),
+        version: 1,
+        createdAt: DateTime(2024, 12, 31, 23, 59),
+        updatedAt: DateTime(2025, 1, 1),
       );
       expect(entity.duration.inMinutes, 150);
     });
@@ -24,11 +27,14 @@ void main() {
         id: '1',
         title: '샘플 일정',
         type: LectureType.event,
-        status: LectureStatus.scheduled,
+        lectureStatus: LectureStatus.scheduled,
         classroomId: 'room-1',
         classroomName: '공학관 101',
         start: DateTime(2025, 1, 1, 9),
         end: DateTime(2025, 1, 1, 11),
+        version: 1,
+        createdAt: DateTime(2024, 12, 31, 23, 59),
+        updatedAt: DateTime(2025, 1, 1),
       );
       expect(entity.occursOn(DateTime(2025, 1, 1, 10)), isTrue);
       expect(entity.occursOn(DateTime(2025, 1, 1, 12)), isFalse);

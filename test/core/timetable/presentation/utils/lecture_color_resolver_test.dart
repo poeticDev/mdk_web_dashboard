@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mdk_app_theme/mdk_app_theme.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
@@ -11,16 +12,21 @@ void main() {
   LectureEntity _build({
     LectureType type = LectureType.lecture,
     LectureStatus status = LectureStatus.scheduled,
+    String? colorHex,
   }) {
     return LectureEntity(
       id: '1',
       title: '샘플',
       type: type,
-      status: status,
+      lectureStatus: status,
       classroomId: 'room-1',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
       end: DateTime.utc(2025, 1, 1, 10),
+      colorHex: colorHex,
+      version: 1,
+      createdAt: DateTime.utc(2024, 12, 31, 23, 59),
+      updatedAt: DateTime.utc(2025, 1, 1),
     );
   }
 
@@ -35,5 +41,10 @@ void main() {
         resolver.resolveColor(_build(status: LectureStatus.canceled));
     expect(canceled.opacity, equals(1.0));
     expect(canceled.computeLuminance(), greaterThan(active.computeLuminance()));
+  });
+
+  test('uses custom colorHex when provided', () {
+    final color = resolver.resolveColor(_build(colorHex: '#123456'));
+    expect(color.value, equals(const Color(0xFF123456).value));
   });
 }

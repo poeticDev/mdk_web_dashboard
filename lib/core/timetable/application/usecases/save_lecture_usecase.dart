@@ -15,7 +15,7 @@ class SaveLectureUseCase {
       UpdateLectureInput(
         lectureId: command.lectureId!,
         payload: command.payload,
-        applyToSeries: command.applyToSeries,
+        expectedVersion: command.expectedVersion,
       ),
     );
   }
@@ -26,10 +26,10 @@ class SaveLectureCommand {
   const SaveLectureCommand({
     required this.payload,
     this.lectureId,
-    this.applyToSeries = false,
+    this.expectedVersion,
   });
 
   final LectureWriteInput payload;
   final String? lectureId;
-  final bool applyToSeries;
+  final int? expectedVersion;
 }

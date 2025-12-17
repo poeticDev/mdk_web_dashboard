@@ -15,9 +15,11 @@ void main() {
       type: 'EXAM',
       status: 'CANCELED',
       classroomId: 'room-1',
-      classroomName: '공학관 101',
       startTime: DateTime.utc(2025, 1, 1, 9),
       endTime: DateTime.utc(2025, 1, 1, 11),
+      version: 2,
+      createdAt: DateTime.utc(2024, 12, 1),
+      updatedAt: DateTime.utc(2024, 12, 2),
       recurrenceExceptions: <DateTime>[DateTime.utc(2025, 1, 3, 9)],
     );
 
@@ -32,6 +34,7 @@ void main() {
       from: DateTime.utc(2025, 1, 1),
       to: DateTime.utc(2025, 1, 31),
       classroomId: 'room-1',
+      timezone: 'Asia/Seoul',
       departmentId: 'dept',
       type: LectureType.event,
       status: LectureStatus.scheduled,
@@ -39,21 +42,20 @@ void main() {
     final request = mapper.toQueryRequest(query);
     expect(request.type, 'EVENT');
     expect(request.status, 'ACTIVE');
+    expect(request.timezone, 'Asia/Seoul');
   });
 
   test('toPayload copies writer input', () {
     final LectureWriteInput input = LectureWriteInput(
       title: 'AI 기초',
       type: LectureType.lecture,
-      status: LectureStatus.scheduled,
       classroomId: 'room-1',
-      classroomName: '공학관 101',
       start: DateTime.utc(2025, 2, 1, 10),
       end: DateTime.utc(2025, 2, 1, 12),
-      recurrenceExceptions: <DateTime>[DateTime.utc(2025, 2, 8, 10)],
+      externalCode: 'EXT-1',
     );
     final payload = mapper.toPayload(input);
     expect(payload.type, 'LECTURE');
-    expect(payload.recurrenceExceptions.first.year, 2025);
+    expect(payload.externalCode, 'EXT-1');
   });
 }

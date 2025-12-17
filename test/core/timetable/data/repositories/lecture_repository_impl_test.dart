@@ -4,7 +4,6 @@ import 'package:web_dashboard/core/timetable/data/dtos/lecture_dto.dart';
 import 'package:web_dashboard/core/timetable/data/dtos/lecture_request_dtos.dart';
 import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
 import 'package:web_dashboard/core/timetable/data/repositories/lecture_repository_impl.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
 
@@ -29,9 +28,11 @@ void main() {
         type: 'LECTURE',
         status: 'ACTIVE',
         classroomId: 'room-1',
-        classroomName: '공학관 101',
         startTime: DateTime.utc(2025, 1, 1, 9),
         endTime: DateTime.utc(2025, 1, 1, 10),
+        version: 1,
+        createdAt: DateTime.utc(2025, 1, 1, 8),
+        updatedAt: DateTime.utc(2025, 1, 1, 8),
       ),
     ];
 
@@ -40,6 +41,7 @@ void main() {
         from: DateTime.utc(2025, 1, 1),
         to: DateTime.utc(2025, 1, 7),
         classroomId: 'room-1',
+        timezone: 'Asia/Seoul',
         type: LectureType.lecture,
       ),
     );
@@ -56,18 +58,18 @@ void main() {
       type: 'EVENT',
       status: 'ACTIVE',
       classroomId: 'room-1',
-      classroomName: '공학관 101',
       startTime: DateTime.utc(2025, 1, 1, 9),
       endTime: DateTime.utc(2025, 1, 1, 10),
+      version: 1,
+      createdAt: DateTime.utc(2025, 1, 1, 8),
+      updatedAt: DateTime.utc(2025, 1, 1, 8),
     );
 
     final entity = await repository.createLecture(
       LectureWriteInput(
         title: '신규 강의',
         type: LectureType.event,
-        status: LectureStatus.scheduled,
         classroomId: 'room-1',
-        classroomName: '공학관 101',
         start: DateTime.utc(2025, 1, 1, 9),
         end: DateTime.utc(2025, 1, 1, 10),
       ),
@@ -84,21 +86,21 @@ void main() {
       type: 'LECTURE',
       status: 'ACTIVE',
       classroomId: 'room-1',
-      classroomName: '공학관 101',
       startTime: DateTime.utc(2025, 1, 1, 9),
       endTime: DateTime.utc(2025, 1, 1, 10),
+      version: 2,
+      createdAt: DateTime.utc(2025, 1, 1, 8),
+      updatedAt: DateTime.utc(2025, 1, 1, 8),
     );
 
     final entity = await repository.updateLecture(
       UpdateLectureInput(
         lectureId: '55',
-        applyToSeries: true,
+        expectedVersion: 1,
         payload: LectureWriteInput(
           title: '수정 강의',
           type: LectureType.lecture,
-          status: LectureStatus.scheduled,
           classroomId: 'room-1',
-          classroomName: '공학관 101',
           start: DateTime.utc(2025, 1, 1, 9),
           end: DateTime.utc(2025, 1, 1, 10),
         ),
@@ -106,7 +108,7 @@ void main() {
     );
 
     expect(remote.lastUpdate?.lectureId, '55');
-    expect(remote.lastUpdate?.applyToSeries, isTrue);
+    expect(remote.lastUpdate?.expectedVersion, 1);
     expect(entity.title, '수정 강의');
   });
 
@@ -114,12 +116,12 @@ void main() {
     await repository.deleteLecture(
       const DeleteLectureInput(
         lectureId: '77',
-        deleteSeries: true,
+        expectedVersion: 3,
       ),
     );
 
     expect(remote.lastDelete?.lectureId, '77');
-    expect(remote.lastDelete?.deleteSeries, isTrue);
+    expect(remote.lastDelete?.expectedVersion, 3);
   });
 }
 

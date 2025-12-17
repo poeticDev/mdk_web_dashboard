@@ -20,10 +20,12 @@ class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
   @override
   Future<List<LectureDto>> fetchLectures(LectureQueryRequest request) async {
     final Response<dynamic> response = await _dio.get<dynamic>(
-      ApiConstants.lectures,
+      ApiConstants.classroomTimetablePath(request.classroomId),
       queryParameters: request.toQueryParameters(),
     );
-    final List<dynamic> items = response.data as List<dynamic>? ?? <dynamic>[];
+    final Map<String, dynamic> envelope =
+        (response.data as Map<String, dynamic>?) ?? <String, dynamic>{};
+    final List<dynamic> items = envelope['lectures'] as List<dynamic>? ?? <dynamic>[];
     return items
         .map(
           (dynamic item) => LectureDto.fromJson(item as Map<String, Object?>),
@@ -42,10 +44,12 @@ class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
 
   @override
   Future<LectureDto> updateLecture(UpdateLectureRequest request) async {
-    final Response<dynamic> response = await _dio.put<dynamic>(
+    final Response<dynamic> response = await _dio.patch<dynamic>(
       '${ApiConstants.lectures}/${request.lectureId}',
-      data: request.payload.toJson(),
-      queryParameters: request.toQueryParameters(),
+      data: request.payload.toJson(
+        expectedVersion: request.expectedVersion,
+      ),
+      options: _buildVersionOption(request.expectedVersion),
     );
     return LectureDto.fromJson(response.data as Map<String, Object?>);
   }
@@ -54,7 +58,18 @@ class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
   Future<void> deleteLecture(DeleteLectureRequest request) async {
     await _dio.delete<void>(
       '${ApiConstants.lectures}/${request.lectureId}',
-      queryParameters: request.toQueryParameters(),
+      options: _buildVersionOption(request.expectedVersion),
+    );
+  }
+
+  Options? _buildVersionOption(int? version) {
+    if (version == null) {
+      return null;
+    }
+    return Options(
+      headers: <String, Object?>{
+        ApiConstants.expectedVersionHeader: version,
+      },
     );
   }
 }

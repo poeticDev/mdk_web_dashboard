@@ -69,11 +69,11 @@ class _ClassroomTimetableSectionState
     final TimetableDateRange? range = state.visibleRange;
 
     return Card(
-      elevation: 0,
+      elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             _TimetableHeader(
               view: _calendarView,
@@ -118,7 +118,7 @@ class _ClassroomTimetableSectionState
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: _calendarView == CalendarView.week ? 520 : 480,
+              height: _calendarView == CalendarView.week ? 800 : 600,
               child: SfCalendar(
                 controller: _calendarController,
                 view: _calendarView,
@@ -130,7 +130,7 @@ class _ClassroomTimetableSectionState
                 backgroundColor: theme.colorScheme.surface,
                 dataSource: dataSource,
                 showNavigationArrow: false,
-                todayHighlightColor: theme.colorScheme.primary,
+                todayHighlightColor: theme.colorScheme.secondary,
                 monthViewSettings: MonthViewSettings(
                   showAgenda: true,
                   appointmentDisplayCount: 3,

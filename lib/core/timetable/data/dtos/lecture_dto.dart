@@ -4,11 +4,15 @@ class LectureDto {
     required this.id,
     required this.title,
     required this.type,
-    required this.status,
     required this.classroomId,
-    required this.classroomName,
     required this.startTime,
     required this.endTime,
+    required this.version,
+    required this.createdAt,
+    required this.updatedAt,
+    this.status = 'ACTIVE',
+    this.classroomName,
+    this.externalCode,
     this.departmentId,
     this.departmentName,
     this.instructorId,
@@ -24,13 +28,17 @@ class LectureDto {
   final String type;
   final String status;
   final String classroomId;
-  final String classroomName;
+  final String? classroomName;
+  final String? externalCode;
   final String? departmentId;
   final String? departmentName;
   final String? instructorId;
   final String? instructorName;
   final DateTime startTime;
   final DateTime endTime;
+  final int version;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   final String? colorHex;
   final String? recurrenceRule;
   final List<DateTime> recurrenceExceptions;
@@ -40,19 +48,31 @@ class LectureDto {
   factory LectureDto.fromJson(Map<String, Object?> json) {
     final List<Object?> rawExceptions =
         json['recurrenceExceptions'] as List<Object?>? ?? <Object?>[];
+    DateTime parseDate(String key) {
+      final Object? raw = json[key];
+      if (raw == null) {
+        return DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+      }
+      return DateTime.parse(raw.toString());
+    }
+
     return LectureDto(
       id: json['id']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
       type: json['type']?.toString() ?? 'LECTURE',
       status: json['status']?.toString() ?? 'ACTIVE',
       classroomId: json['classroomId']?.toString() ?? '',
-      classroomName: json['classroomName']?.toString() ?? '',
+      classroomName: json['classroomName']?.toString(),
+      externalCode: json['externalCode']?.toString(),
       departmentId: json['departmentId']?.toString(),
       departmentName: json['departmentName']?.toString(),
       instructorId: json['instructorId']?.toString(),
       instructorName: json['instructorName']?.toString(),
-      startTime: DateTime.parse(json['startTime']!.toString()),
-      endTime: DateTime.parse(json['endTime']!.toString()),
+      startTime: parseDate('startTime'),
+      endTime: parseDate('endTime'),
+      version: int.tryParse(json['version']?.toString() ?? '') ?? 0,
+      createdAt: parseDate('createdAt'),
+      updatedAt: parseDate('updatedAt'),
       colorHex: json['colorHex']?.toString(),
       recurrenceRule: json['recurrenceRule']?.toString(),
       recurrenceExceptions: rawExceptions
@@ -72,12 +92,16 @@ class LectureDto {
       'status': status,
       'classroomId': classroomId,
       'classroomName': classroomName,
+      'externalCode': externalCode,
       'departmentId': departmentId,
       'departmentName': departmentName,
       'instructorId': instructorId,
       'instructorName': instructorName,
       'startTime': startTime.toUtc().toIso8601String(),
       'endTime': endTime.toUtc().toIso8601String(),
+      'version': version,
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       'colorHex': colorHex,
       'recurrenceRule': recurrenceRule,
       'recurrenceExceptions': recurrenceExceptions

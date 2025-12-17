@@ -11,12 +11,16 @@ void main() {
       id: '1',
       title: 'AI 개론',
       type: LectureType.lecture,
-      status: LectureStatus.scheduled,
+      lectureStatus: LectureStatus.scheduled,
       classroomId: 'room-1',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
       end: DateTime.utc(2025, 1, 1, 10),
       instructorName: '김교수',
+      version: 1,
+      createdAt: DateTime.utc(2024, 12, 31, 23, 59),
+      updatedAt: DateTime.utc(2025, 1, 1),
+      notes: '비고',
     );
 
     final vm = LectureViewModel.fromEntity(
@@ -27,5 +31,7 @@ void main() {
     expect(vm.title, 'AI 개론');
     expect(vm.statusLabel, '진행');
     expect(vm.instructorName, '김교수');
+    expect(vm.version, 1);
+    expect(vm.notes, '비고');
   });
 }

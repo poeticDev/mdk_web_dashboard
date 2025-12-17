@@ -15,8 +15,9 @@ part 'classroom_timetable_controller.g.dart';
 class ClassroomTimetableController
     extends _$ClassroomTimetableController {
   /// TODO: 서버 연동 완료 후 false로 변경한다.
-  static bool demoDataEnabled = true;
+  static bool demoDataEnabled = false;
   static const int _demoLecturesPerMonth = 10;
+  static const String _defaultTimezone = 'Asia/Seoul';
   static const List<String> _demoCourseNames = <String>[
     'AI 개론',
     '스마트보안 실습',
@@ -59,6 +60,7 @@ class ClassroomTimetableController
                   from: targetRange.from,
                   to: targetRange.to,
                   classroomId: state.classroomId,
+                  timezone: _defaultTimezone,
                   departmentId: state.departmentId,
                   instructorId: state.instructorId,
                   type: state.filterType,
@@ -126,7 +128,7 @@ class ClassroomTimetableController
             id: '${anchor.month}_$i',
             title: _demoCourseNames[i % _demoCourseNames.length],
             type: LectureType.values[i % LectureType.values.length],
-            status: i % 6 == 0
+            lectureStatus: i % 6 == 0
                 ? LectureStatus.canceled
                 : LectureStatus.scheduled,
             classroomId: state.classroomId,
@@ -135,6 +137,9 @@ class ClassroomTimetableController
             instructorName: _demoProfessors[i % _demoProfessors.length],
             start: start,
             end: end,
+            version: 1,
+            createdAt: DateTime.now().subtract(const Duration(days: 1)),
+            updatedAt: DateTime.now(),
           ),
         );
       }

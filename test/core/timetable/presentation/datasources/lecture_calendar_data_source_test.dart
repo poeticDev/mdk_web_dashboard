@@ -13,6 +13,8 @@ void main() {
       end: DateTime.utc(2025, 1, 1, 10),
       color: Colors.purple,
       statusLabel: '진행',
+      version: 1,
+      notes: '비고',
     );
     final dataSource = LectureCalendarDataSource(<LectureViewModel>[vm]);
 

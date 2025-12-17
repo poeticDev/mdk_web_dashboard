@@ -9,11 +9,15 @@ class LectureEntity {
     required this.id,
     required this.title,
     required this.type,
-    required this.status,
     required this.classroomId,
-    required this.classroomName,
     required this.start,
     required this.end,
+    required this.version,
+    required this.createdAt,
+    required this.updatedAt,
+    LectureStatus lectureStatus = LectureStatus.scheduled,
+    String? classroomName,
+    this.externalCode,
     this.departmentId,
     this.departmentName,
     this.instructorId,
@@ -22,9 +26,11 @@ class LectureEntity {
     this.recurrenceRule,
     List<DateTime> recurrenceExceptions = const <DateTime>[],
     this.notes,
-  }) : recurrenceExceptions = UnmodifiableListView<DateTime>(
-         List<DateTime>.from(recurrenceExceptions)..sort(),
-       );
+  })  : classroomName = classroomName ?? classroomId,
+        status = lectureStatus,
+        recurrenceExceptions = UnmodifiableListView<DateTime>(
+          List<DateTime>.from(recurrenceExceptions)..sort(),
+        );
 
   final String id;
   final String title;
@@ -32,12 +38,16 @@ class LectureEntity {
   final LectureStatus status;
   final String classroomId;
   final String classroomName;
+  final String? externalCode;
   final String? departmentId;
   final String? departmentName;
   final String? instructorId;
   final String? instructorName;
   final DateTime start;
   final DateTime end;
+  final int version;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   final String? colorHex;
   final String? recurrenceRule;
   final UnmodifiableListView<DateTime> recurrenceExceptions;

@@ -15,7 +15,6 @@ class LectureMapper {
       id: dto.id,
       title: dto.title,
       type: LectureType.fromApi(dto.type),
-      status: LectureStatus.fromApi(dto.status),
       classroomId: dto.classroomId,
       classroomName: dto.classroomName,
       departmentId: dto.departmentId,
@@ -24,6 +23,11 @@ class LectureMapper {
       instructorName: dto.instructorName,
       start: dto.startTime,
       end: dto.endTime,
+      lectureStatus: LectureStatus.fromApi(dto.status),
+      externalCode: dto.externalCode,
+      version: dto.version,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
       colorHex: dto.colorHex,
       recurrenceRule: dto.recurrenceRule,
       recurrenceExceptions: dto.recurrenceExceptions,
@@ -36,6 +40,7 @@ class LectureMapper {
       from: query.from,
       to: query.to,
       classroomId: query.classroomId,
+      timezone: query.timezone,
       departmentId: query.departmentId,
       instructorId: query.instructorId,
       type: query.type?.apiValue,
@@ -47,18 +52,14 @@ class LectureMapper {
     return LecturePayloadDto(
       title: input.title,
       type: input.type.apiValue,
-      status: input.status.apiValue,
       classroomId: input.classroomId,
-      classroomName: input.classroomName,
+      externalCode: input.externalCode,
       departmentId: input.departmentId,
-      departmentName: input.departmentName,
       instructorId: input.instructorId,
-      instructorName: input.instructorName,
       startTime: input.start,
       endTime: input.end,
       colorHex: input.colorHex,
       recurrenceRule: input.recurrenceRule,
-      recurrenceExceptions: input.recurrenceExceptions,
       notes: input.notes,
     );
   }
@@ -67,14 +68,14 @@ class LectureMapper {
     return UpdateLectureRequest(
       lectureId: input.lectureId,
       payload: toPayload(input.payload),
-      applyToSeries: input.applyToSeries,
+      expectedVersion: input.expectedVersion,
     );
   }
 
   DeleteLectureRequest toDeleteRequest(DeleteLectureInput input) {
     return DeleteLectureRequest(
       lectureId: input.lectureId,
-      deleteSeries: input.deleteSeries,
+      expectedVersion: input.expectedVersion,
     );
   }
 }

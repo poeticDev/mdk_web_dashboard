@@ -13,32 +13,58 @@ class LectureColorResolver {
   final AppColors _colors;
 
   Color resolveColor(LectureEntity lecture) {
-    final LectureType type = lecture.type;
-    Color baseColor;
-    switch (type) {
-      case LectureType.lecture:
-        baseColor = _colors.primary;
-        break;
-      case LectureType.event:
-        baseColor = _colors.success;
-        break;
-      case LectureType.exam:
-        baseColor = _colors.error;
-        break;
+    final Color? customColor = _parseHexColor(lecture.colorHex);
+    if (customColor != null) {
+      return _applyCancellationTint(customColor, lecture.status);
     }
+
+    final LectureType type = lecture.type;
+    final Color baseColor = _baseColorByType(type);
     final double lightnessVariance =
         _computeVariance(lecture.title.hashCode, type.index);
     final HSLColor hsl = HSLColor.fromColor(baseColor);
-    Color resolved = hsl
+    final Color varied = hsl
         .withLightness((hsl.lightness + lightnessVariance).clamp(0.2, 0.8))
         .toColor();
-    if (lecture.status == LectureStatus.canceled) {
-      resolved = HSLColor.fromColor(resolved)
-          .withSaturation(0.2)
-          .withLightness(math.min(0.9, hsl.lightness + 0.2))
-          .toColor();
+    return _applyCancellationTint(varied, lecture.status);
+  }
+
+  Color _baseColorByType(LectureType type) {
+    switch (type) {
+      case LectureType.lecture:
+        return _colors.primary;
+      case LectureType.event:
+        return _colors.success;
+      case LectureType.exam:
+        return _colors.error;
     }
-    return resolved;
+  }
+
+  Color? _parseHexColor(String? hex) {
+    if (hex == null || hex.isEmpty) {
+      return null;
+    }
+    final String normalized = hex.replaceAll('#', '').toUpperCase();
+    if (normalized.length != 6 && normalized.length != 8) {
+      return null;
+    }
+    final String value = normalized.length == 6 ? 'FF$normalized' : normalized;
+    final int? colorValue = int.tryParse(value, radix: 16);
+    if (colorValue == null) {
+      return null;
+    }
+    return Color(colorValue);
+  }
+
+  Color _applyCancellationTint(Color source, LectureStatus status) {
+    if (status != LectureStatus.canceled) {
+      return source;
+    }
+    final HSLColor hsl = HSLColor.fromColor(source);
+    return hsl
+        .withSaturation(0.2)
+        .withLightness(math.min(0.9, hsl.lightness + 0.2))
+        .toColor();
   }
 
   double _computeVariance(int hash, int seed) {

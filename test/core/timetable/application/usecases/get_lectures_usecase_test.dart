@@ -20,11 +20,14 @@ void main() {
         id: '1',
         title: '강의 1',
         type: LectureType.lecture,
-        status: LectureStatus.scheduled,
+        lectureStatus: LectureStatus.scheduled,
         classroomId: 'room-1',
         classroomName: '공학관 101',
         start: DateTime.utc(2025, 1, 1, 9),
         end: DateTime.utc(2025, 1, 1, 10),
+        version: 1,
+        createdAt: DateTime.utc(2024, 12, 31, 20),
+        updatedAt: DateTime.utc(2024, 12, 31, 21),
       ),
     ];
     final usecase = GetLecturesUseCase(repository);
@@ -46,11 +49,14 @@ void main() {
       id: 'new',
       title: '신규',
       type: LectureType.event,
-      status: LectureStatus.scheduled,
+      lectureStatus: LectureStatus.scheduled,
       classroomId: 'room-1',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
       end: DateTime.utc(2025, 1, 1, 10),
+      version: 1,
+      createdAt: DateTime.utc(2024, 12, 31, 20),
+      updatedAt: DateTime.utc(2024, 12, 31, 21),
     );
     final usecase = SaveLectureUseCase(repository);
 
@@ -59,9 +65,7 @@ void main() {
         payload: LectureWriteInput(
           title: '신규',
           type: LectureType.event,
-          status: LectureStatus.scheduled,
           classroomId: 'room-1',
-          classroomName: '공학관 101',
           start: DateTime.utc(2025, 1, 1, 9),
           end: DateTime.utc(2025, 1, 1, 10),
         ),
@@ -77,31 +81,32 @@ void main() {
       id: 'update',
       title: '수정',
       type: LectureType.lecture,
-      status: LectureStatus.scheduled,
+      lectureStatus: LectureStatus.scheduled,
       classroomId: 'room-1',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
       end: DateTime.utc(2025, 1, 1, 10),
+      version: 2,
+      createdAt: DateTime.utc(2024, 12, 31, 20),
+      updatedAt: DateTime.utc(2025, 1, 1, 8),
     );
     final usecase = SaveLectureUseCase(repository);
 
     await usecase.execute(
       SaveLectureCommand(
         lectureId: 'update',
-        applyToSeries: true,
+        expectedVersion: 1,
         payload: LectureWriteInput(
           title: '수정',
           type: LectureType.lecture,
-          status: LectureStatus.scheduled,
           classroomId: 'room-1',
-          classroomName: '공학관 101',
           start: DateTime.utc(2025, 1, 1, 9),
           end: DateTime.utc(2025, 1, 1, 10),
         ),
       ),
     );
 
-    expect(repository.lastUpdate?.applyToSeries, isTrue);
+    expect(repository.lastUpdate?.expectedVersion, 1);
     expect(repository.updatedCount, 1);
   });
 
@@ -111,7 +116,7 @@ void main() {
     await usecase.execute(
       const DeleteLectureInput(
         lectureId: 'delete',
-        deleteSeries: true,
+        expectedVersion: 4,
       ),
     );
 

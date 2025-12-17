@@ -11,8 +11,10 @@ class LectureViewModel {
     required this.end,
     required this.color,
     required this.statusLabel,
+    required this.version,
     this.departmentName,
     this.instructorName,
+    this.notes,
   });
 
   final String id;
@@ -22,8 +24,10 @@ class LectureViewModel {
   final DateTime end;
   final Color color;
   final String statusLabel;
+  final int version;
   final String? departmentName;
   final String? instructorName;
+  final String? notes;
 
   factory LectureViewModel.fromEntity(
     LectureEntity entity, {
@@ -39,6 +43,8 @@ class LectureViewModel {
       statusLabel: entity.status.isCanceled ? '휴강' : '진행',
       departmentName: entity.departmentName,
       instructorName: entity.instructorName,
+      version: entity.version,
+      notes: entity.notes,
     );
   }
 }
