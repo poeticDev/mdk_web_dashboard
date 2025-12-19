@@ -73,6 +73,7 @@ dependencies:
   dio: ^5.9.0
   gsheets: ^0.5.0
   json_annotation: ^4.9.0
+  intl: ^0.20.2
 
   ### Media
   media_kit: ^1.2.2 # Primary package.

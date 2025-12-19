@@ -1,3 +1,5 @@
+import 'package:web_dashboard/common/utils/date_time_utils.dart';
+
 /// /lectures 응답 구조를 표현하는 DTO.
 class LectureDto {
   LectureDto({
@@ -48,13 +50,6 @@ class LectureDto {
   factory LectureDto.fromJson(Map<String, Object?> json) {
     final List<Object?> rawExceptions =
         json['recurrenceExceptions'] as List<Object?>? ?? <Object?>[];
-    DateTime parseDate(String key) {
-      final Object? raw = json[key];
-      if (raw == null) {
-        return DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
-      }
-      return DateTime.parse(raw.toString());
-    }
 
     return LectureDto(
       id: json['id']?.toString() ?? '',
@@ -68,16 +63,15 @@ class LectureDto {
       departmentName: json['departmentName']?.toString(),
       instructorId: json['instructorId']?.toString(),
       instructorName: json['instructorName']?.toString(),
-      startTime: parseDate('startTime'),
-      endTime: parseDate('endTime'),
+      startTime: DateTimeUtils.parseUtcFromJson(json['startTime']),
+      endTime: DateTimeUtils.parseUtcFromJson(json['endTime']),
       version: int.tryParse(json['version']?.toString() ?? '') ?? 0,
-      createdAt: parseDate('createdAt'),
-      updatedAt: parseDate('updatedAt'),
+      createdAt: DateTimeUtils.parseUtcFromJson(json['createdAt']),
+      updatedAt: DateTimeUtils.parseUtcFromJson(json['updatedAt']),
       colorHex: json['colorHex']?.toString(),
       recurrenceRule: json['recurrenceRule']?.toString(),
       recurrenceExceptions: rawExceptions
-          .whereType<String>()
-          .map(DateTime.parse)
+          .map((Object? value) => DateTimeUtils.parseUtcFromJson(value))
           .toList(),
       notes: json['notes']?.toString(),
     );

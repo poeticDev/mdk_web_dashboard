@@ -4,6 +4,7 @@ import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:web_dashboard/core/auth/application/auth_controller.dart';
 import 'package:web_dashboard/core/auth/domain/entities/auth_user.dart';
+import 'package:web_dashboard/common/utils/date_time_utils.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
@@ -137,6 +138,7 @@ class _ClassroomTimetableSectionState
                   appointmentDisplayMode:
                       MonthAppointmentDisplayMode.appointment,
                 ),
+                timeZone: 'Korea Standard Time',
                 timeSlotViewSettings: const TimeSlotViewSettings(
                   startHour: 8,
                   endHour: 22,
@@ -401,9 +403,14 @@ class _ClassroomTimetableSectionState
   }
 
   String _formatRange(DateTime start, DateTime end) {
-    return '${start.month}/${start.day} '
-        '${_twoDigits(start.hour)}:${_twoDigits(start.minute)}'
-        ' ~ ${_twoDigits(end.hour)}:${_twoDigits(end.minute)}';
+    final String localeTag = Localizations.localeOf(context).toLanguageTag();
+    return DateTimeUtils.formatRange(
+      start,
+      end,
+      startPattern: 'MM/dd HH:mm',
+      endPattern: 'HH:mm',
+      locale: localeTag,
+    );
   }
 
   String _twoDigits(int value) => value.toString().padLeft(2, '0');
