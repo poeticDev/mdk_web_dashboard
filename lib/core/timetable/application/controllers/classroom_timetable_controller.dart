@@ -51,21 +51,8 @@ class ClassroomTimetableController
       visibleRange: targetRange,
     );
     try {
-      final List<LectureEntity> lectures = demoDataEnabled
-          ? _generateDemoLectures(targetRange)
-          : await ref
-              .read(getLecturesUseCaseProvider)
-              .execute(
-                LectureQuery(
-                  from: targetRange.from,
-                  to: targetRange.to,
-                  classroomId: state.classroomId,
-                  timezone: _defaultTimezone,
-                  departmentId: state.departmentId,
-                  instructorId: state.instructorId,
-                  type: state.filterType,
-                ),
-              );
+      final List<LectureEntity> lectures =
+          await _requestLectures(targetRange);
       state = state.copyWith(
         lectures: lectures,
         isLoading: false,
@@ -99,6 +86,13 @@ class ClassroomTimetableController
 
   void updateRange(TimetableDateRange range) {
     state = state.copyWith(visibleRange: range);
+  }
+
+  /// 무상태로 특정 범위의 강의 목록만 조회한다.
+  Future<List<LectureEntity>> fetchLecturesByRange(
+    TimetableDateRange range,
+  ) {
+    return _requestLectures(range);
   }
 
   List<LectureEntity> _generateDemoLectures(
@@ -149,5 +143,24 @@ class ClassroomTimetableController
           (LectureEntity lecture) => targetRange.contains(lecture.start),
         )
         .toList();
+  }
+
+  Future<List<LectureEntity>> _requestLectures(
+    TimetableDateRange targetRange,
+  ) async {
+    if (demoDataEnabled) {
+      return _generateDemoLectures(targetRange);
+    }
+    return ref.read(getLecturesUseCaseProvider).execute(
+          LectureQuery(
+            from: targetRange.from,
+            to: targetRange.to,
+            classroomId: state.classroomId,
+            timezone: _defaultTimezone,
+            departmentId: state.departmentId,
+            instructorId: state.instructorId,
+            type: state.filterType,
+          ),
+        );
   }
 }
