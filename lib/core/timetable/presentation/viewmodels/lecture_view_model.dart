@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 
 /// UI가 구독하는 불변 ViewModel.
 class LectureViewModel {
@@ -12,6 +13,7 @@ class LectureViewModel {
     required this.color,
     required this.statusLabel,
     required this.version,
+    required this.type,
     this.departmentName,
     this.instructorName,
     this.notes,
@@ -25,6 +27,7 @@ class LectureViewModel {
   final Color color;
   final String statusLabel;
   final int version;
+  final LectureType type;
   final String? departmentName;
   final String? instructorName;
   final String? notes;
@@ -44,6 +47,7 @@ class LectureViewModel {
       departmentName: entity.departmentName,
       instructorName: entity.instructorName,
       version: entity.version,
+      type: entity.type,
       notes: entity.notes,
     );
   }

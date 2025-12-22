@@ -14,6 +14,7 @@ import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_ca
 import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_resolver.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_dialogs.dart';
+import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_modal.dart';
 
 const double _weekCalendarHeight = 800;
 const double _monthCalendarHeight = 600;
@@ -427,11 +428,13 @@ class _ClassroomTimetableSectionState
   }
 
   void _openCreateDialog(DateTime start) {
-    ClassroomTimetableDialogs.showCreateDialog(
+    ClassroomTimetableModal.show(
       context: context,
-      start: start,
-      formatRange: _formatRange,
-      onSubmitPending: () =>
+      mode: ClassroomTimetableModalMode.create,
+      classroomId: widget.classroomId,
+      classroomName: '공학관 ${widget.classroomId}',
+      initialStart: start,
+      onCreateSubmit: (_) =>
           _showPendingFeature('일정 등록 API는 준비 중입니다.'),
     );
   }

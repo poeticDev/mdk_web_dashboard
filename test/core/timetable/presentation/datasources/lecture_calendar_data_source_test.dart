@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
 
@@ -15,6 +16,7 @@ void main() {
       statusLabel: '진행',
       version: 1,
       notes: '비고',
+      type: LectureType.lecture,
     );
     final dataSource = LectureCalendarDataSource(
       items: <LectureViewModel>[vm],
@@ -36,6 +38,7 @@ void main() {
       color: Colors.blue,
       statusLabel: '진행',
       version: 1,
+      type: LectureType.lecture,
     );
     final LectureViewModel incoming = LectureViewModel(
       id: '2',
@@ -46,6 +49,7 @@ void main() {
       color: Colors.red,
       statusLabel: '예정',
       version: 1,
+      type: LectureType.lecture,
     );
     final dataSource = LectureCalendarDataSource(
       items: <LectureViewModel>[existing],
@@ -69,6 +73,7 @@ void main() {
       color: Colors.blue,
       statusLabel: '진행',
       version: 1,
+      type: LectureType.lecture,
     );
     final LectureViewModel updated = LectureViewModel(
       id: 'dup',
@@ -79,6 +84,7 @@ void main() {
       color: Colors.green,
       statusLabel: '진행',
       version: 2,
+      type: LectureType.lecture,
     );
     final dataSource = LectureCalendarDataSource(
       items: <LectureViewModel>[existing],
