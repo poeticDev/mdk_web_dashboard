@@ -131,11 +131,17 @@ class _ClassroomTimetableSectionState
                   CalendarView.week,
                   CalendarView.month,
                 ],
-                headerHeight: 80,
-                headerStyle: CalendarHeaderStyle(
-                  backgroundColor: theme.colorScheme.surface,
+                headerHeight: 0,
+                viewHeaderHeight: 80,
+                // headerStyle: CalendarHeaderStyle(
+                //   backgroundColor: theme.colorScheme.surface,
+                //   textStyle: theme.textTheme.headlineLarge
+                // ),
+                // headerDateFormat: 'y MMMM',
+                viewHeaderStyle: ViewHeaderStyle(
+                  dateTextStyle: theme.textTheme.titleMedium,
+                  dayTextStyle: theme.textTheme.titleMedium,
                 ),
-                headerDateFormat: 'y MMMM',
                 backgroundColor: theme.colorScheme.surface,
                 dataSource: dataSource,
                 // allowAppointmentResize: true,
@@ -177,6 +183,9 @@ class _ClassroomTimetableSectionState
                   return FutureBuilder<void>(
                     future: loadMoreAppointments(),
                     builder: (context, snapshot) {
+                      print('loadMoreWidgetBuilder called');
+                      print('snapshot: $snapshot');
+
                       return Container(
                         height: double.infinity,
                         width: double.infinity,
@@ -318,8 +327,9 @@ class _ClassroomTimetableSectionState
     required LectureColorResolver colorResolver,
   }) async {
     final TimetableDateRange range = _rangeFromDates(from, to);
-    final List<LectureEntity> lectures =
-        await controller.fetchLecturesByRange(range);
+    final List<LectureEntity> lectures = await controller.fetchLecturesByRange(
+      range,
+    );
     return lectures
         .map(
           (LectureEntity lecture) => LectureViewModel.fromEntity(

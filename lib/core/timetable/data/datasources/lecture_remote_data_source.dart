@@ -72,4 +72,5 @@ class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
       },
     );
   }
+
 }

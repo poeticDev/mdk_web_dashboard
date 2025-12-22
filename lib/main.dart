@@ -24,11 +24,7 @@ Future<void> main() async {
       await AdaptiveTheme.getThemeMode() ?? AdaptiveThemeMode.light;
   await initDependencies();
   ThemeRegistry.instance.ensureDefaults();
-  runApp(
-    ProviderScope(
-      child: MyApp(initialThemeMode: initialThemeMode),
-    ),
-  );
+  runApp(ProviderScope(child: MyApp(initialThemeMode: initialThemeMode)));
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -63,21 +59,20 @@ class _MyAppState extends ConsumerState<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: lightTheme,
           darkTheme: darkTheme,
+
           localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
             SfGlobalLocalizations.delegate,
           ],
-          supportedLocales: const <Locale>[
-            Locale('ko'),
-            Locale('en'),
-          ],
+          supportedLocales: const <Locale>[Locale('ko'), Locale('en')],
+          locale: const Locale('ko'),
           builder: (BuildContext context, Widget? child) =>
               ResponsiveBreakpoints.builder(
-            child: child ?? const SizedBox.shrink(),
-            breakpoints: _appBreakpoints,
-          ),
+                child: child ?? const SizedBox.shrink(),
+                breakpoints: _appBreakpoints,
+              ),
           routerConfig: router,
         );
       },
