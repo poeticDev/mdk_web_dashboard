@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:web_dashboard/common/utils/date_time_utils.dart';
+import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
 import 'package:web_dashboard/core/auth/application/auth_controller.dart';
 import 'package:web_dashboard/core/auth/domain/entities/auth_user.dart';
 import 'package:web_dashboard/core/auth/domain/state/auth_state.dart';
-import 'package:web_dashboard/common/utils/date_time_utils.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
 import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_resolver.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_dialogs.dart';
 
 const double _weekCalendarHeight = 800;
 const double _monthCalendarHeight = 600;
@@ -356,29 +358,29 @@ class _ClassroomTimetableSectionState
       _focusedDate.day,
       9,
     );
-    _showCreateModal(suggestedStart);
+    _openCreateDialog(suggestedStart);
   }
 
   /// 캘린더 셀 혹은 일정 탭에 따라 생성/수정 모달을 구분해 띄운다.
   void _handleCalendarTap(CalendarTapDetails details, bool canManage) {
     if (details.targetElement == CalendarElement.appointment &&
         (details.appointments?.isNotEmpty ?? false)) {
-      // if (!canManage) {
-      //   _showPermissionDeniedSnackBar();
-      //   return;
-      // }
+      if (!canManage) {
+        _showPermissionDeniedSnackBar();
+        return;
+      }
       final LectureViewModel vm =
           details.appointments!.first as LectureViewModel;
-      _showEditModal(vm);
+      _openDetailDialog(vm);
       return;
     }
     if (details.targetElement == CalendarElement.calendarCell &&
         details.date != null) {
-      // if (!canManage) {
-      //   _showPermissionDeniedSnackBar();
-      //   return;
-      // }
-      _showCreateModal(details.date!);
+      if (!canManage) {
+        _showPermissionDeniedSnackBar();
+        return;
+      }
+      _openCreateDialog(details.date!);
     }
   }
 
@@ -394,100 +396,13 @@ class _ClassroomTimetableSectionState
 
   /// 권한이 없을 때 경고 스낵바를 표시한다.
   void _showPermissionDeniedSnackBar() {
-    _showComingSoonSnackBar('권한이 없습니다. 관리자/운영자만 가능합니다.');
-  }
-
-  /// 더미 생성 모달을 출력한다.
-  Future<void> _showCreateModal(DateTime start) async {
-    final DateTime end = start.add(const Duration(hours: 1));
-    final TextEditingController titleController = TextEditingController(
-      text: '${start.month}월 ${start.day}일 일정',
-    );
-    final TextEditingController memoController = TextEditingController();
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('새 일정 등록 (더미)'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('시간: ${_formatRange(start, end)}'),
-              const SizedBox(height: 12),
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: '강의명'),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: memoController,
-                decoration: const InputDecoration(labelText: '메모'),
-                maxLines: 2,
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('취소'),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                _showComingSoonSnackBar('일정 등록 API는 준비 중입니다.');
-              },
-              child: const Text('등록'),
-            ),
-          ],
-        );
-      },
-    );
-    titleController.dispose();
-    memoController.dispose();
-  }
-
-  /// 더미 수정 모달을 출력한다.
-  Future<void> _showEditModal(LectureViewModel vm) async {
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('일정 상세 (더미)'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('강의명: ${vm.title}'),
-              Text('강의실: ${vm.classroomName}'),
-              Text('시간: ${_formatRange(vm.start, vm.end)}'),
-              if (vm.instructorName != null) Text('강사: ${vm.instructorName}'),
-              const SizedBox(height: 8),
-              Text('상태: ${vm.statusLabel}'),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('닫기'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                _showComingSoonSnackBar('휴강 처리 기능은 준비 중입니다.');
-              },
-              child: const Text('휴강 처리'),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                _showComingSoonSnackBar('일정 수정 API는 준비 중입니다.');
-              },
-              child: const Text('수정'),
-            ),
-          ],
-        );
-      },
+    if (!mounted) {
+      return;
+    }
+    AppSnackBar.show(
+      context,
+      message: '권한이 없습니다. 관리자/운영자만 가능합니다.',
+      type: AppSnackBarType.warning,
     );
   }
 
@@ -504,13 +419,33 @@ class _ClassroomTimetableSectionState
   }
 
   /// 공통 스낵바 메시지를 노출한다.
-  void _showComingSoonSnackBar(String message) {
+  void _showPendingFeature(String message) {
     if (!mounted) {
       return;
     }
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    AppSnackBar.show(context, message: message, type: AppSnackBarType.info);
+  }
+
+  void _openCreateDialog(DateTime start) {
+    ClassroomTimetableDialogs.showCreateDialog(
+      context: context,
+      start: start,
+      formatRange: _formatRange,
+      onSubmitPending: () =>
+          _showPendingFeature('일정 등록 API는 준비 중입니다.'),
+    );
+  }
+
+  void _openDetailDialog(LectureViewModel vm) {
+    ClassroomTimetableDialogs.showDetailDialog(
+      context: context,
+      lecture: vm,
+      formatRange: _formatRange,
+      onSuspendPending: () =>
+          _showPendingFeature('휴강 처리 기능은 준비 중입니다.'),
+      onEditPending: () =>
+          _showPendingFeature('일정 수정 API는 준비 중입니다.'),
+    );
   }
 }
 

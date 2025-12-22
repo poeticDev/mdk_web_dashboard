@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web_dashboard/common/app_bar/common_app_bar.dart';
 import 'package:web_dashboard/common/app_bar/common_app_bar_options.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
+import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
 import 'package:web_dashboard/ui/classroom_detail/models/classroom_detail_header_data.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
@@ -81,9 +82,11 @@ class _ClassroomDetailPageState extends State<ClassroomDetailPage> {
   }
 
   void _showComingSoonSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(
+    AppSnackBar.show(
       context,
-    ).showSnackBar(const SnackBar(content: Text('실시간 카메라 연동은 준비 중입니다.')));
+      message: '실시간 카메라 연동은 준비 중입니다.',
+      type: AppSnackBarType.info,
+    );
   }
 }
 

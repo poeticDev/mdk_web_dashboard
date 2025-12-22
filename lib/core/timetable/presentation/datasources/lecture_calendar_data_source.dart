@@ -51,6 +51,7 @@ class LectureCalendarDataSource extends CalendarDataSource {
       final List<LectureViewModel> nextItems =
           await _loadMoreLectures(startDate, endDate);
       if (nextItems.isEmpty) {
+        notifyListeners(CalendarDataSourceAction.reset, _items);
         return;
       }
       _mergeAppointments(nextItems);
