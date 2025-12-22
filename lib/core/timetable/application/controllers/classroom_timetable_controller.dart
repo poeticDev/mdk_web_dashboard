@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/application/timetable_providers.dart';
+import 'package:web_dashboard/core/timetable/application/usecases/save_lecture_usecase.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
@@ -162,5 +163,22 @@ class ClassroomTimetableController
             type: state.filterType,
           ),
         );
+  }
+
+  Future<void> saveLecture({
+    required LectureWriteInput payload,
+    String? lectureId,
+    int? expectedVersion,
+    Set<LectureField>? updatedFields,
+  }) async {
+    await ref.read(saveLectureUseCaseProvider).execute(
+          SaveLectureCommand(
+            payload: payload,
+            lectureId: lectureId,
+            expectedVersion: expectedVersion,
+            updatedFields: updatedFields,
+          ),
+        );
+    await loadLectures(range: state.visibleRange);
   }
 }

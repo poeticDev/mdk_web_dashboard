@@ -33,5 +33,6 @@ void main() {
     expect(vm.instructorName, '김교수');
     expect(vm.version, 1);
     expect(vm.notes, '비고');
+    expect(vm.type, LectureType.lecture);
   });
 }

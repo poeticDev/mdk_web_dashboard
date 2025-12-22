@@ -10,6 +10,8 @@ import 'package:web_dashboard/core/auth/domain/state/auth_state.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart'
+    show LectureWriteInput, UpdateLectureInput, LectureField;
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
 import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_resolver.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
@@ -121,7 +123,7 @@ class _ClassroomTimetableSectionState
               onNavigate: (int delta) => _navigateCalendar(delta, controller),
               onToday: () => _jumpToToday(controller),
               canManage: canManage,
-              onCreateRequest: _handleCreateFromHeader,
+              onCreateRequest: () => _handleCreateFromHeader(controller),
               onPermissionDenied: _showPermissionDeniedSnackBar,
             ),
             const SizedBox(height: 16),
@@ -201,7 +203,7 @@ class _ClassroomTimetableSectionState
                 onViewChanged: (ViewChangedDetails details) =>
                     _handleVisibleDatesChange(details, controller),
                 onTap: (CalendarTapDetails details) =>
-                    _handleCalendarTap(details, canManage),
+                    _handleCalendarTap(details, canManage, controller),
               ),
             ),
             if (state.isLoading && viewModels.isEmpty)
@@ -352,18 +354,22 @@ class _ClassroomTimetableSectionState
   }
 
   /// 헤더에서 일정 등록 버튼을 눌렀을 때 기본 시작 시간을 제안한다.
-  void _handleCreateFromHeader() {
+  void _handleCreateFromHeader(ClassroomTimetableController controller) {
     final DateTime suggestedStart = DateTime(
       _focusedDate.year,
       _focusedDate.month,
       _focusedDate.day,
       9,
     );
-    _openCreateDialog(suggestedStart);
+    _openCreateDialog(controller, suggestedStart);
   }
 
   /// 캘린더 셀 혹은 일정 탭에 따라 생성/수정 모달을 구분해 띄운다.
-  void _handleCalendarTap(CalendarTapDetails details, bool canManage) {
+  void _handleCalendarTap(
+    CalendarTapDetails details,
+    bool canManage,
+    ClassroomTimetableController controller,
+  ) {
     if (details.targetElement == CalendarElement.appointment &&
         (details.appointments?.isNotEmpty ?? false)) {
       if (!canManage) {
@@ -372,7 +378,7 @@ class _ClassroomTimetableSectionState
       }
       final LectureViewModel vm =
           details.appointments!.first as LectureViewModel;
-      _openDetailDialog(vm);
+      _openDetailDialog(controller, vm);
       return;
     }
     if (details.targetElement == CalendarElement.calendarCell &&
@@ -381,7 +387,7 @@ class _ClassroomTimetableSectionState
         _showPermissionDeniedSnackBar();
         return;
       }
-      _openCreateDialog(details.date!);
+      _openCreateDialog(controller, details.date!);
     }
   }
 
@@ -427,28 +433,183 @@ class _ClassroomTimetableSectionState
     AppSnackBar.show(context, message: message, type: AppSnackBarType.info);
   }
 
-  void _openCreateDialog(DateTime start) {
+  void _openCreateDialog(
+    ClassroomTimetableController controller,
+    DateTime start,
+  ) {
     ClassroomTimetableModal.show(
       context: context,
       mode: ClassroomTimetableModalMode.create,
       classroomId: widget.classroomId,
       classroomName: '공학관 ${widget.classroomId}',
       initialStart: start,
-      onCreateSubmit: (_) =>
-          _showPendingFeature('일정 등록 API는 준비 중입니다.'),
+      onCreateSubmit: (LectureWriteInput input) =>
+          _handleCreateSubmit(controller, input),
     );
   }
 
-  void _openDetailDialog(LectureViewModel vm) {
+  void _openDetailDialog(
+    ClassroomTimetableController controller,
+    LectureViewModel vm,
+  ) {
     ClassroomTimetableDialogs.showDetailDialog(
       context: context,
       lecture: vm,
       formatRange: _formatRange,
       onSuspendPending: () =>
           _showPendingFeature('휴강 처리 기능은 준비 중입니다.'),
-      onEditPending: () =>
-          _showPendingFeature('일정 수정 API는 준비 중입니다.'),
+      onEditPending: () => _openEditDialog(controller, vm),
     );
+  }
+
+  void _openEditDialog(
+    ClassroomTimetableController controller,
+    LectureViewModel vm,
+  ) {
+    ClassroomTimetableModal.show(
+      context: context,
+      mode: ClassroomTimetableModalMode.edit,
+      classroomId: widget.classroomId,
+      classroomName: vm.classroomName,
+      initialStart: vm.start,
+      initialLecture: vm,
+      onUpdateSubmit: (UpdateLectureInput input) =>
+          _handleUpdateSubmit(controller, vm, input),
+    );
+  }
+
+  Future<void> _handleCreateSubmit(
+    ClassroomTimetableController controller,
+    LectureWriteInput input,
+  ) async {
+    await _saveLecture(
+      controller: controller,
+      payload: input,
+      successMessage: '일정이 등록되었습니다.',
+    );
+  }
+
+  Future<void> _handleUpdateSubmit(
+    ClassroomTimetableController controller,
+    LectureViewModel original,
+    UpdateLectureInput input,
+  ) async {
+    final Set<LectureField> changedFields = _computeChangedFields(
+      original,
+      input.payload,
+    );
+    if (changedFields.isEmpty) {
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          message: '변경된 내용이 없습니다.',
+          type: AppSnackBarType.info,
+        );
+      }
+      return;
+    }
+    await _saveLecture(
+      controller: controller,
+      payload: input.payload,
+      lectureId: input.lectureId,
+      expectedVersion: input.expectedVersion,
+      changedFields: changedFields,
+      successMessage: '일정이 수정되었습니다.',
+    );
+  }
+
+  Future<void> _saveLecture({
+    required ClassroomTimetableController controller,
+    required LectureWriteInput payload,
+    String? lectureId,
+    int? expectedVersion,
+    Set<LectureField>? changedFields,
+    required String successMessage,
+  }) async {
+    try {
+      await controller.saveLecture(
+        payload: payload,
+        lectureId: lectureId,
+        expectedVersion: expectedVersion,
+        updatedFields: changedFields,
+      );
+      if (!mounted) {
+        return;
+      }
+      AppSnackBar.show(
+        context,
+        message: successMessage,
+        type: AppSnackBarType.success,
+      );
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+      AppSnackBar.show(
+        context,
+        message: '일정 저장에 실패했습니다.',
+        type: AppSnackBarType.error,
+      );
+    }
+  }
+
+  Set<LectureField> _computeChangedFields(
+    LectureViewModel original,
+    LectureWriteInput next,
+  ) {
+    final Set<LectureField> fields = <LectureField>{};
+    if (original.title.trim() != next.title.trim()) {
+      fields.add(LectureField.title);
+    }
+    if (original.type != next.type) {
+      fields.add(LectureField.type);
+    }
+    if (!_isSameMoment(original.start, next.start)) {
+      fields.add(LectureField.startTime);
+    }
+    if (!_isSameMoment(original.end, next.end)) {
+      fields.add(LectureField.endTime);
+    }
+    if (_normalizeText(original.departmentName) !=
+        _normalizeText(next.departmentId)) {
+      fields.add(LectureField.departmentId);
+    }
+    if (_normalizeText(original.instructorName) !=
+        _normalizeText(next.instructorId)) {
+      fields.add(LectureField.instructorId);
+    }
+    if (_colorHexFromColor(original.color) != _normalizeHex(next.colorHex)) {
+      fields.add(LectureField.colorHex);
+    }
+    if (_normalizeText(original.recurrenceRule) !=
+        _normalizeText(next.recurrenceRule)) {
+      fields.add(LectureField.recurrenceRule);
+    }
+    if (_normalizeText(original.notes) != _normalizeText(next.notes)) {
+      fields.add(LectureField.notes);
+    }
+    return fields;
+  }
+
+  bool _isSameMoment(DateTime a, DateTime b) =>
+      a.toUtc().isAtSameMomentAs(b.toUtc());
+
+  String _normalizeText(String? value) => value?.trim() ?? '';
+
+  String _colorHexFromColor(Color color) {
+    final int r = (color.r * 255.0).round() & 0xff;
+    final int g = (color.g * 255.0).round() & 0xff;
+    final int b = (color.b * 255.0).round() & 0xff;
+    return '${r.toRadixString(16).padLeft(2, '0')}'
+            '${g.toRadixString(16).padLeft(2, '0')}'
+            '${b.toRadixString(16).padLeft(2, '0')}'
+        .toUpperCase();
+  }
+
+  String _normalizeHex(String? value) {
+    final String normalized =
+        value?.replaceAll('#', '').trim().toUpperCase() ?? '';
+    return normalized;
   }
 }
 

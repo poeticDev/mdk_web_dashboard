@@ -14,6 +14,7 @@ class LectureViewModel {
     required this.statusLabel,
     required this.version,
     required this.type,
+    this.recurrenceRule,
     this.departmentName,
     this.instructorName,
     this.notes,
@@ -28,6 +29,7 @@ class LectureViewModel {
   final String statusLabel;
   final int version;
   final LectureType type;
+  final String? recurrenceRule;
   final String? departmentName;
   final String? instructorName;
   final String? notes;
@@ -48,6 +50,7 @@ class LectureViewModel {
       instructorName: entity.instructorName,
       version: entity.version,
       type: entity.type,
+      recurrenceRule: entity.recurrenceRule,
       notes: entity.notes,
     );
   }

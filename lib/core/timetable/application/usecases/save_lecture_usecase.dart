@@ -16,6 +16,7 @@ class SaveLectureUseCase {
         lectureId: command.lectureId!,
         payload: command.payload,
         expectedVersion: command.expectedVersion,
+        updatedFields: command.updatedFields,
       ),
     );
   }
@@ -27,9 +28,11 @@ class SaveLectureCommand {
     required this.payload,
     this.lectureId,
     this.expectedVersion,
+    this.updatedFields,
   });
 
   final LectureWriteInput payload;
   final String? lectureId;
   final int? expectedVersion;
+  final Set<LectureField>? updatedFields;
 }

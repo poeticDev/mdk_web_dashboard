@@ -2,6 +2,20 @@ import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 
+/// 업데이트 시 어떤 필드가 변했는지 나타내는 열거형.
+enum LectureField {
+  title,
+  type,
+  classroomId,
+  startTime,
+  endTime,
+  departmentId,
+  instructorId,
+  colorHex,
+  recurrenceRule,
+  notes,
+}
+
 /// 강의 일정 CRUD를 담당하는 도메인 레이어 계약.
 abstract class LectureRepository {
   Future<List<LectureEntity>> fetchLectures(LectureQuery query);
@@ -68,11 +82,13 @@ class UpdateLectureInput {
     required this.lectureId,
     required this.payload,
     this.expectedVersion,
+    this.updatedFields,
   });
 
   final String lectureId;
   final LectureWriteInput payload;
   final int? expectedVersion;
+  final Set<LectureField>? updatedFields;
 }
 
 /// 삭제 요청 시 반복 일정 범위를 제어하는 입력 값.

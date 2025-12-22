@@ -36,11 +36,11 @@ class LectureQueryRequest {
 /// 생성/수정 API 요청 본문을 구성하는 DTO.
 class LecturePayloadDto {
   const LecturePayloadDto({
-    required this.title,
-    required this.type,
-    required this.classroomId,
-    required this.startTime,
-    required this.endTime,
+    this.title,
+    this.type,
+    this.classroomId,
+    this.startTime,
+    this.endTime,
     this.externalCode,
     this.departmentId,
     this.instructorId,
@@ -49,33 +49,74 @@ class LecturePayloadDto {
     this.notes,
   });
 
-  final String title;
-  final String type;
-  final String classroomId;
+  final String? title;
+  final String? type;
+  final String? classroomId;
   final String? externalCode;
   final String? departmentId;
   final String? instructorId;
-  final DateTime startTime;
-  final DateTime endTime;
+  final DateTime? startTime;
+  final DateTime? endTime;
   final String? colorHex;
   final String? recurrenceRule;
   final String? notes;
 
+  factory LecturePayloadDto.create({
+    required String title,
+    required String type,
+    required String classroomId,
+    required DateTime startTime,
+    required DateTime endTime,
+    String? externalCode,
+    String? departmentId,
+    String? instructorId,
+    String? colorHex,
+    String? recurrenceRule,
+    String? notes,
+  }) {
+    return LecturePayloadDto(
+      title: title,
+      type: type,
+      classroomId: classroomId,
+      startTime: startTime,
+      endTime: endTime,
+      externalCode: externalCode,
+      departmentId: departmentId,
+      instructorId: instructorId,
+      colorHex: colorHex,
+      recurrenceRule: recurrenceRule,
+      notes: notes,
+    );
+  }
+
   Map<String, Object?> toJson({int? expectedVersion}) {
-    return <String, Object?>{
-      'title': title,
-      'type': type,
-      'classroomId': classroomId,
-      'externalCode': externalCode,
-      'departmentId': departmentId,
-      'instructorId': instructorId,
-      'startTime': startTime.toUtc().toIso8601String(),
-      'endTime': endTime.toUtc().toIso8601String(),
-      'colorHex': colorHex,
-      'recurrenceRule': recurrenceRule,
-      'notes': notes,
-      if (expectedVersion != null) 'expectedVersion': expectedVersion,
-    };
+    final Map<String, Object?> json = <String, Object?>{};
+    void put(String key, Object? value) {
+      if (value == null) {
+        return;
+      }
+      if (value is DateTime) {
+        json[key] = value.toUtc().toIso8601String();
+        return;
+      }
+      json[key] = value;
+    }
+
+    put('title', title);
+    put('type', type);
+    put('classroomId', classroomId);
+    put('externalCode', externalCode);
+    put('departmentId', departmentId);
+    put('instructorId', instructorId);
+    put('startTime', startTime);
+    put('endTime', endTime);
+    put('colorHex', colorHex);
+    put('recurrenceRule', recurrenceRule);
+    put('notes', notes);
+    if (expectedVersion != null) {
+      json['expectedVersion'] = expectedVersion;
+    }
+    return json;
   }
 }
 

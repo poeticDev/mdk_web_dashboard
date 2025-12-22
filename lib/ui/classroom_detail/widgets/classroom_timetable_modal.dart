@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
+import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
@@ -87,7 +88,8 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
     _colorController = TextEditingController(
       text: lecture == null ? '' : _formatColorHex(lecture.color),
     );
-    _rruleController = TextEditingController(text: '');
+    _rruleController =
+        TextEditingController(text: lecture?.recurrenceRule ?? '');
     _memoController = TextEditingController(text: lecture?.notes ?? '');
     _selectedType = lecture != null ? lecture.type : LectureType.lecture;
     _start = lecture?.start ?? widget.initialStart;
@@ -166,6 +168,11 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
           label: '닫기',
           onPressed: () => Navigator.of(context).pop(),
         ),
+        AppDialogAction(
+          label: widget.mode == ClassroomTimetableModalMode.create ? '등록' : '수정',
+          isPrimary: true,
+          onPressed: _handleSubmit,
+        ),
       ],
     );
   }
@@ -182,6 +189,69 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
     final String g = gChannel.toRadixString(16).padLeft(2, '0');
     final String b = bChannel.toRadixString(16).padLeft(2, '0');
     return (r + g + b).toUpperCase();
+  }
+
+  void _handleSubmit() {
+    final FormState? state = _formKey.currentState;
+    if (state == null || !state.validate()) {
+      return;
+    }
+    if (!_end.isAfter(_start)) {
+      AppSnackBar.show(
+        context,
+        message: '종료 시간은 시작 시간보다 늦어야 합니다.',
+        type: AppSnackBarType.error,
+      );
+      return;
+    }
+    final LectureWriteInput payload = LectureWriteInput(
+      title: _titleController.text.trim(),
+      type: _selectedType,
+      classroomId: widget.classroomId,
+      start: _start,
+      end: _end,
+      departmentId: _normalizeOptional(_departmentController.text),
+      instructorId: _normalizeOptional(_instructorController.text),
+      colorHex: _normalizeColorHex(_colorController.text),
+      recurrenceRule: _normalizeOptional(_rruleController.text),
+      notes: _normalizeOptional(_memoController.text),
+    );
+    if (widget.mode == ClassroomTimetableModalMode.create) {
+      widget.onCreateSubmit?.call(payload);
+    } else {
+      final String? lectureId = widget.initialLecture?.id;
+      if (lectureId == null) {
+        AppSnackBar.show(
+          context,
+          message: '선택된 일정 정보가 없습니다.',
+          type: AppSnackBarType.error,
+        );
+        return;
+      }
+      widget.onUpdateSubmit?.call(
+        UpdateLectureInput(
+          lectureId: lectureId,
+          payload: payload,
+          expectedVersion: widget.initialLecture?.version,
+        ),
+      );
+    }
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  String? _normalizeOptional(String value) {
+    final String trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  String? _normalizeColorHex(String value) {
+    final String trimmed = value.trim().replaceFirst('#', '');
+    if (trimmed.isEmpty) {
+      return null;
+    }
+    return '#${trimmed.toUpperCase()}';
   }
 }
 

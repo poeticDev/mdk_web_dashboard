@@ -43,11 +43,11 @@
    - [x] Color/RRule/메모 입력 UI와 DateTime picker 구성.
 3. **DI/콜백 연결**
    - [x] 등록 버튼에서 `ClassroomTimetableModal.show(...)` 호출해 UI 확인.
-   - [ ] 제출 로직을 통합 콜백으로 연결.
+   - [x] 모달에서 제출 시 `LectureWriteInput`/`UpdateLectureInput` 콜백 호출.
 4. **컨트롤러 연동**
-   - [ ] 등록: `SaveLectureUseCase` 연동 후 스낵바.
-   - [ ] 수정: `UpdateLectureUseCase` + version 처리.
-   - [ ] 완료 후 `_refreshTimetable`.
+   - [x] 등록: `SaveLectureUseCase` 기반 `saveLecture` API 연동 및 성공 스낵바.
+   - [x] 수정: 동일 save 경로 + version 전달.
+   - [x] 완료 후 `loadLectures` 재호출로 상태 싱크.
 5. **테스트**
    - [ ] Form validator 단위 테스트 (입력 누락/종료시간 검사).
    - [ ] Modal submit → 콜백 호출 여부 위젯 테스트.

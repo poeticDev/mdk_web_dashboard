@@ -49,7 +49,7 @@ class LectureMapper {
   }
 
   LecturePayloadDto toPayload(LectureWriteInput input) {
-    return LecturePayloadDto(
+    return LecturePayloadDto.create(
       title: input.title,
       type: input.type.apiValue,
       classroomId: input.classroomId,
@@ -64,10 +64,40 @@ class LectureMapper {
     );
   }
 
+  LecturePayloadDto toPartialPayload(
+    LectureWriteInput input,
+    Set<LectureField> fields,
+  ) {
+    return LecturePayloadDto(
+      title: fields.contains(LectureField.title) ? input.title : null,
+      type: fields.contains(LectureField.type) ? input.type.apiValue : null,
+      classroomId:
+          fields.contains(LectureField.classroomId) ? input.classroomId : null,
+      departmentId:
+          fields.contains(LectureField.departmentId) ? input.departmentId : null,
+      instructorId:
+          fields.contains(LectureField.instructorId) ? input.instructorId : null,
+      startTime:
+          fields.contains(LectureField.startTime) ? input.start : null,
+      endTime: fields.contains(LectureField.endTime) ? input.end : null,
+      colorHex:
+          fields.contains(LectureField.colorHex) ? input.colorHex : null,
+      recurrenceRule: fields.contains(LectureField.recurrenceRule)
+          ? input.recurrenceRule
+          : null,
+      notes: fields.contains(LectureField.notes) ? input.notes : null,
+    );
+  }
+
   UpdateLectureRequest toUpdateRequest(UpdateLectureInput input) {
+    final Set<LectureField>? updatedFields = input.updatedFields;
+    final LecturePayloadDto payload = (updatedFields == null ||
+            updatedFields.isEmpty)
+        ? toPayload(input.payload)
+        : toPartialPayload(input.payload, updatedFields);
     return UpdateLectureRequest(
       lectureId: input.lectureId,
-      payload: toPayload(input.payload),
+      payload: payload,
       expectedVersion: input.expectedVersion,
     );
   }
