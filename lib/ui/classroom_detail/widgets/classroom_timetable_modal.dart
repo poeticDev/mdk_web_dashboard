@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
 import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
@@ -14,6 +15,8 @@ const List<Color> _lectureColorPalette = <Color>[
   Color(0xFFDFF7DF),
   Color(0xFFD6CCFF),
 ];
+
+enum WeeklyRepeatOption { none, weeks, until }
 
 enum ClassroomTimetableModalMode { create, edit }
 
@@ -74,12 +77,15 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   late TextEditingController _titleController;
   late TextEditingController _departmentController;
   late TextEditingController _instructorController;
-  late TextEditingController _rruleController;
   late TextEditingController _memoController;
+  late TextEditingController _repeatCountController;
   late LectureType _selectedType;
   late DateTime _start;
   late DateTime _end;
   late Color _selectedColor;
+  WeeklyRepeatOption _repeatOption = WeeklyRepeatOption.none;
+  int _repeatWeekCount = 1;
+  DateTime? _repeatUntilDate;
 
   @override
   void initState() {
@@ -94,13 +100,16 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
         TextEditingController(text: lecture?.departmentName ?? '');
     _instructorController =
         TextEditingController(text: lecture?.instructorName ?? '');
-    _rruleController =
-        TextEditingController(text: lecture?.recurrenceRule ?? '');
     _memoController = TextEditingController(text: lecture?.notes ?? '');
+    _repeatCountController = TextEditingController();
     _selectedType = lecture != null ? lecture.type : LectureType.lecture;
     _start = lecture?.start ?? widget.initialStart;
     _end = lecture?.end ?? widget.initialStart.add(const Duration(hours: 1));
     _selectedColor = lecture?.color ?? _lectureColorPalette.first;
+    if (_isForcedColor(_selectedType)) {
+      _selectedColor = _forcedColorForType(_selectedType);
+    }
+    _applyExistingRecurrence(lecture?.recurrenceRule);
   }
 
   @override
@@ -108,8 +117,8 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
     _titleController.dispose();
     _departmentController.dispose();
     _instructorController.dispose();
-    _rruleController.dispose();
     _memoController.dispose();
+    _repeatCountController.dispose();
     super.dispose();
   }
 
@@ -173,7 +182,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
                   },
                 ),
                 const SizedBox(height: 12),
-                _RRuleField(controller: _rruleController),
+                _buildRecurrenceOptions(),
                 const SizedBox(height: 12),
                 _MemoField(controller: _memoController),
               ],
@@ -205,8 +214,15 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   bool _isForcedColor(LectureType type) =>
       type == LectureType.event || type == LectureType.exam;
 
+  AppColors _resolveAppColors() {
+    final Brightness brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark
+        ? AppColors.dark(ThemeBrand.defaultBrand)
+        : AppColors.light(ThemeBrand.defaultBrand);
+  }
+
   Color _forcedColorForType(LectureType type) {
-    final AppColors palette = AppColors.light(ThemeBrand.defaultBrand);
+    final AppColors palette = _resolveAppColors();
     switch (type) {
       case LectureType.event:
         return palette.success;
@@ -215,6 +231,185 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       case LectureType.lecture:
         return _selectedColor;
     }
+  }
+
+  Widget _buildRecurrenceOptions() {
+    final ThemeData theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('주 반복 옵션', style: theme.textTheme.titleSmall),
+        _OptionTile(
+          label: '반복 없음',
+          value: _repeatOption == WeeklyRepeatOption.none,
+          onChanged: () => _setRepeatOption(WeeklyRepeatOption.none),
+        ),
+        _OptionTile(
+          label: '0주간 반복',
+          value: _repeatOption == WeeklyRepeatOption.weeks,
+          onChanged: () => _setRepeatOption(WeeklyRepeatOption.weeks),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 32, top: 8),
+            child: SizedBox(
+              width: 120,
+              child: TextFormField(
+                controller: _repeatCountController,
+                enabled: _repeatOption == WeeklyRepeatOption.weeks,
+                decoration: const InputDecoration(
+                  labelText: '주 횟수 (1-99)',
+                  counterText: '',
+                ),
+                maxLength: 2,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                onChanged: _onWeekCountChanged,
+              ),
+            ),
+          ),
+        ),
+        _OptionTile(
+          label: '특정 날짜까지 반복',
+          value: _repeatOption == WeeklyRepeatOption.until,
+          onChanged: () => _setRepeatOption(WeeklyRepeatOption.until),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 32, top: 8),
+            child: OutlinedButton.icon(
+              onPressed: _repeatOption == WeeklyRepeatOption.until
+                  ? _pickRepeatUntilDate
+                  : null,
+              icon: const Icon(Icons.calendar_month),
+              label: Text(
+                _repeatUntilDate == null
+                    ? '종료 날짜 선택'
+                    : _formatKoreanDate(_repeatUntilDate!),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          _repeatSummaryText(),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _setRepeatOption(WeeklyRepeatOption option) {
+    setState(() {
+      _repeatOption = option;
+      if (option != WeeklyRepeatOption.weeks) {
+        _repeatWeekCount = _repeatWeekCount.clamp(1, 99);
+        _repeatCountController.text = _repeatWeekCount.toString();
+      }
+      if (option != WeeklyRepeatOption.until) {
+        _repeatUntilDate = null;
+      }
+    });
+  }
+
+  void _onWeekCountChanged(String value) {
+    final int parsed = int.tryParse(value) ?? 1;
+    setState(() {
+      _repeatWeekCount = parsed.clamp(1, 99);
+      _repeatCountController.text = _repeatWeekCount.toString();
+    });
+  }
+
+  Future<void> _pickRepeatUntilDate() async {
+    final DateTime initial =
+        _repeatUntilDate ?? _start.add(const Duration(days: 7));
+    final DateTime firstDate =
+        DateTime(_start.year, _start.month, _start.day);
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: firstDate,
+      lastDate: DateTime(_start.year + 5),
+    );
+    if (picked == null) {
+      return;
+    }
+    setState(() {
+      _repeatUntilDate = picked;
+    });
+  }
+
+  String _repeatSummaryText() {
+    switch (_repeatOption) {
+      case WeeklyRepeatOption.none:
+        return '반복 없음';
+      case WeeklyRepeatOption.weeks:
+        final DateTime last =
+            _start.add(Duration(days: 7 * (_repeatWeekCount - 1)));
+        return '${_repeatWeekCount}주간 반복 · '
+            '${_formatKoreanDate(last)}까지 매주 반복됩니다.';
+      case WeeklyRepeatOption.until:
+        if (_repeatUntilDate == null) {
+          return '종료 날짜를 선택하세요.';
+        }
+        return '${_formatKoreanDate(_repeatUntilDate!)}까지 매주 반복됩니다.';
+    }
+  }
+
+  String _formatKoreanDate(DateTime date) =>
+      '${date.year}년 ${date.month}월 ${date.day}일';
+
+  String? _buildRecurrenceRule() {
+    if (_repeatOption == WeeklyRepeatOption.none) {
+      return null;
+    }
+    final String byDay = _weekdayToken(_start.weekday);
+    if (_repeatOption == WeeklyRepeatOption.weeks) {
+      final int count = _repeatWeekCount.clamp(1, 99);
+      return 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$byDay;COUNT=$count';
+    }
+    if (_repeatOption == WeeklyRepeatOption.until && _repeatUntilDate != null) {
+      final DateTime untilDateTime = DateTime(
+        _repeatUntilDate!.year,
+        _repeatUntilDate!.month,
+        _repeatUntilDate!.day,
+        _end.hour,
+        _end.minute,
+      );
+      final String until = _formatUtc(untilDateTime);
+      return 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$byDay;UNTIL=$until';
+    }
+    return null;
+  }
+
+  String _weekdayToken(int weekday) {
+    switch (weekday) {
+      case DateTime.monday:
+        return 'MO';
+      case DateTime.tuesday:
+        return 'TU';
+      case DateTime.wednesday:
+        return 'WE';
+      case DateTime.thursday:
+        return 'TH';
+      case DateTime.friday:
+        return 'FR';
+      case DateTime.saturday:
+        return 'SA';
+      case DateTime.sunday:
+      default:
+        return 'SU';
+    }
+  }
+
+  String _formatUtc(DateTime dateTime) {
+    final DateTime utc = dateTime.toUtc();
+    return '${utc.year.toString().padLeft(4, '0')}'
+        '${utc.month.toString().padLeft(2, '0')}'
+        '${utc.day.toString().padLeft(2, '0')}T'
+        '${utc.hour.toString().padLeft(2, '0')}'
+        '${utc.minute.toString().padLeft(2, '0')}'
+        '${utc.second.toString().padLeft(2, '0')}Z';
   }
 
   String _formatColorHex(Color color) {
@@ -230,6 +425,61 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   String? _colorHexForSubmission() {
     final Color color = _effectiveColor;
     return '#${_formatColorHex(color)}';
+  }
+
+  void _applyExistingRecurrence(String? rrule) {
+    _repeatOption = WeeklyRepeatOption.none;
+    _repeatWeekCount = 1;
+    _repeatCountController.text = '1';
+    _repeatUntilDate = null;
+    if (rrule == null || rrule.isEmpty) {
+      return;
+    }
+    final String upper = rrule.toUpperCase();
+    if (!upper.contains('FREQ=WEEKLY')) {
+      return;
+    }
+    if (upper.contains('COUNT=')) {
+      final RegExpMatch? match = RegExp(r'COUNT=(\d+)').firstMatch(upper);
+      if (match != null) {
+        final int parsed = int.parse(match.group(1)!);
+        _repeatWeekCount = parsed.clamp(1, 99);
+        _repeatCountController.text = _repeatWeekCount.toString();
+        _repeatOption = WeeklyRepeatOption.weeks;
+      }
+      return;
+    }
+    if (upper.contains('UNTIL=')) {
+      final RegExpMatch? match = RegExp(r'UNTIL=([0-9TZ]+)').firstMatch(upper);
+      if (match != null) {
+        final DateTime? until = _parseUntilDate(match.group(1)!);
+        if (until != null) {
+          _repeatUntilDate = until;
+          _repeatOption = WeeklyRepeatOption.until;
+        }
+      }
+    }
+  }
+
+  DateTime? _parseUntilDate(String raw) {
+    try {
+      if (raw.length >= 15 && raw.contains('T')) {
+        final String datePart = raw.substring(0, 8);
+        final int year = int.parse(datePart.substring(0, 4));
+        final int month = int.parse(datePart.substring(4, 6));
+        final int day = int.parse(datePart.substring(6, 8));
+        return DateTime(year, month, day);
+      }
+      if (raw.length == 8) {
+        final int year = int.parse(raw.substring(0, 4));
+        final int month = int.parse(raw.substring(4, 6));
+        final int day = int.parse(raw.substring(6, 8));
+        return DateTime(year, month, day);
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
   }
 
   void _handleSubmit() {
@@ -254,7 +504,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       departmentId: _normalizeOptional(_departmentController.text),
       instructorId: _normalizeOptional(_instructorController.text),
       colorHex: _colorHexForSubmission(),
-      recurrenceRule: _normalizeOptional(_rruleController.text),
+      recurrenceRule: _buildRecurrenceRule(),
       notes: _normalizeOptional(_memoController.text),
     );
     if (widget.mode == ClassroomTimetableModalMode.create) {
@@ -555,23 +805,6 @@ class _ColorPickerField extends StatelessWidget {
   }
 }
 
-class _RRuleField extends StatelessWidget {
-  const _RRuleField({required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: const InputDecoration(
-        labelText: '반복 규칙 (RFC5545)',
-        hintText: 'RRULE:FREQ=WEEKLY;BYDAY=MO,WE',
-      ),
-    );
-  }
-}
-
 class _MemoField extends StatelessWidget {
   const _MemoField({required this.controller});
 
@@ -586,6 +819,37 @@ class _MemoField extends StatelessWidget {
         labelText: '메모',
         hintText: '추가 정보를 입력하세요.',
       ),
+    );
+  }
+}
+
+class _OptionTile extends StatelessWidget {
+  const _OptionTile({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    this.child,
+  });
+
+  final String label;
+  final bool value;
+  final VoidCallback onChanged;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          value: value,
+          onChanged: (_) => onChanged(),
+          controlAffinity: ListTileControlAffinity.leading,
+          title: Text(label),
+        ),
+        if (value && child != null) child!,
+      ],
     );
   }
 }
