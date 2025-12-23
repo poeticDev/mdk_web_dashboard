@@ -1,6 +1,10 @@
 import 'package:intl/intl.dart';
 
 /// UTC 기반 DateTime 파싱/포매팅 유틸리티.
+///
+/// 서버는 모든 시간을 UTC로 내려주므로, UI에서는 `toLocal()`로 변환한 뒤
+/// 표기/편집해야 시차(예: KST) 차이가 나지 않는다.
+/// 반대로 서버로 전송할 때는 반드시 `toUtc()`로 변환할 것.
 class DateTimeUtils {
   const DateTimeUtils._();
 

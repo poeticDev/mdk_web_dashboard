@@ -48,8 +48,12 @@ class LectureOccurrenceDto {
       status: json['status']?.toString() ?? 'scheduled',
       isOverride: json['isOverride'] as bool? ?? false,
       sourceVersion: int.tryParse(json['sourceVersion']?.toString() ?? '') ?? 0,
-      startAt: DateTimeUtils.parseUtcFromJson(json['startAt']),
-      endAt: DateTimeUtils.parseUtcFromJson(json['endAt']),
+      startAt: DateTimeUtils.toLocal(
+        DateTimeUtils.parseUtcFromJson(json['startAt']),
+      ),
+      endAt: DateTimeUtils.toLocal(
+        DateTimeUtils.parseUtcFromJson(json['endAt']),
+      ),
       colorHex: json['colorHex']?.toString(),
       notes: json['notes']?.toString(),
       department: json['department'] is Map<String, Object?>

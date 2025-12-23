@@ -165,7 +165,7 @@ class _ClassroomTimetableSectionState
                         theme.colorScheme.inversePrimary,
                   ),
                 ),
-                timeZone: _koreaTimeZoneId,
+                // timeZone: _koreaTimeZoneId,
                 timeSlotViewSettings: const TimeSlotViewSettings(
                   startHour: 8,
                   endHour: 22,

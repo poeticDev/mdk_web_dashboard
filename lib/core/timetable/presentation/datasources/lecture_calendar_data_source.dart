@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
 
-typedef LectureRangeLoader = Future<List<LectureViewModel>> Function(
-  DateTime from,
-  DateTime to,
-);
+typedef LectureRangeLoader =
+    Future<List<LectureViewModel>> Function(DateTime from, DateTime to);
 
 /// Syncfusion Calendar와 연결되는 DataSource.
 class LectureCalendarDataSource extends CalendarDataSource {
   LectureCalendarDataSource({
     required List<LectureViewModel> items,
     required LectureRangeLoader loadMoreLectures,
-  })  : _items = List<LectureViewModel>.from(items),
-        _loadMoreLectures = loadMoreLectures {
+  }) : _items = List<LectureViewModel>.from(items),
+       _loadMoreLectures = loadMoreLectures {
     appointments = _items;
   }
 
@@ -48,22 +46,27 @@ class LectureCalendarDataSource extends CalendarDataSource {
     }
     _isLoadingMore = true;
     try {
-      final List<LectureViewModel> nextItems =
-          await _loadMoreLectures(startDate, endDate);
+      print('로드모어 시작');
+      final List<LectureViewModel> nextItems = await _loadMoreLectures(
+        startDate,
+        endDate,
+      );
+      print('다음 아이템: $nextItems');
       if (nextItems.isEmpty) {
         notifyListeners(CalendarDataSourceAction.reset, _items);
         return;
       }
+      print('머지 시작');
       _mergeAppointments(nextItems);
     } finally {
+      print('로드모어 종료');
       _isLoadingMore = false;
     }
   }
 
   /// 기존 일정과 신규 데이터를 병합해 정렬 후 Syncfusion에 알린다.
   void _mergeAppointments(List<LectureViewModel> incoming) {
-    final Map<String, LectureViewModel> merged =
-        <String, LectureViewModel>{
+    final Map<String, LectureViewModel> merged = <String, LectureViewModel>{
       for (final LectureViewModel lecture in _items) lecture.id: lecture,
     };
     for (final LectureViewModel lecture in incoming) {
@@ -74,8 +77,7 @@ class LectureCalendarDataSource extends CalendarDataSource {
     }
     final List<LectureViewModel> sorted = merged.values.toList()
       ..sort(
-        (LectureViewModel a, LectureViewModel b) =>
-            a.start.compareTo(b.start),
+        (LectureViewModel a, LectureViewModel b) => a.start.compareTo(b.start),
       );
     _items
       ..clear()

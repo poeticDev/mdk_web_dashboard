@@ -63,15 +63,27 @@ class LectureDto {
       departmentName: json['departmentName']?.toString(),
       instructorId: json['instructorId']?.toString(),
       instructorName: json['instructorName']?.toString(),
-      startTime: DateTimeUtils.parseUtcFromJson(json['startTime']),
-      endTime: DateTimeUtils.parseUtcFromJson(json['endTime']),
+      startTime: DateTimeUtils.toLocal(
+        DateTimeUtils.parseUtcFromJson(json['startTime']),
+      ),
+      endTime: DateTimeUtils.toLocal(
+        DateTimeUtils.parseUtcFromJson(json['endTime']),
+      ),
       version: int.tryParse(json['version']?.toString() ?? '') ?? 0,
-      createdAt: DateTimeUtils.parseUtcFromJson(json['createdAt']),
-      updatedAt: DateTimeUtils.parseUtcFromJson(json['updatedAt']),
+      createdAt: DateTimeUtils.toLocal(
+        DateTimeUtils.parseUtcFromJson(json['createdAt']),
+      ),
+      updatedAt: DateTimeUtils.toLocal(
+        DateTimeUtils.parseUtcFromJson(json['updatedAt']),
+      ),
       colorHex: json['colorHex']?.toString(),
       recurrenceRule: json['recurrenceRule']?.toString(),
       recurrenceExceptions: rawExceptions
-          .map((Object? value) => DateTimeUtils.parseUtcFromJson(value))
+          .map(
+            (Object? value) => DateTimeUtils.toLocal(
+              DateTimeUtils.parseUtcFromJson(value),
+            ),
+          )
           .toList(),
       notes: json['notes']?.toString(),
     );

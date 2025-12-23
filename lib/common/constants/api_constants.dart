@@ -9,7 +9,7 @@ class ApiConstants {
   static const String me = '/me';
   static const String logout = '/logout';
   static const String lectures = '/lectures';
-  static const String lectureOccurrences = '/lectures/occurrences';
+  static const String lectureOccurrences = '/lectures/occurrence';
   static const String classrooms = '/classrooms';
   static const String expectedVersionHeader = 'x-expected-version';
 
