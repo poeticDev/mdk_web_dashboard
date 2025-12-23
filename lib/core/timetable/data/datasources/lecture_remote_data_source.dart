@@ -46,9 +46,7 @@ class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
   Future<LectureDto> updateLecture(UpdateLectureRequest request) async {
     final Response<dynamic> response = await _dio.patch<dynamic>(
       '${ApiConstants.lectures}/${request.lectureId}',
-      data: request.payload.toJson(
-        expectedVersion: request.expectedVersion,
-      ),
+      data: _buildPatchBody(request),
       options: _buildVersionOption(request.expectedVersion),
     );
     return LectureDto.fromJson(response.data as Map<String, Object?>);
@@ -71,6 +69,14 @@ class LectureRemoteDataSourceImpl implements LectureRemoteDataSource {
         ApiConstants.expectedVersionHeader: version,
       },
     );
+  }
+
+  Map<String, Object?> _buildPatchBody(UpdateLectureRequest request) {
+    return <String, Object?>{
+      'patch': request.payload.toJson(),
+      if (request.expectedVersion != null)
+        'expectedVersion': request.expectedVersion,
+    };
   }
 
 }

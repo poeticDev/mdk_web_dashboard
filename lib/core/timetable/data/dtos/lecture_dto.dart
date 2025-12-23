@@ -12,7 +12,7 @@ class LectureDto {
     required this.version,
     required this.createdAt,
     required this.updatedAt,
-    this.status = 'ACTIVE',
+    this.status = 'scheduled',
     this.classroomName,
     this.externalCode,
     this.departmentId,
@@ -46,74 +46,136 @@ class LectureDto {
   final List<DateTime> recurrenceExceptions;
   final String? notes;
 
-  /// JSON 맵을 DTO로 변환한다.
   factory LectureDto.fromJson(Map<String, Object?> json) {
-    final List<Object?> rawExceptions =
-        json['recurrenceExceptions'] as List<Object?>? ?? <Object?>[];
-
+    final List<DateTime> parsedExceptions = _extractRecurrenceExceptions(json);
     return LectureDto(
-      id: json['id']?.toString() ?? '',
-      title: json['title']?.toString() ?? '',
-      type: json['type']?.toString() ?? 'LECTURE',
-      status: json['status']?.toString() ?? 'ACTIVE',
-      classroomId: json['classroomId']?.toString() ?? '',
-      classroomName: json['classroomName']?.toString(),
-      externalCode: json['externalCode']?.toString(),
-      departmentId: json['departmentId']?.toString(),
-      departmentName: json['departmentName']?.toString(),
-      instructorId: json['instructorId']?.toString(),
-      instructorName: json['instructorName']?.toString(),
+      id: _string(json, 'lectureId') ?? _string(json, 'id') ?? '',
+      title: _string(json, 'title') ?? '',
+      type: _string(json, 'type') ?? 'lecture',
+      status: _string(json, 'status') ?? 'scheduled',
+      classroomId: _string(json, 'classroomId') ?? '',
+      classroomName: _string(json, 'classroomName'),
+      externalCode: _string(json, 'externalCode'),
+      departmentId: _string(json, 'departmentId'),
+      departmentName: _string(json, 'departmentName'),
+      instructorId:
+          _string(json, 'instructorUserId') ?? _string(json, 'instructorId'),
+      instructorName: _string(json, 'instructorName'),
       startTime: DateTimeUtils.toLocal(
         DateTimeUtils.parseUtcFromJson(json['startTime']),
       ),
       endTime: DateTimeUtils.toLocal(
         DateTimeUtils.parseUtcFromJson(json['endTime']),
       ),
-      version: int.tryParse(json['version']?.toString() ?? '') ?? 0,
+      version: int.tryParse(_string(json, 'version') ?? '') ?? 0,
       createdAt: DateTimeUtils.toLocal(
         DateTimeUtils.parseUtcFromJson(json['createdAt']),
       ),
       updatedAt: DateTimeUtils.toLocal(
         DateTimeUtils.parseUtcFromJson(json['updatedAt']),
       ),
-      colorHex: json['colorHex']?.toString(),
-      recurrenceRule: json['recurrenceRule']?.toString(),
-      recurrenceExceptions: rawExceptions
-          .map(
-            (Object? value) => DateTimeUtils.toLocal(
-              DateTimeUtils.parseUtcFromJson(value),
-            ),
-          )
-          .toList(),
-      notes: json['notes']?.toString(),
+      colorHex: _string(json, 'colorHex'),
+      recurrenceRule: _extractRecurrenceRule(json),
+      recurrenceExceptions: parsedExceptions,
+      notes: _string(json, 'notes'),
     );
   }
 
-  /// API 전송용 JSON으로 직렬화한다.
   Map<String, Object?> toJson() {
-    return <String, Object?>{
-      'id': id,
+    final Map<String, Object?> json = <String, Object?>{
+      'lectureId': id,
       'title': title,
       'type': type,
-      'status': status,
       'classroomId': classroomId,
-      'classroomName': classroomName,
-      'externalCode': externalCode,
-      'departmentId': departmentId,
-      'departmentName': departmentName,
-      'instructorId': instructorId,
-      'instructorName': instructorName,
       'startTime': startTime.toUtc().toIso8601String(),
       'endTime': endTime.toUtc().toIso8601String(),
       'version': version,
       'createdAt': createdAt.toUtc().toIso8601String(),
       'updatedAt': updatedAt.toUtc().toIso8601String(),
-      'colorHex': colorHex,
-      'recurrenceRule': recurrenceRule,
-      'recurrenceExceptions': recurrenceExceptions
-          .map((DateTime date) => date.toUtc().toIso8601String())
-          .toList(),
-      'notes': notes,
     };
+    _write(json, 'status', status);
+    _write(json, 'classroomName', classroomName);
+    _write(json, 'externalCode', externalCode);
+    _write(json, 'departmentId', departmentId);
+    _write(json, 'departmentName', departmentName);
+    _write(json, 'instructorUserId', instructorId);
+    _write(json, 'instructorName', instructorName);
+    _write(json, 'colorHex', colorHex);
+    final Map<String, Object?>? recurrence = _buildRecurrenceJson();
+    if (recurrence != null) {
+      json['recurrence'] = recurrence;
+    }
+    if (notes != null) {
+      json['notes'] = notes;
+    }
+    return json;
+  }
+
+  static String? _string(Map<String, Object?> json, String key) {
+    final Object? value = json[key];
+    return value == null ? null : value.toString();
+  }
+
+  static List<DateTime> _extractRecurrenceExceptions(
+    Map<String, Object?> json,
+  ) {
+    if (json['recurrence'] is Map<String, Object?>) {
+      final Map<String, Object?> recurrence =
+          json['recurrence']! as Map<String, Object?>;
+      final List<DateTime> exDates =
+          _parseDateList(recurrence['exDates'] as List<Object?>?);
+      if (exDates.isNotEmpty) {
+        return exDates;
+      }
+    }
+    return _parseDateList(json['recurrenceExceptions'] as List<Object?>?);
+  }
+
+  static List<DateTime> _parseDateList(List<Object?>? raw) {
+    final List<Object?> safeList = raw ?? <Object?>[];
+    return safeList
+        .map(
+          (Object? value) => DateTimeUtils.toLocal(
+            DateTimeUtils.parseUtcFromJson(value),
+          ),
+        )
+        .toList();
+  }
+
+  static String? _extractRecurrenceRule(Map<String, Object?> json) {
+    if (json['recurrence'] is Map<String, Object?>) {
+      final Map<String, Object?> recurrence =
+          json['recurrence']! as Map<String, Object?>;
+      final String? rule = _string(recurrence, 'rrule');
+      if (rule != null && rule.isNotEmpty) {
+        return rule;
+      }
+    }
+    return _string(json, 'recurrenceRule');
+  }
+
+  Map<String, Object?>? _buildRecurrenceJson() {
+    final String? rule = recurrenceRule;
+    if (rule == null || rule.trim().isEmpty) {
+      return null;
+    }
+    final List<String> exDates = recurrenceExceptions
+        .map((DateTime date) => date.toUtc().toIso8601String())
+        .toList();
+    return <String, Object?>{
+      'rrule': rule,
+      if (exDates.isNotEmpty) 'exDates': exDates,
+    };
+  }
+
+  static void _write(
+    Map<String, Object?> target,
+    String key,
+    Object? value,
+  ) {
+    if (value == null) {
+      return;
+    }
+    target[key] = value;
   }
 }

@@ -25,8 +25,8 @@ void main() {
       LectureDto(
         id: '1',
         title: '강의 A',
-        type: 'LECTURE',
-        status: 'ACTIVE',
+        type: 'lecture',
+        status: 'scheduled',
         classroomId: 'room-1',
         startTime: DateTime.utc(2025, 1, 1, 9),
         endTime: DateTime.utc(2025, 1, 1, 10),
@@ -46,7 +46,7 @@ void main() {
       ),
     );
 
-    expect(remote.lastQuery?.type, 'LECTURE');
+    expect(remote.lastQuery?.type, 'lecture');
     expect(result.length, 1);
     expect(result.first.title, '강의 A');
   });
@@ -55,8 +55,8 @@ void main() {
     remote.singleResult = LectureDto(
       id: '55',
       title: '신규 강의',
-      type: 'EVENT',
-      status: 'ACTIVE',
+      type: 'event',
+      status: 'scheduled',
       classroomId: 'room-1',
       startTime: DateTime.utc(2025, 1, 1, 9),
       endTime: DateTime.utc(2025, 1, 1, 10),
@@ -83,8 +83,8 @@ void main() {
     remote.singleResult = LectureDto(
       id: '55',
       title: '수정 강의',
-      type: 'LECTURE',
-      status: 'ACTIVE',
+      type: 'lecture',
+      status: 'scheduled',
       classroomId: 'room-1',
       startTime: DateTime.utc(2025, 1, 1, 9),
       endTime: DateTime.utc(2025, 1, 1, 10),

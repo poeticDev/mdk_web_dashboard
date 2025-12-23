@@ -46,6 +46,7 @@ class LecturePayloadDto {
     this.instructorId,
     this.colorHex,
     this.recurrenceRule,
+    this.recurrenceExceptionDates,
     this.notes,
   });
 
@@ -59,6 +60,7 @@ class LecturePayloadDto {
   final DateTime? endTime;
   final String? colorHex;
   final String? recurrenceRule;
+  final List<DateTime>? recurrenceExceptionDates;
   final String? notes;
 
   factory LecturePayloadDto.create({
@@ -72,6 +74,7 @@ class LecturePayloadDto {
     String? instructorId,
     String? colorHex,
     String? recurrenceRule,
+    List<DateTime>? recurrenceExceptionDates,
     String? notes,
   }) {
     return LecturePayloadDto(
@@ -85,11 +88,12 @@ class LecturePayloadDto {
       instructorId: instructorId,
       colorHex: colorHex,
       recurrenceRule: recurrenceRule,
+      recurrenceExceptionDates: recurrenceExceptionDates,
       notes: notes,
     );
   }
 
-  Map<String, Object?> toJson({int? expectedVersion}) {
+  Map<String, Object?> toJson() {
     final Map<String, Object?> json = <String, Object?>{};
     void put(String key, Object? value) {
       if (value == null) {
@@ -107,16 +111,27 @@ class LecturePayloadDto {
     put('classroomId', classroomId);
     put('externalCode', externalCode);
     put('departmentId', departmentId);
-    put('instructorId', instructorId);
+    put('instructorUserId', instructorId);
     put('startTime', startTime);
     put('endTime', endTime);
     put('colorHex', colorHex);
-    put('recurrenceRule', recurrenceRule);
+    _writeRecurrence(json);
     put('notes', notes);
-    if (expectedVersion != null) {
-      json['expectedVersion'] = expectedVersion;
-    }
     return json;
+  }
+
+  void _writeRecurrence(Map<String, Object?> json) {
+    if (recurrenceRule == null) {
+      return;
+    }
+    final List<DateTime>? exceptions = recurrenceExceptionDates;
+    json['recurrence'] = <String, Object?>{
+      'rrule': recurrenceRule,
+      if (exceptions != null && exceptions.isNotEmpty)
+        'exDates': exceptions
+            .map((DateTime date) => date.toUtc().toIso8601String())
+            .toList(),
+    };
   }
 }
 

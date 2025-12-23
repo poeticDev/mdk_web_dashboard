@@ -31,10 +31,10 @@ void main() {
             'tz': 'Asia/Seoul',
             'lectures': <Map<String, Object?>>[
               <String, Object?>{
-                'id': '1',
+                'lectureId': '1',
                 'title': '캘린더 테스트',
-                'type': 'LECTURE',
-                'status': 'ACTIVE',
+                'type': 'lecture',
+                'status': 'scheduled',
                 'classroomId': 'room-1',
                 'startTime': '2025-01-01T09:00:00Z',
                 'endTime': '2025-01-01T10:00:00Z',
@@ -76,10 +76,10 @@ void main() {
       _FakeResponse(
         body: ResponseBody.fromString(
           jsonEncode(<String, Object?>{
-            'id': '1',
+            'lectureId': '1',
             'title': '신규 일정',
-            'type': 'EVENT',
-            'status': 'ACTIVE',
+            'type': 'event',
+            'status': 'scheduled',
             'classroomId': 'room-1',
             'startTime': '2025-01-01T09:00:00Z',
             'endTime': '2025-01-01T10:00:00Z',
@@ -101,14 +101,14 @@ void main() {
     final dto = await dataSource.createLecture(
       LecturePayloadDto(
         title: '신규 일정',
-        type: 'EVENT',
+        type: 'event',
         classroomId: 'room-1',
         startTime: DateTime.utc(2025, 1, 1, 9),
         endTime: DateTime.utc(2025, 1, 1, 10),
       ),
     );
 
-    expect(dto.type, 'EVENT');
+    expect(dto.type, 'event');
   });
 
   test('updateLecture hits PATCH /lectures/:id with version header', () async {
@@ -116,10 +116,10 @@ void main() {
       _FakeResponse(
         body: ResponseBody.fromString(
           jsonEncode(<String, Object?>{
-            'id': '1',
+            'lectureId': '1',
             'title': '수정된 일정',
-            'type': 'LECTURE',
-            'status': 'ACTIVE',
+            'type': 'lecture',
+            'status': 'scheduled',
             'classroomId': 'room-1',
             'startTime': '2025-01-01T09:00:00Z',
             'endTime': '2025-01-01T10:00:00Z',
@@ -137,10 +137,8 @@ void main() {
             options.headers[ApiConstants.expectedVersionHeader],
             1,
           );
-          expect(
-            options.data['expectedVersion'],
-            1,
-          );
+          expect(options.data['patch']['title'], '수정된 일정');
+          expect(options.data['expectedVersion'], 1);
         },
       ),
     );
@@ -151,7 +149,7 @@ void main() {
         expectedVersion: 1,
         payload: LecturePayloadDto(
           title: '수정된 일정',
-          type: 'LECTURE',
+          type: 'lecture',
           classroomId: 'room-1',
           startTime: DateTime.utc(2025, 1, 1, 9),
           endTime: DateTime.utc(2025, 1, 1, 10),

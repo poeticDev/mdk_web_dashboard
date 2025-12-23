@@ -1,7 +1,7 @@
 /// 강의 일정의 상태(정상/휴강)를 나타내는 enum.
 enum LectureStatus {
-  scheduled('ACTIVE'),
-  canceled('CANCELED');
+  scheduled('scheduled'),
+  canceled('cancelled');
 
   const LectureStatus(this.apiValue);
 
@@ -12,8 +12,10 @@ enum LectureStatus {
 
   /// API 문자열을 enum으로 변환한다.
   static LectureStatus fromApi(String value) {
-    return value.toUpperCase() == 'CANCELED'
-        ? LectureStatus.canceled
-        : LectureStatus.scheduled;
+    final String normalized = value.toLowerCase();
+    if (normalized == 'canceled' || normalized == 'cancelled') {
+      return LectureStatus.canceled;
+    }
+    return LectureStatus.scheduled;
   }
 }

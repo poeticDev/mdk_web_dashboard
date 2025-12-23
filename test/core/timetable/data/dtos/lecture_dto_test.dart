@@ -8,8 +8,8 @@ void main() {
     final LectureDto dto = LectureDto(
       id: '1',
       title: '테스트 강의',
-      type: 'LECTURE',
-      status: 'ACTIVE',
+      type: 'lecture',
+      status: 'scheduled',
       classroomId: 'room-1',
       departmentId: 'dept-1',
       instructorId: 'inst-1',
@@ -23,8 +23,34 @@ void main() {
     );
 
     final Map<String, Object?> json = dto.toJson();
-    final LectureDto restored =
-        LectureDto.fromJson(jsonDecode(jsonEncode(json)) as Map<String, Object?>);
+    expect(json['lectureId'], '1');
+    expect(
+      (json['recurrence'] as Map<String, Object?>)['rrule'],
+      'FREQ=WEEKLY',
+    );
+
+    final LectureDto restored = LectureDto.fromJson(
+      jsonDecode(
+        jsonEncode(
+          <String, Object?>{
+            'lectureId': '1',
+            'title': '테스트 강의',
+            'type': 'lecture',
+            'status': 'scheduled',
+            'classroomId': 'room-1',
+            'startTime': '2025-01-01T09:00:00Z',
+            'endTime': '2025-01-01T11:00:00Z',
+            'version': 3,
+            'createdAt': '2024-12-31T23:30:00Z',
+            'updatedAt': '2025-01-01T00:30:00Z',
+            'recurrence': <String, Object?>{
+              'rrule': 'FREQ=WEEKLY',
+              'exDates': <String>['2025-01-08T09:00:00Z'],
+            },
+          },
+        ),
+      ) as Map<String, Object?>,
+    );
 
     expect(restored.id, '1');
     expect(restored.title, '테스트 강의');

@@ -12,8 +12,8 @@ void main() {
     final LectureDto dto = LectureDto(
       id: '1',
       title: '수학 시험',
-      type: 'EXAM',
-      status: 'CANCELED',
+      type: 'exam',
+      status: 'cancelled',
       classroomId: 'room-1',
       startTime: DateTime.utc(2025, 1, 1, 9),
       endTime: DateTime.utc(2025, 1, 1, 11),
@@ -40,8 +40,8 @@ void main() {
       status: LectureStatus.scheduled,
     );
     final request = mapper.toQueryRequest(query);
-    expect(request.type, 'EVENT');
-    expect(request.status, 'ACTIVE');
+    expect(request.type, 'event');
+    expect(request.status, 'scheduled');
     expect(request.timezone, 'Asia/Seoul');
   });
 
@@ -55,7 +55,7 @@ void main() {
       externalCode: 'EXT-1',
     );
     final payload = mapper.toPayload(input);
-    expect(payload.type, 'LECTURE');
+    expect(payload.type, 'lecture');
     expect(payload.externalCode, 'EXT-1');
   });
 }
