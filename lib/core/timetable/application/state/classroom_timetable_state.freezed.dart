@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ClassroomTimetableState {
 
- String get classroomId; List<LectureEntity> get lectures; TimetableDateRange? get visibleRange; LectureType? get filterType; String? get departmentId; String? get instructorId; bool get isLoading; bool get isRefreshing; String? get errorMessage;
+ String get classroomId; List<LectureOccurrenceEntity> get occurrences; TimetableDateRange? get visibleRange; LectureType? get filterType; String? get departmentId; String? get instructorId; bool get isLoading; bool get isRefreshing; String? get errorMessage;
 /// Create a copy of ClassroomTimetableState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ClassroomTimetableStateCopyWith<ClassroomTimetableState> get copyWith => _$Clas
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClassroomTimetableState&&(identical(other.classroomId, classroomId) || other.classroomId == classroomId)&&const DeepCollectionEquality().equals(other.lectures, lectures)&&(identical(other.visibleRange, visibleRange) || other.visibleRange == visibleRange)&&(identical(other.filterType, filterType) || other.filterType == filterType)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&(identical(other.instructorId, instructorId) || other.instructorId == instructorId)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isRefreshing, isRefreshing) || other.isRefreshing == isRefreshing)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClassroomTimetableState&&(identical(other.classroomId, classroomId) || other.classroomId == classroomId)&&const DeepCollectionEquality().equals(other.occurrences, occurrences)&&(identical(other.visibleRange, visibleRange) || other.visibleRange == visibleRange)&&(identical(other.filterType, filterType) || other.filterType == filterType)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&(identical(other.instructorId, instructorId) || other.instructorId == instructorId)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isRefreshing, isRefreshing) || other.isRefreshing == isRefreshing)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,classroomId,const DeepCollectionEquality().hash(lectures),visibleRange,filterType,departmentId,instructorId,isLoading,isRefreshing,errorMessage);
+int get hashCode => Object.hash(runtimeType,classroomId,const DeepCollectionEquality().hash(occurrences),visibleRange,filterType,departmentId,instructorId,isLoading,isRefreshing,errorMessage);
 
 @override
 String toString() {
-  return 'ClassroomTimetableState(classroomId: $classroomId, lectures: $lectures, visibleRange: $visibleRange, filterType: $filterType, departmentId: $departmentId, instructorId: $instructorId, isLoading: $isLoading, isRefreshing: $isRefreshing, errorMessage: $errorMessage)';
+  return 'ClassroomTimetableState(classroomId: $classroomId, occurrences: $occurrences, visibleRange: $visibleRange, filterType: $filterType, departmentId: $departmentId, instructorId: $instructorId, isLoading: $isLoading, isRefreshing: $isRefreshing, errorMessage: $errorMessage)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ClassroomTimetableStateCopyWith<$Res>  {
   factory $ClassroomTimetableStateCopyWith(ClassroomTimetableState value, $Res Function(ClassroomTimetableState) _then) = _$ClassroomTimetableStateCopyWithImpl;
 @useResult
 $Res call({
- String classroomId, List<LectureEntity> lectures, TimetableDateRange? visibleRange, LectureType? filterType, String? departmentId, String? instructorId, bool isLoading, bool isRefreshing, String? errorMessage
+ String classroomId, List<LectureOccurrenceEntity> occurrences, TimetableDateRange? visibleRange, LectureType? filterType, String? departmentId, String? instructorId, bool isLoading, bool isRefreshing, String? errorMessage
 });
 
 
@@ -62,11 +62,11 @@ class _$ClassroomTimetableStateCopyWithImpl<$Res>
 
 /// Create a copy of ClassroomTimetableState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? classroomId = null,Object? lectures = null,Object? visibleRange = freezed,Object? filterType = freezed,Object? departmentId = freezed,Object? instructorId = freezed,Object? isLoading = null,Object? isRefreshing = null,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? classroomId = null,Object? occurrences = null,Object? visibleRange = freezed,Object? filterType = freezed,Object? departmentId = freezed,Object? instructorId = freezed,Object? isLoading = null,Object? isRefreshing = null,Object? errorMessage = freezed,}) {
   return _then(_self.copyWith(
 classroomId: null == classroomId ? _self.classroomId : classroomId // ignore: cast_nullable_to_non_nullable
-as String,lectures: null == lectures ? _self.lectures : lectures // ignore: cast_nullable_to_non_nullable
-as List<LectureEntity>,visibleRange: freezed == visibleRange ? _self.visibleRange : visibleRange // ignore: cast_nullable_to_non_nullable
+as String,occurrences: null == occurrences ? _self.occurrences : occurrences // ignore: cast_nullable_to_non_nullable
+as List<LectureOccurrenceEntity>,visibleRange: freezed == visibleRange ? _self.visibleRange : visibleRange // ignore: cast_nullable_to_non_nullable
 as TimetableDateRange?,filterType: freezed == filterType ? _self.filterType : filterType // ignore: cast_nullable_to_non_nullable
 as LectureType?,departmentId: freezed == departmentId ? _self.departmentId : departmentId // ignore: cast_nullable_to_non_nullable
 as String?,instructorId: freezed == instructorId ? _self.instructorId : instructorId // ignore: cast_nullable_to_non_nullable
@@ -170,10 +170,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String classroomId,  List<LectureEntity> lectures,  TimetableDateRange? visibleRange,  LectureType? filterType,  String? departmentId,  String? instructorId,  bool isLoading,  bool isRefreshing,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String classroomId,  List<LectureOccurrenceEntity> occurrences,  TimetableDateRange? visibleRange,  LectureType? filterType,  String? departmentId,  String? instructorId,  bool isLoading,  bool isRefreshing,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClassroomTimetableState() when $default != null:
-return $default(_that.classroomId,_that.lectures,_that.visibleRange,_that.filterType,_that.departmentId,_that.instructorId,_that.isLoading,_that.isRefreshing,_that.errorMessage);case _:
+return $default(_that.classroomId,_that.occurrences,_that.visibleRange,_that.filterType,_that.departmentId,_that.instructorId,_that.isLoading,_that.isRefreshing,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -191,10 +191,10 @@ return $default(_that.classroomId,_that.lectures,_that.visibleRange,_that.filter
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String classroomId,  List<LectureEntity> lectures,  TimetableDateRange? visibleRange,  LectureType? filterType,  String? departmentId,  String? instructorId,  bool isLoading,  bool isRefreshing,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String classroomId,  List<LectureOccurrenceEntity> occurrences,  TimetableDateRange? visibleRange,  LectureType? filterType,  String? departmentId,  String? instructorId,  bool isLoading,  bool isRefreshing,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _ClassroomTimetableState():
-return $default(_that.classroomId,_that.lectures,_that.visibleRange,_that.filterType,_that.departmentId,_that.instructorId,_that.isLoading,_that.isRefreshing,_that.errorMessage);case _:
+return $default(_that.classroomId,_that.occurrences,_that.visibleRange,_that.filterType,_that.departmentId,_that.instructorId,_that.isLoading,_that.isRefreshing,_that.errorMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -211,10 +211,10 @@ return $default(_that.classroomId,_that.lectures,_that.visibleRange,_that.filter
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String classroomId,  List<LectureEntity> lectures,  TimetableDateRange? visibleRange,  LectureType? filterType,  String? departmentId,  String? instructorId,  bool isLoading,  bool isRefreshing,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String classroomId,  List<LectureOccurrenceEntity> occurrences,  TimetableDateRange? visibleRange,  LectureType? filterType,  String? departmentId,  String? instructorId,  bool isLoading,  bool isRefreshing,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _ClassroomTimetableState() when $default != null:
-return $default(_that.classroomId,_that.lectures,_that.visibleRange,_that.filterType,_that.departmentId,_that.instructorId,_that.isLoading,_that.isRefreshing,_that.errorMessage);case _:
+return $default(_that.classroomId,_that.occurrences,_that.visibleRange,_that.filterType,_that.departmentId,_that.instructorId,_that.isLoading,_that.isRefreshing,_that.errorMessage);case _:
   return null;
 
 }
@@ -226,15 +226,15 @@ return $default(_that.classroomId,_that.lectures,_that.visibleRange,_that.filter
 
 
 class _ClassroomTimetableState extends ClassroomTimetableState {
-  const _ClassroomTimetableState({required this.classroomId, final  List<LectureEntity> lectures = const <LectureEntity>[], this.visibleRange, this.filterType, this.departmentId, this.instructorId, this.isLoading = false, this.isRefreshing = false, this.errorMessage}): _lectures = lectures,super._();
+  const _ClassroomTimetableState({required this.classroomId, final  List<LectureOccurrenceEntity> occurrences = const <LectureOccurrenceEntity>[], this.visibleRange, this.filterType, this.departmentId, this.instructorId, this.isLoading = false, this.isRefreshing = false, this.errorMessage}): _occurrences = occurrences,super._();
   
 
 @override final  String classroomId;
- final  List<LectureEntity> _lectures;
-@override@JsonKey() List<LectureEntity> get lectures {
-  if (_lectures is EqualUnmodifiableListView) return _lectures;
+ final  List<LectureOccurrenceEntity> _occurrences;
+@override@JsonKey() List<LectureOccurrenceEntity> get occurrences {
+  if (_occurrences is EqualUnmodifiableListView) return _occurrences;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_lectures);
+  return EqualUnmodifiableListView(_occurrences);
 }
 
 @override final  TimetableDateRange? visibleRange;
@@ -255,16 +255,16 @@ _$ClassroomTimetableStateCopyWith<_ClassroomTimetableState> get copyWith => __$C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassroomTimetableState&&(identical(other.classroomId, classroomId) || other.classroomId == classroomId)&&const DeepCollectionEquality().equals(other._lectures, _lectures)&&(identical(other.visibleRange, visibleRange) || other.visibleRange == visibleRange)&&(identical(other.filterType, filterType) || other.filterType == filterType)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&(identical(other.instructorId, instructorId) || other.instructorId == instructorId)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isRefreshing, isRefreshing) || other.isRefreshing == isRefreshing)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassroomTimetableState&&(identical(other.classroomId, classroomId) || other.classroomId == classroomId)&&const DeepCollectionEquality().equals(other._occurrences, _occurrences)&&(identical(other.visibleRange, visibleRange) || other.visibleRange == visibleRange)&&(identical(other.filterType, filterType) || other.filterType == filterType)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&(identical(other.instructorId, instructorId) || other.instructorId == instructorId)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isRefreshing, isRefreshing) || other.isRefreshing == isRefreshing)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,classroomId,const DeepCollectionEquality().hash(_lectures),visibleRange,filterType,departmentId,instructorId,isLoading,isRefreshing,errorMessage);
+int get hashCode => Object.hash(runtimeType,classroomId,const DeepCollectionEquality().hash(_occurrences),visibleRange,filterType,departmentId,instructorId,isLoading,isRefreshing,errorMessage);
 
 @override
 String toString() {
-  return 'ClassroomTimetableState(classroomId: $classroomId, lectures: $lectures, visibleRange: $visibleRange, filterType: $filterType, departmentId: $departmentId, instructorId: $instructorId, isLoading: $isLoading, isRefreshing: $isRefreshing, errorMessage: $errorMessage)';
+  return 'ClassroomTimetableState(classroomId: $classroomId, occurrences: $occurrences, visibleRange: $visibleRange, filterType: $filterType, departmentId: $departmentId, instructorId: $instructorId, isLoading: $isLoading, isRefreshing: $isRefreshing, errorMessage: $errorMessage)';
 }
 
 
@@ -275,7 +275,7 @@ abstract mixin class _$ClassroomTimetableStateCopyWith<$Res> implements $Classro
   factory _$ClassroomTimetableStateCopyWith(_ClassroomTimetableState value, $Res Function(_ClassroomTimetableState) _then) = __$ClassroomTimetableStateCopyWithImpl;
 @override @useResult
 $Res call({
- String classroomId, List<LectureEntity> lectures, TimetableDateRange? visibleRange, LectureType? filterType, String? departmentId, String? instructorId, bool isLoading, bool isRefreshing, String? errorMessage
+ String classroomId, List<LectureOccurrenceEntity> occurrences, TimetableDateRange? visibleRange, LectureType? filterType, String? departmentId, String? instructorId, bool isLoading, bool isRefreshing, String? errorMessage
 });
 
 
@@ -292,11 +292,11 @@ class __$ClassroomTimetableStateCopyWithImpl<$Res>
 
 /// Create a copy of ClassroomTimetableState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? classroomId = null,Object? lectures = null,Object? visibleRange = freezed,Object? filterType = freezed,Object? departmentId = freezed,Object? instructorId = freezed,Object? isLoading = null,Object? isRefreshing = null,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? classroomId = null,Object? occurrences = null,Object? visibleRange = freezed,Object? filterType = freezed,Object? departmentId = freezed,Object? instructorId = freezed,Object? isLoading = null,Object? isRefreshing = null,Object? errorMessage = freezed,}) {
   return _then(_ClassroomTimetableState(
 classroomId: null == classroomId ? _self.classroomId : classroomId // ignore: cast_nullable_to_non_nullable
-as String,lectures: null == lectures ? _self._lectures : lectures // ignore: cast_nullable_to_non_nullable
-as List<LectureEntity>,visibleRange: freezed == visibleRange ? _self.visibleRange : visibleRange // ignore: cast_nullable_to_non_nullable
+as String,occurrences: null == occurrences ? _self._occurrences : occurrences // ignore: cast_nullable_to_non_nullable
+as List<LectureOccurrenceEntity>,visibleRange: freezed == visibleRange ? _self.visibleRange : visibleRange // ignore: cast_nullable_to_non_nullable
 as TimetableDateRange?,filterType: freezed == filterType ? _self.filterType : filterType // ignore: cast_nullable_to_non_nullable
 as LectureType?,departmentId: freezed == departmentId ? _self.departmentId : departmentId // ignore: cast_nullable_to_non_nullable
 as String?,instructorId: freezed == instructorId ? _self.instructorId : instructorId // ignore: cast_nullable_to_non_nullable

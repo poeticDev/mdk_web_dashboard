@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:mdk_app_theme/mdk_app_theme.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 
@@ -27,6 +28,22 @@ class LectureColorResolver {
         .withLightness((hsl.lightness + lightnessVariance).clamp(0.2, 0.8))
         .toColor();
     return _applyCancellationTint(varied, lecture.status);
+  }
+
+  Color resolveColorForOccurrence(LectureOccurrenceEntity occurrence) {
+    final Color? customColor = _parseHexColor(occurrence.colorHex);
+    if (customColor != null) {
+      return _applyCancellationTint(customColor, occurrence.status);
+    }
+    final LectureType type = occurrence.type;
+    final Color baseColor = _baseColorByType(type);
+    final double lightnessVariance =
+        _computeVariance(occurrence.lectureId.hashCode, type.index);
+    final HSLColor hsl = HSLColor.fromColor(baseColor);
+    final Color varied = hsl
+        .withLightness((hsl.lightness + lightnessVariance).clamp(0.2, 0.8))
+        .toColor();
+    return _applyCancellationTint(varied, occurrence.status);
   }
 
   Color _baseColorByType(LectureType type) {

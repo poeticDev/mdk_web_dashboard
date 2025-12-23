@@ -4,10 +4,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/application/timetable_providers.dart';
 import 'package:web_dashboard/core/timetable/application/usecases/save_lecture_usecase.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_query.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart'
+    show LectureField, LectureWriteInput;
 
 part 'classroom_timetable_controller.g.dart';
 
@@ -18,7 +20,6 @@ class ClassroomTimetableController
   /// TODO: 서버 연동 완료 후 false로 변경한다.
   static bool demoDataEnabled = false;
   static const int _demoLecturesPerMonth = 10;
-  static const String _defaultTimezone = 'Asia/Seoul';
   static const List<String> _demoCourseNames = <String>[
     'AI 개론',
     '스마트보안 실습',
@@ -52,12 +53,12 @@ class ClassroomTimetableController
       visibleRange: targetRange,
     );
     try {
-      final List<LectureEntity> lectures =
-          await _requestLectures(targetRange);
+      final List<LectureOccurrenceEntity> occurrences =
+          await _requestOccurrences(targetRange);
       state = state.copyWith(
-        lectures: lectures,
+        occurrences: occurrences,
         isLoading: false,
-        errorMessage: lectures.isEmpty ? '표시할 일정이 없습니다.' : null,
+        errorMessage: occurrences.isEmpty ? '표시할 일정이 없습니다.' : null,
       );
     } catch (_) {
       state = state.copyWith(
@@ -89,14 +90,14 @@ class ClassroomTimetableController
     state = state.copyWith(visibleRange: range);
   }
 
-  /// 무상태로 특정 범위의 강의 목록만 조회한다.
-  Future<List<LectureEntity>> fetchLecturesByRange(
+  /// 무상태로 특정 범위의 occurrence만 조회한다.
+  Future<List<LectureOccurrenceEntity>> fetchOccurrencesByRange(
     TimetableDateRange range,
   ) {
-    return _requestLectures(range);
+    return _requestOccurrences(range);
   }
 
-  List<LectureEntity> _generateDemoLectures(
+  List<LectureOccurrenceEntity> _generateDemoOccurrences(
     TimetableDateRange targetRange,
   ) {
     final DateTime base =
@@ -105,7 +106,8 @@ class ClassroomTimetableController
       base,
       DateTime(base.year, base.month + 1, 1),
     ];
-    final List<LectureEntity> samples = <LectureEntity>[];
+    final List<LectureOccurrenceEntity> samples =
+        <LectureOccurrenceEntity>[];
     for (final DateTime anchor in monthAnchors) {
       final DateTime lastDay =
           DateTime(anchor.year, anchor.month + 1, 0);
@@ -118,49 +120,47 @@ class ClassroomTimetableController
           9 + (i % 3) * 2,
         );
         final DateTime end = start.add(const Duration(hours: 1, minutes: 40));
+        final LectureStatus status = i % 6 == 0
+            ? LectureStatus.canceled
+            : LectureStatus.scheduled;
         samples.add(
-          LectureEntity(
-            id: '${anchor.month}_$i',
+          LectureOccurrenceEntity(
+            id: 'occ_${anchor.month}_$i',
+            lectureId: 'demo_${anchor.month}_$i',
             title: _demoCourseNames[i % _demoCourseNames.length],
             type: LectureType.values[i % LectureType.values.length],
-            lectureStatus: i % 6 == 0
-                ? LectureStatus.canceled
-                : LectureStatus.scheduled,
+            status: status,
+            isOverride: false,
             classroomId: state.classroomId,
             classroomName: '공학관 ${state.classroomId}',
-            departmentName: '스마트보안학과',
-            instructorName: _demoProfessors[i % _demoProfessors.length],
             start: start,
             end: end,
-            version: 1,
-            createdAt: DateTime.now().subtract(const Duration(days: 1)),
-            updatedAt: DateTime.now(),
+            sourceVersion: 1,
+            departmentName: '스마트보안학과',
+            instructorName: _demoProfessors[i % _demoProfessors.length],
           ),
         );
       }
     }
     return samples
         .where(
-          (LectureEntity lecture) => targetRange.contains(lecture.start),
+          (LectureOccurrenceEntity occurrence) =>
+              targetRange.contains(occurrence.start),
         )
         .toList();
   }
 
-  Future<List<LectureEntity>> _requestLectures(
+  Future<List<LectureOccurrenceEntity>> _requestOccurrences(
     TimetableDateRange targetRange,
   ) async {
     if (demoDataEnabled) {
-      return _generateDemoLectures(targetRange);
+      return _generateDemoOccurrences(targetRange);
     }
-    return ref.read(getLecturesUseCaseProvider).execute(
-          LectureQuery(
+    return ref.read(getLectureOccurrencesUseCaseProvider).execute(
+          LectureOccurrenceQuery(
+            classroomId: state.classroomId,
             from: targetRange.from,
             to: targetRange.to,
-            classroomId: state.classroomId,
-            timezone: _defaultTimezone,
-            departmentId: state.departmentId,
-            instructorId: state.instructorId,
-            type: state.filterType,
           ),
         );
   }

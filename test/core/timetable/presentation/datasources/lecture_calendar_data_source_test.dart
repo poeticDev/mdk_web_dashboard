@@ -8,6 +8,7 @@ void main() {
   test('LectureCalendarDataSource exposes view model values', () {
     final vm = LectureViewModel(
       id: '1',
+      lectureId: 'lec-1',
       title: '테스트',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
@@ -17,6 +18,7 @@ void main() {
       version: 1,
       notes: '비고',
       type: LectureType.lecture,
+      isOverride: false,
     );
     final dataSource = LectureCalendarDataSource(
       items: <LectureViewModel>[vm],
@@ -31,6 +33,7 @@ void main() {
   test('handleLoadMore appends fetched lectures without duplicates', () async {
     final LectureViewModel existing = LectureViewModel(
       id: '1',
+      lectureId: 'lec-1',
       title: '기존',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
@@ -39,9 +42,11 @@ void main() {
       statusLabel: '진행',
       version: 1,
       type: LectureType.lecture,
+      isOverride: false,
     );
     final LectureViewModel incoming = LectureViewModel(
       id: '2',
+      lectureId: 'lec-2',
       title: '추가',
       classroomName: '공학관 102',
       start: DateTime.utc(2025, 1, 2, 9),
@@ -50,6 +55,7 @@ void main() {
       statusLabel: '예정',
       version: 1,
       type: LectureType.lecture,
+      isOverride: false,
     );
     final dataSource = LectureCalendarDataSource(
       items: <LectureViewModel>[existing],
@@ -66,6 +72,7 @@ void main() {
   test('handleLoadMore prefers newer versions when ids match', () async {
     final LectureViewModel existing = LectureViewModel(
       id: 'dup',
+      lectureId: 'lec-dup',
       title: '기존',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
@@ -74,9 +81,11 @@ void main() {
       statusLabel: '진행',
       version: 1,
       type: LectureType.lecture,
+      isOverride: false,
     );
     final LectureViewModel updated = LectureViewModel(
       id: 'dup',
+      lectureId: 'lec-dup',
       title: '수정',
       classroomName: '공학관 101',
       start: DateTime.utc(2025, 1, 1, 9),
@@ -85,6 +94,7 @@ void main() {
       statusLabel: '진행',
       version: 2,
       type: LectureType.lecture,
+      isOverride: true,
     );
     final dataSource = LectureCalendarDataSource(
       items: <LectureViewModel>[existing],

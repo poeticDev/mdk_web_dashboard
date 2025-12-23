@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/application/timetable_providers.dart';
-import 'package:web_dashboard/core/timetable/application/usecases/get_lectures_usecase.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/application/usecases/get_lecture_occurrences_usecase.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_query.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart';
 
 void main() {
   setUp(() {
@@ -16,8 +17,10 @@ void main() {
 
   test('loadLectures fetches data and updates state', () async {
     final container = ProviderContainer(
-      overrides:[
-        getLecturesUseCaseProvider.overrideWithValue(_FakeGetLecturesUseCase()),
+      overrides: [
+        getLectureOccurrencesUseCaseProvider.overrideWithValue(
+          _FakeGetLectureOccurrencesUseCase(),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -34,13 +37,15 @@ void main() {
     final state =
         container.read(classroomTimetableControllerProvider('room-1'));
     expect(state.isLoading, isFalse);
-    expect(state.lectures.length, 1);
+    expect(state.occurrences.length, 1);
   });
 
   test('selectLectureType stores filter without loading', () {
     final container = ProviderContainer(
       overrides: [
-        getLecturesUseCaseProvider.overrideWithValue(_FakeGetLecturesUseCase()),
+        getLectureOccurrencesUseCaseProvider.overrideWithValue(
+          _FakeGetLectureOccurrencesUseCase(),
+        ),
       ],
     );
     addTearDown(container.dispose);
@@ -56,47 +61,38 @@ void main() {
   });
 }
 
-class _FakeGetLecturesUseCase extends GetLecturesUseCase {
-  _FakeGetLecturesUseCase() : super(_DummyRepository());
+class _FakeGetLectureOccurrencesUseCase extends GetLectureOccurrencesUseCase {
+  _FakeGetLectureOccurrencesUseCase()
+      : super(_DummyLectureOccurrenceRepository());
 
   @override
-  Future<List<LectureEntity>> execute(LectureQuery query) async {
-    return <LectureEntity>[
-      LectureEntity(
-        id: '1',
+  Future<List<LectureOccurrenceEntity>> execute(
+    LectureOccurrenceQuery query,
+  ) async {
+    return <LectureOccurrenceEntity>[
+      LectureOccurrenceEntity(
+        id: 'occ-1',
+        lectureId: 'lec-1',
         title: '테스트 강의',
         type: LectureType.lecture,
-        lectureStatus: LectureStatus.scheduled,
+        status: LectureStatus.scheduled,
+        isOverride: false,
         classroomId: query.classroomId,
         classroomName: '공학관 101',
         start: DateTime(2025, 1, 1, 9),
         end: DateTime(2025, 1, 1, 10),
-        version: 1,
-        createdAt: DateTime(2024, 12, 31, 23),
-        updatedAt: DateTime(2024, 12, 31, 23, 30),
+        sourceVersion: 1,
       ),
     ];
   }
 }
 
-class _DummyRepository implements LectureRepository {
+class _DummyLectureOccurrenceRepository
+    implements LectureOccurrenceRepository {
   @override
-  Future<LectureEntity> createLecture(LectureWriteInput input) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> deleteLecture(DeleteLectureInput input) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<LectureEntity>> fetchLectures(LectureQuery query) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<LectureEntity> updateLecture(UpdateLectureInput input) {
+  Future<List<LectureOccurrenceEntity>> fetchOccurrences(
+    LectureOccurrenceQuery query,
+  ) {
     throw UnimplementedError();
   }
 }

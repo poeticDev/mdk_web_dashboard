@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 
 part 'classroom_timetable_state.freezed.dart';
@@ -11,7 +11,8 @@ abstract class ClassroomTimetableState with _$ClassroomTimetableState {
 
   const factory ClassroomTimetableState({
     required String classroomId,
-    @Default(<LectureEntity>[]) List<LectureEntity> lectures,
+    @Default(<LectureOccurrenceEntity>[])
+        List<LectureOccurrenceEntity> occurrences,
     TimetableDateRange? visibleRange,
     LectureType? filterType,
     String? departmentId,

@@ -9,7 +9,7 @@ import 'package:web_dashboard/core/auth/domain/entities/auth_user.dart';
 import 'package:web_dashboard/core/auth/domain/state/auth_state.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart'
     show LectureWriteInput, UpdateLectureInput, LectureField;
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
@@ -84,17 +84,18 @@ class _ClassroomTimetableSectionState
         ? AppColors.dark(ThemeBrand.defaultBrand)
         : AppColors.light(ThemeBrand.defaultBrand);
     final LectureColorResolver colorResolver = LectureColorResolver(appColors);
-    final List<LectureViewModel> viewModels = state.lectures
+    final List<LectureViewModel> viewModels = state.occurrences
         .map(
-          (LectureEntity lecture) => LectureViewModel.fromEntity(
-            lecture,
-            color: colorResolver.resolveColor(lecture),
+          (LectureOccurrenceEntity occurrence) =>
+              LectureViewModel.fromOccurrence(
+            occurrence,
+            color: colorResolver.resolveColorForOccurrence(occurrence),
           ),
         )
         .toList();
     final LectureCalendarDataSource dataSource = LectureCalendarDataSource(
       items: viewModels,
-      loadMoreLectures: (DateTime from, DateTime to) => _loadMoreLectures(
+      loadMoreLectures: (DateTime from, DateTime to) => _loadMoreOccurrences(
         from: from,
         to: to,
         controller: controller,
@@ -324,22 +325,22 @@ class _ClassroomTimetableSectionState
     return _rangeFromDates(start, end);
   }
 
-  /// 로드 모어 이벤트에 맞춰 서버에서 추가 강의 일정을 받아온다.
-  Future<List<LectureViewModel>> _loadMoreLectures({
+  /// 로드 모어 이벤트에 맞춰 서버에서 추가 occurrence를 받아온다.
+  Future<List<LectureViewModel>> _loadMoreOccurrences({
     required DateTime from,
     required DateTime to,
     required ClassroomTimetableController controller,
     required LectureColorResolver colorResolver,
   }) async {
     final TimetableDateRange range = _rangeFromDates(from, to);
-    final List<LectureEntity> lectures = await controller.fetchLecturesByRange(
-      range,
-    );
-    return lectures
+    final List<LectureOccurrenceEntity> occurrences =
+        await controller.fetchOccurrencesByRange(range);
+    return occurrences
         .map(
-          (LectureEntity lecture) => LectureViewModel.fromEntity(
-            lecture,
-            color: colorResolver.resolveColor(lecture),
+          (LectureOccurrenceEntity occurrence) =>
+              LectureViewModel.fromOccurrence(
+            occurrence,
+            color: colorResolver.resolveColorForOccurrence(occurrence),
           ),
         )
         .toList();
