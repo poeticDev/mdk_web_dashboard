@@ -1,6 +1,6 @@
 /// 조회 API에 전달할 쿼리 파라미터 묶음.
-class LectureQueryRequest {
-  const LectureQueryRequest({
+class LectureOriginQueryRequest {
+  const LectureOriginQueryRequest({
     required this.from,
     required this.to,
     required this.classroomId,
@@ -141,11 +141,15 @@ class UpdateLectureRequest {
     required this.lectureId,
     required this.payload,
     this.expectedVersion,
+    this.applyToFollowing = false,
+    this.applyToOverrides = false,
   });
 
   final String lectureId;
   final LecturePayloadDto payload;
   final int? expectedVersion;
+  final bool applyToFollowing;
+  final bool applyToOverrides;
 }
 
 /// DELETE /lectures/{id} 요청 파라미터.
@@ -153,8 +157,10 @@ class DeleteLectureRequest {
   const DeleteLectureRequest({
     required this.lectureId,
     required this.expectedVersion,
+    this.applyToFollowing = false,
   });
 
   final String lectureId;
   final int expectedVersion;
+  final bool applyToFollowing;
 }

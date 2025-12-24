@@ -9,7 +9,7 @@ import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_re
 void main() {
   final resolver = LectureColorResolver(AppColors.light(ThemeBrand.defaultBrand));
 
-  LectureEntity _build({
+  LectureEntity buildLecture({
     LectureType type = LectureType.lecture,
     LectureStatus status = LectureStatus.scheduled,
     String? colorHex,
@@ -31,20 +31,20 @@ void main() {
   }
 
   test('resolves lecture color by type', () {
-    final color = resolver.resolveColor(_build(type: LectureType.event));
+    final color = resolver.resolveColor(buildLecture(type: LectureType.event));
     expect(color, isNotNull);
   });
 
   test('canceled lectures lower saturation', () {
-    final active = resolver.resolveColor(_build());
+    final active = resolver.resolveColor(buildLecture());
     final canceled =
-        resolver.resolveColor(_build(status: LectureStatus.canceled));
-    expect(canceled.opacity, equals(1.0));
+        resolver.resolveColor(buildLecture(status: LectureStatus.canceled));
+    expect(canceled.a, equals(1.0));
     expect(canceled.computeLuminance(), greaterThan(active.computeLuminance()));
   });
 
   test('uses custom colorHex when provided', () {
-    final color = resolver.resolveColor(_build(colorHex: '#123456'));
-    expect(color.value, equals(const Color(0xFF123456).value));
+    final color = resolver.resolveColor(buildLecture(colorHex: '#123456'));
+    expect(color.toARGB32(), equals(const Color(0xFF123456).toARGB32()));
   });
 }

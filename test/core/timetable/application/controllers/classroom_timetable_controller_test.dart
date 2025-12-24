@@ -95,4 +95,23 @@ class _DummyLectureOccurrenceRepository
   ) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<LectureOccurrenceEntity> createOccurrence(
+    LectureOccurrenceWriteInput input,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteOccurrence(LectureOccurrenceDeleteInput input) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<LectureOccurrenceEntity> updateOccurrence(
+    LectureOccurrenceUpdateInput input,
+  ) {
+    throw UnimplementedError();
+  }
 }

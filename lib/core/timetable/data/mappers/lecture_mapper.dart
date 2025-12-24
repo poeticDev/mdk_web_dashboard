@@ -3,7 +3,7 @@ import 'package:web_dashboard/core/timetable/data/dtos/lecture_request_dtos.dart
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 
 /// DTO ↔ 도메인 변환 책임을 담당하는 매퍼.
 class LectureMapper {
@@ -35,8 +35,8 @@ class LectureMapper {
     );
   }
 
-  LectureQueryRequest toQueryRequest(LectureQuery query) {
-    return LectureQueryRequest(
+  LectureOriginQueryRequest toQueryRequest(LectureOriginQuery query) {
+    return LectureOriginQueryRequest(
       from: query.from,
       to: query.to,
       classroomId: query.classroomId,
@@ -48,7 +48,7 @@ class LectureMapper {
     );
   }
 
-  LecturePayloadDto toPayload(LectureWriteInput input) {
+  LecturePayloadDto toPayload(LectureOriginWriteInput input) {
     return LecturePayloadDto.create(
       title: input.title,
       type: input.type.apiValue,
@@ -65,7 +65,7 @@ class LectureMapper {
   }
 
   LecturePayloadDto toPartialPayload(
-    LectureWriteInput input,
+    LectureOriginWriteInput input,
     Set<LectureField> fields,
   ) {
     return LecturePayloadDto(
@@ -89,7 +89,7 @@ class LectureMapper {
     );
   }
 
-  UpdateLectureRequest toUpdateRequest(UpdateLectureInput input) {
+  UpdateLectureRequest toUpdateRequest(LectureOriginUpdateInput input) {
     final Set<LectureField>? updatedFields = input.updatedFields;
     final LecturePayloadDto payload = (updatedFields == null ||
             updatedFields.isEmpty)
@@ -99,13 +99,16 @@ class LectureMapper {
       lectureId: input.lectureId,
       payload: payload,
       expectedVersion: input.expectedVersion,
+      applyToFollowing: input.applyToFollowing,
+      applyToOverrides: input.applyToOverrides,
     );
   }
 
-  DeleteLectureRequest toDeleteRequest(DeleteLectureInput input) {
+  DeleteLectureRequest toDeleteRequest(LectureOriginDeleteInput input) {
     return DeleteLectureRequest(
       lectureId: input.lectureId,
       expectedVersion: input.expectedVersion,
+      applyToFollowing: input.applyToFollowing,
     );
   }
 }

@@ -10,8 +10,8 @@ import 'package:web_dashboard/core/auth/domain/state/auth_state.dart';
 import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart'
-    show LectureWriteInput, UpdateLectureInput, LectureField;
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart'
+    show LectureOriginWriteInput, LectureOriginUpdateInput, LectureField;
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
 import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_resolver.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
@@ -21,7 +21,6 @@ import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_mo
 const double _weekCalendarHeight = 800;
 const double _monthCalendarHeight = 600;
 const double _timeSlotIntervalHeight = 60;
-const String _koreaTimeZoneId = 'Korea Standard Time';
 const String _rangeStartPattern = 'MM/dd HH:mm';
 const String _rangeEndPattern = 'HH:mm';
 
@@ -165,7 +164,6 @@ class _ClassroomTimetableSectionState
                         theme.colorScheme.inversePrimary,
                   ),
                 ),
-                // timeZone: _koreaTimeZoneId,
                 timeSlotViewSettings: const TimeSlotViewSettings(
                   startHour: 8,
                   endHour: 22,
@@ -444,7 +442,7 @@ class _ClassroomTimetableSectionState
       classroomId: widget.classroomId,
       classroomName: '공학관 ${widget.classroomId}',
       initialStart: start,
-      onCreateSubmit: (LectureWriteInput input) =>
+      onCreateSubmit: (LectureOriginWriteInput input) =>
           _handleCreateSubmit(controller, input),
     );
   }
@@ -474,14 +472,14 @@ class _ClassroomTimetableSectionState
       classroomName: vm.classroomName,
       initialStart: vm.start,
       initialLecture: vm,
-      onUpdateSubmit: (UpdateLectureInput input) =>
+      onUpdateSubmit: (LectureOriginUpdateInput input) =>
           _handleUpdateSubmit(controller, vm, input),
     );
   }
 
   Future<void> _handleCreateSubmit(
     ClassroomTimetableController controller,
-    LectureWriteInput input,
+    LectureOriginWriteInput input,
   ) async {
     await _saveLecture(
       controller: controller,
@@ -493,7 +491,7 @@ class _ClassroomTimetableSectionState
   Future<void> _handleUpdateSubmit(
     ClassroomTimetableController controller,
     LectureViewModel original,
-    UpdateLectureInput input,
+    LectureOriginUpdateInput input,
   ) async {
     final Set<LectureField> changedFields = _computeChangedFields(
       original,
@@ -521,7 +519,7 @@ class _ClassroomTimetableSectionState
 
   Future<void> _saveLecture({
     required ClassroomTimetableController controller,
-    required LectureWriteInput payload,
+    required LectureOriginWriteInput payload,
     String? lectureId,
     int? expectedVersion,
     Set<LectureField>? changedFields,
@@ -556,7 +554,7 @@ class _ClassroomTimetableSectionState
 
   Set<LectureField> _computeChangedFields(
     LectureViewModel original,
-    LectureWriteInput next,
+    LectureOriginWriteInput next,
   ) {
     final Set<LectureField> fields = <LectureField>{};
     if (original.title.trim() != next.title.trim()) {

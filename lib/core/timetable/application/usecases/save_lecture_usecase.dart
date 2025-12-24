@@ -1,22 +1,24 @@
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 
 /// 강의 일정을 생성 혹은 수정하는 UseCase.
 class SaveLectureUseCase {
   const SaveLectureUseCase(this._repository);
 
-  final LectureRepository _repository;
+  final LectureOriginRepository _repository;
 
   Future<LectureEntity> execute(SaveLectureCommand command) {
     if (command.lectureId == null) {
       return _repository.createLecture(command.payload);
     }
     return _repository.updateLecture(
-      UpdateLectureInput(
+      LectureOriginUpdateInput(
         lectureId: command.lectureId!,
         payload: command.payload,
         expectedVersion: command.expectedVersion,
         updatedFields: command.updatedFields,
+        applyToFollowing: command.applyToFollowing,
+        applyToOverrides: command.applyToOverrides,
       ),
     );
   }
@@ -29,10 +31,14 @@ class SaveLectureCommand {
     this.lectureId,
     this.expectedVersion,
     this.updatedFields,
+    this.applyToFollowing = false,
+    this.applyToOverrides = false,
   });
 
-  final LectureWriteInput payload;
+  final LectureOriginWriteInput payload;
   final String? lectureId;
   final int? expectedVersion;
   final Set<LectureField>? updatedFields;
+  final bool applyToFollowing;
+  final bool applyToOverrides;
 }

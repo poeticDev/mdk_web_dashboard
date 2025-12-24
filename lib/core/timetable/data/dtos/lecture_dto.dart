@@ -113,7 +113,7 @@ class LectureDto {
 
   static String? _string(Map<String, Object?> json, String key) {
     final Object? value = json[key];
-    return value == null ? null : value.toString();
+    return value?.toString();
   }
 
   static List<DateTime> _extractRecurrenceExceptions(

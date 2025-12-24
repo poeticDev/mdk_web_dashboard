@@ -5,8 +5,8 @@ import 'package:web_dashboard/core/auth/data/datasources/auth_remote_data_source
 import 'package:web_dashboard/core/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:web_dashboard/core/auth/data/repositories/auth_repository_impl.dart';
 import 'package:web_dashboard/core/auth/domain/repositories/auth_repository.dart';
-import 'package:web_dashboard/core/timetable/data/datasources/lecture_remote_data_source.dart';
-import 'package:web_dashboard/core/timetable/data/datasources/lecture_remote_data_source.dart'
+import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart';
+import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart'
     as timetable_remote;
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_occurrence_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_occurrence_remote_data_source.dart'
@@ -14,9 +14,9 @@ import 'package:web_dashboard/core/timetable/data/datasources/lecture_occurrence
 import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
 import 'package:web_dashboard/core/timetable/data/mappers/lecture_occurrence_mapper.dart';
 import 'package:web_dashboard/core/timetable/data/repositories/lecture_occurrence_repository_impl.dart';
-import 'package:web_dashboard/core/timetable/data/repositories/lecture_repository_impl.dart';
+import 'package:web_dashboard/core/timetable/data/repositories/lecture_origin_repository_impl.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 
 final GetIt di = GetIt.instance;
 
@@ -40,14 +40,14 @@ Future<void> initDependencies() async {
       () => const LectureOccurrenceMapper(),
     );
   }
-  if (!di.isRegistered<LectureRemoteDataSource>()) {
-    di.registerLazySingleton<LectureRemoteDataSource>(
-      () => timetable_remote.LectureRemoteDataSourceImpl(dio: di()),
+  if (!di.isRegistered<LectureOriginRemoteDataSource>()) {
+    di.registerLazySingleton<LectureOriginRemoteDataSource>(
+      () => timetable_remote.LectureOriginRemoteDataSourceImpl(dio: di()),
     );
   }
-  if (!di.isRegistered<LectureRepository>()) {
-    di.registerLazySingleton<LectureRepository>(
-      () => LectureRepositoryImpl(
+  if (!di.isRegistered<LectureOriginRepository>()) {
+    di.registerLazySingleton<LectureOriginRepository>(
+      () => LectureOriginRepositoryImpl(
         remoteDataSource: di(),
         mapper: di(),
       ),

@@ -4,7 +4,7 @@ import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
 import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
 
 const List<Color> _lectureColorPalette = <Color>[
@@ -38,8 +38,8 @@ class ClassroomTimetableModal extends StatefulWidget {
   final String classroomName;
   final DateTime initialStart;
   final LectureViewModel? initialLecture;
-  final ValueChanged<LectureWriteInput>? onCreateSubmit;
-  final ValueChanged<UpdateLectureInput>? onUpdateSubmit;
+  final ValueChanged<LectureOriginWriteInput>? onCreateSubmit;
+  final ValueChanged<LectureOriginUpdateInput>? onUpdateSubmit;
 
   static Future<void> show({
     required BuildContext context,
@@ -48,8 +48,8 @@ class ClassroomTimetableModal extends StatefulWidget {
     required String classroomName,
     required DateTime initialStart,
     LectureViewModel? initialLecture,
-    ValueChanged<LectureWriteInput>? onCreateSubmit,
-    ValueChanged<UpdateLectureInput>? onUpdateSubmit,
+    ValueChanged<LectureOriginWriteInput>? onCreateSubmit,
+    ValueChanged<LectureOriginUpdateInput>? onUpdateSubmit,
   }) {
     return showDialog<void>(
       context: context,
@@ -292,7 +292,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
         Text(
           _repeatSummaryText(),
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: _buildSubtleOnSurface(theme),
           ),
         ),
       ],
@@ -346,7 +346,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       case WeeklyRepeatOption.weeks:
         final DateTime last =
             _start.add(Duration(days: 7 * (_repeatWeekCount - 1)));
-        return '${_repeatWeekCount}주간 반복 · '
+        return '$_repeatWeekCount주간 반복 · '
             '${_formatKoreanDate(last)}까지 매주 반복됩니다.';
       case WeeklyRepeatOption.until:
         if (_repeatUntilDate == null) {
@@ -358,6 +358,11 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
 
   String _formatKoreanDate(DateTime date) =>
       '${date.year}년 ${date.month}월 ${date.day}일';
+
+  Color _buildSubtleOnSurface(ThemeData theme) {
+    final Color base = theme.colorScheme.onSurface;
+    return base.withValues(alpha: base.a * 0.7);
+  }
 
   String? _buildRecurrenceRule() {
     if (_repeatOption == WeeklyRepeatOption.none) {
@@ -495,7 +500,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       );
       return;
     }
-    final LectureWriteInput payload = LectureWriteInput(
+    final LectureOriginWriteInput payload = LectureOriginWriteInput(
       title: _titleController.text.trim(),
       type: _selectedType,
       classroomId: widget.classroomId,
@@ -520,7 +525,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
         return;
       }
       widget.onUpdateSubmit?.call(
-        UpdateLectureInput(
+        LectureOriginUpdateInput(
           lectureId: lectureId,
           payload: payload,
           expectedVersion: widget.initialLecture?.version,

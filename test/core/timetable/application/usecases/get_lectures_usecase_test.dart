@@ -5,7 +5,7 @@ import 'package:web_dashboard/core/timetable/application/usecases/delete_lecture
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 
 void main() {
   late _FakeRepository repository;
@@ -33,7 +33,7 @@ void main() {
     final usecase = GetLecturesUseCase(repository);
 
     final result = await usecase.execute(
-      LectureQuery(
+      LectureOriginQuery(
         from: DateTime.utc(2025, 1, 1),
         to: DateTime.utc(2025, 1, 2),
         classroomId: 'room-1',
@@ -62,7 +62,7 @@ void main() {
 
     final entity = await usecase.execute(
       SaveLectureCommand(
-        payload: LectureWriteInput(
+        payload: LectureOriginWriteInput(
           title: '신규',
           type: LectureType.event,
           classroomId: 'room-1',
@@ -96,7 +96,7 @@ void main() {
       SaveLectureCommand(
         lectureId: 'update',
         expectedVersion: 1,
-        payload: LectureWriteInput(
+        payload: LectureOriginWriteInput(
           title: '수정',
           type: LectureType.lecture,
           classroomId: 'room-1',
@@ -114,7 +114,7 @@ void main() {
     final usecase = DeleteLectureUseCase(repository);
 
     await usecase.execute(
-      const DeleteLectureInput(
+      const LectureOriginDeleteInput(
         lectureId: 'delete',
         expectedVersion: 4,
       ),
@@ -124,9 +124,9 @@ void main() {
   });
 }
 
-class _FakeRepository implements LectureRepository {
-  LectureQuery? lastQuery;
-  UpdateLectureInput? lastUpdate;
+class _FakeRepository implements LectureOriginRepository {
+  LectureOriginQuery? lastQuery;
+  LectureOriginUpdateInput? lastUpdate;
   LectureEntity? singleResult;
   List<LectureEntity> fetchResult = <LectureEntity>[];
   int createdCount = 0;
@@ -134,24 +134,24 @@ class _FakeRepository implements LectureRepository {
   int deletedCount = 0;
 
   @override
-  Future<LectureEntity> createLecture(LectureWriteInput input) async {
+  Future<LectureEntity> createLecture(LectureOriginWriteInput input) async {
     createdCount += 1;
     return singleResult!;
   }
 
   @override
-  Future<void> deleteLecture(DeleteLectureInput input) async {
+  Future<void> deleteLecture(LectureOriginDeleteInput input) async {
     deletedCount += 1;
   }
 
   @override
-  Future<List<LectureEntity>> fetchLectures(LectureQuery query) async {
+  Future<List<LectureEntity>> fetchLectures(LectureOriginQuery query) async {
     lastQuery = query;
     return fetchResult;
   }
 
   @override
-  Future<LectureEntity> updateLecture(UpdateLectureInput input) async {
+  Future<LectureEntity> updateLecture(LectureOriginUpdateInput input) async {
     lastUpdate = input;
     updatedCount += 1;
     return singleResult!;

@@ -3,7 +3,7 @@ import 'package:web_dashboard/core/timetable/data/dtos/lecture_dto.dart';
 import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 
 void main() {
   const LectureMapper mapper = LectureMapper();
@@ -30,7 +30,7 @@ void main() {
   });
 
   test('toQueryRequest copies filters', () {
-    final LectureQuery query = LectureQuery(
+    final LectureOriginQuery query = LectureOriginQuery(
       from: DateTime.utc(2025, 1, 1),
       to: DateTime.utc(2025, 1, 31),
       classroomId: 'room-1',
@@ -46,7 +46,7 @@ void main() {
   });
 
   test('toPayload copies writer input', () {
-    final LectureWriteInput input = LectureWriteInput(
+    final LectureOriginWriteInput input = LectureOriginWriteInput(
       title: 'AI 기초',
       type: LectureType.lecture,
       classroomId: 'room-1',

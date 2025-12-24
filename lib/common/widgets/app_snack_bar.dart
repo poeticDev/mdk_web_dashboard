@@ -49,7 +49,6 @@ class AppSnackBar {
       case AppSnackBarType.error:
         return colors.error;
       case AppSnackBarType.info:
-      default:
         return colors.secondary;
     }
   }

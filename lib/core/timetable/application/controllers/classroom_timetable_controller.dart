@@ -8,8 +8,8 @@ import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_query.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart'
-    show LectureField, LectureWriteInput;
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart'
+    show LectureField, LectureOriginWriteInput;
 
 part 'classroom_timetable_controller.g.dart';
 
@@ -166,10 +166,12 @@ class ClassroomTimetableController
   }
 
   Future<void> saveLecture({
-    required LectureWriteInput payload,
+    required LectureOriginWriteInput payload,
     String? lectureId,
     int? expectedVersion,
     Set<LectureField>? updatedFields,
+    bool applyToFollowing = false,
+    bool applyToOverrides = false,
   }) async {
     await ref.read(saveLectureUseCaseProvider).execute(
           SaveLectureCommand(
@@ -177,6 +179,8 @@ class ClassroomTimetableController
             lectureId: lectureId,
             expectedVersion: expectedVersion,
             updatedFields: updatedFields,
+            applyToFollowing: applyToFollowing,
+            applyToOverrides: applyToOverrides,
           ),
         );
     await loadLectures(range: state.visibleRange);

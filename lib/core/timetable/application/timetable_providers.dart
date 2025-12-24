@@ -4,10 +4,10 @@ import 'package:web_dashboard/core/timetable/application/usecases/get_lecture_oc
 import 'package:web_dashboard/core/timetable/application/usecases/get_lectures_usecase.dart';
 import 'package:web_dashboard/core/timetable/application/usecases/save_lecture_usecase.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_occurrence_remote_data_source.dart';
-import 'package:web_dashboard/core/timetable/data/datasources/lecture_remote_data_source.dart';
+import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_repository.dart';
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 import 'package:web_dashboard/di/service_locator.dart';
 
 /// Lecture(master) DTO ↔ Entity 변환기.
@@ -16,9 +16,9 @@ final Provider<LectureMapper> lectureMapperProvider = Provider<LectureMapper>(
 );
 
 /// Lecture(master) REST 호출 데이터 소스.
-final Provider<LectureRemoteDataSource> lectureRemoteDataSourceProvider =
-    Provider<LectureRemoteDataSource>(
-  (Ref ref) => di<LectureRemoteDataSource>(),
+final Provider<LectureOriginRemoteDataSource> lectureRemoteDataSourceProvider =
+    Provider<LectureOriginRemoteDataSource>(
+  (Ref ref) => di<LectureOriginRemoteDataSource>(),
 );
 
 /// Lecture occurrence REST 호출 데이터 소스.
@@ -29,9 +29,9 @@ final Provider<LectureOccurrenceRemoteDataSource>
 );
 
 /// Lecture(master) 저장소.
-final Provider<LectureRepository> lectureRepositoryProvider =
-    Provider<LectureRepository>(
-  (Ref ref) => di<LectureRepository>(),
+final Provider<LectureOriginRepository> lectureRepositoryProvider =
+    Provider<LectureOriginRepository>(
+  (Ref ref) => di<LectureOriginRepository>(),
 );
 
 /// Lecture occurrence 저장소.
