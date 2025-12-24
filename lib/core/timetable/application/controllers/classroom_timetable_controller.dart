@@ -10,6 +10,11 @@ import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart'
     show LectureField, LectureOriginWriteInput;
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart'
+    show
+        LectureOccurrenceDeleteInput,
+        LectureOccurrenceUpdateInput,
+        LectureOccurrenceWriteInput;
 
 part 'classroom_timetable_controller.g.dart';
 
@@ -183,6 +188,33 @@ class ClassroomTimetableController
             applyToOverrides: applyToOverrides,
           ),
         );
+    await loadLectures(range: state.visibleRange);
+  }
+
+  Future<LectureOccurrenceEntity> createOccurrence(
+    LectureOccurrenceWriteInput input,
+  ) async {
+    final LectureOccurrenceEntity entity = await ref
+        .read(createLectureOccurrenceUseCaseProvider)
+        .execute(input);
+    await loadLectures(range: state.visibleRange);
+    return entity;
+  }
+
+  Future<LectureOccurrenceEntity> updateOccurrence(
+    LectureOccurrenceUpdateInput input,
+  ) async {
+    final LectureOccurrenceEntity entity = await ref
+        .read(updateLectureOccurrenceUseCaseProvider)
+        .execute(input);
+    await loadLectures(range: state.visibleRange);
+    return entity;
+  }
+
+  Future<void> deleteOccurrence(
+    LectureOccurrenceDeleteInput input,
+  ) async {
+    await ref.read(deleteLectureOccurrenceUseCaseProvider).execute(input);
     await loadLectures(range: state.visibleRange);
   }
 }

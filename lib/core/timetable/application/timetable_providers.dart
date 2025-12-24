@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/core/timetable/application/usecases/delete_lecture_usecase.dart';
+import 'package:web_dashboard/core/timetable/application/usecases/delete_lecture_occurrence_usecase.dart';
 import 'package:web_dashboard/core/timetable/application/usecases/get_lecture_occurrences_usecase.dart';
 import 'package:web_dashboard/core/timetable/application/usecases/get_lectures_usecase.dart';
+import 'package:web_dashboard/core/timetable/application/usecases/create_lecture_occurrence_usecase.dart';
+import 'package:web_dashboard/core/timetable/application/usecases/update_lecture_occurrence_usecase.dart';
 import 'package:web_dashboard/core/timetable/application/usecases/save_lecture_usecase.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_occurrence_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart';
@@ -51,6 +54,33 @@ final Provider<GetLectureOccurrencesUseCase>
     getLectureOccurrencesUseCaseProvider =
     Provider<GetLectureOccurrencesUseCase>(
   (Ref ref) => GetLectureOccurrencesUseCase(
+    ref.watch(lectureOccurrenceRepositoryProvider),
+  ),
+);
+
+/// Occurrence 생성 유즈케이스.
+final Provider<CreateLectureOccurrenceUseCase>
+    createLectureOccurrenceUseCaseProvider =
+    Provider<CreateLectureOccurrenceUseCase>(
+  (Ref ref) => CreateLectureOccurrenceUseCase(
+    ref.watch(lectureOccurrenceRepositoryProvider),
+  ),
+);
+
+/// Occurrence 수정 유즈케이스.
+final Provider<UpdateLectureOccurrenceUseCase>
+    updateLectureOccurrenceUseCaseProvider =
+    Provider<UpdateLectureOccurrenceUseCase>(
+  (Ref ref) => UpdateLectureOccurrenceUseCase(
+    ref.watch(lectureOccurrenceRepositoryProvider),
+  ),
+);
+
+/// Occurrence 삭제 유즈케이스.
+final Provider<DeleteLectureOccurrenceUseCase>
+    deleteLectureOccurrenceUseCaseProvider =
+    Provider<DeleteLectureOccurrenceUseCase>(
+  (Ref ref) => DeleteLectureOccurrenceUseCase(
     ref.watch(lectureOccurrenceRepositoryProvider),
   ),
 );
