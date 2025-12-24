@@ -6,6 +6,7 @@ import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_edit_options.dart';
 
 const List<Color> _lectureColorPalette = <Color>[
   Color(0xFFE3EFF7),
@@ -29,6 +30,7 @@ class ClassroomTimetableModal extends StatefulWidget {
     required this.initialStart,
     this.onCreateSubmit,
     this.onUpdateSubmit,
+    this.onDeleteSubmit,
     this.initialLecture,
     super.key,
   });
@@ -39,7 +41,8 @@ class ClassroomTimetableModal extends StatefulWidget {
   final DateTime initialStart;
   final LectureViewModel? initialLecture;
   final ValueChanged<LectureOriginWriteInput>? onCreateSubmit;
-  final ValueChanged<LectureOriginUpdateInput>? onUpdateSubmit;
+  final ValueChanged<LectureEditCommand>? onUpdateSubmit;
+  final ValueChanged<LectureDeleteCommand>? onDeleteSubmit;
 
   static Future<void> show({
     required BuildContext context,
@@ -49,7 +52,8 @@ class ClassroomTimetableModal extends StatefulWidget {
     required DateTime initialStart,
     LectureViewModel? initialLecture,
     ValueChanged<LectureOriginWriteInput>? onCreateSubmit,
-    ValueChanged<LectureOriginUpdateInput>? onUpdateSubmit,
+    ValueChanged<LectureEditCommand>? onUpdateSubmit,
+    ValueChanged<LectureDeleteCommand>? onDeleteSubmit,
   }) {
     return showDialog<void>(
       context: context,
@@ -62,6 +66,7 @@ class ClassroomTimetableModal extends StatefulWidget {
           initialLecture: initialLecture,
           onCreateSubmit: onCreateSubmit,
           onUpdateSubmit: onUpdateSubmit,
+          onDeleteSubmit: onDeleteSubmit,
         );
       },
     );
@@ -86,6 +91,11 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   WeeklyRepeatOption _repeatOption = WeeklyRepeatOption.none;
   int _repeatWeekCount = 1;
   DateTime? _repeatUntilDate;
+  LectureEditScopeOption _editScope = LectureEditScopeOption.occurrenceOnly;
+  bool _includeOverrides = false;
+
+  bool get _isOccurrenceScope =>
+      _editScope == LectureEditScopeOption.occurrenceOnly;
 
   @override
   void initState() {
@@ -110,6 +120,8 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       _selectedColor = _forcedColorForType(_selectedType);
     }
     _applyExistingRecurrence(lecture?.recurrenceRule);
+    _editScope = LectureEditScopeOption.occurrenceOnly;
+    _includeOverrides = true;
   }
 
   @override
@@ -132,12 +144,14 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 _ModalContextSummary(
                   classroomName: widget.classroomName,
                   mode: widget.mode,
                 ),
+                if (widget.mode == ClassroomTimetableModalMode.edit)
+                  _buildEditScopeSection(),
                 const SizedBox(height: 16),
                 _TitleField(controller: _titleController),
                 const SizedBox(height: 12),
@@ -182,7 +196,8 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
                   },
                 ),
                 const SizedBox(height: 12),
-                _buildRecurrenceOptions(),
+                if (widget.mode == ClassroomTimetableModalMode.create)
+                  _buildRecurrenceOptions(),
                 const SizedBox(height: 12),
                 _MemoField(controller: _memoController),
               ],
@@ -191,6 +206,12 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
         ),
       ),
       actions: <AppDialogAction>[
+        if (widget.mode == ClassroomTimetableModalMode.edit &&
+            widget.onDeleteSubmit != null)
+          AppDialogAction(
+            label: '삭제',
+            onPressed: _handleDeletePressed,
+          ),
         AppDialogAction(
           label: '닫기',
           onPressed: () => Navigator.of(context).pop(),
@@ -299,6 +320,67 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
     );
   }
 
+  Widget _buildEditScopeSection() {
+    final ThemeData theme = Theme.of(context);
+    if (widget.mode != ClassroomTimetableModalMode.edit) {
+      return const SizedBox.shrink();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const SizedBox(height: 12),
+        Text('적용 범위', style: theme.textTheme.titleSmall),
+        const SizedBox(height: 8),
+        SegmentedButton<LectureEditScopeOption>(
+          segments: const <ButtonSegment<LectureEditScopeOption>>[
+            ButtonSegment<LectureEditScopeOption>(
+              value: LectureEditScopeOption.occurrenceOnly,
+              label: Text('현재 회차만'),
+            ),
+            ButtonSegment<LectureEditScopeOption>(
+              value: LectureEditScopeOption.followingSeries,
+              label: Text('이후 회차 포함'),
+            ),
+            ButtonSegment<LectureEditScopeOption>(
+              value: LectureEditScopeOption.entireSeries,
+              label: Text('전체 회차'),
+            ),
+          ],
+          selected: <LectureEditScopeOption>{_editScope},
+          onSelectionChanged: (Set<LectureEditScopeOption> values) {
+            _setEditScope(values.first);
+          },
+        ),
+        const SizedBox(height: 8),
+        Text(
+          _describeEditScope(_editScope),
+          style: theme.textTheme.bodySmall,
+        ),
+        // if (_isOccurrenceScope)
+        //   const Padding(
+        //     padding: EdgeInsets.only(top: 4),
+        //     child: Text(
+        //       '현재 회차만 옵션에서는 시간만 수정할 수 있습니다.',
+        //       style: TextStyle(color: Colors.orangeAccent),
+        //     ),
+        //   ),
+        // if (!_isOccurrenceScope)
+        //   SwitchListTile.adaptive(
+        //     contentPadding: const EdgeInsetsDirectional.only(start: 16),
+        //     title: const Text('개별 수정된 회차 포함'),
+        //     subtitle:
+        //         const Text('개별 수정된 회차까지 함께 반영하거나 삭제합니다.'),
+        //     value: _includeOverrides,
+        //     onChanged: (bool value) {
+        //       setState(() {
+        //         _includeOverrides = value;
+        //       });
+        //     },
+        //   ),
+      ],
+    );
+  }
+
   void _setRepeatOption(WeeklyRepeatOption option) {
     setState(() {
       _repeatOption = option;
@@ -310,6 +392,26 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
         _repeatUntilDate = null;
       }
     });
+  }
+
+  void _setEditScope(LectureEditScopeOption option) {
+    setState(() {
+      _editScope = option;
+      if (_isOccurrenceScope) {
+        _includeOverrides = false;
+      }
+    });
+  }
+
+  String _describeEditScope(LectureEditScopeOption option) {
+    return switch (option) {
+      LectureEditScopeOption.occurrenceOnly =>
+        '선택한 회차만 수정합니다.',
+      LectureEditScopeOption.followingSeries =>
+        '현재 회차와 이후 회차를 수정합니다.',
+      LectureEditScopeOption.entireSeries =>
+        '모든 회차를 수정합니다.',
+    };
   }
 
   void _onWeekCountChanged(String value) {
@@ -488,7 +590,9 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   }
 
   void _handleSubmit() {
+    
     final FormState? state = _formKey.currentState;
+
     if (state == null || !state.validate()) {
       return;
     }
@@ -512,11 +616,12 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       recurrenceRule: _buildRecurrenceRule(),
       notes: _normalizeOptional(_memoController.text),
     );
+
     if (widget.mode == ClassroomTimetableModalMode.create) {
       widget.onCreateSubmit?.call(payload);
     } else {
-      final String? lectureId = widget.initialLecture?.id;
-      if (lectureId == null) {
+      final LectureViewModel? lecture = widget.initialLecture;
+      if (lecture == null || lecture.id.isEmpty) {
         AppSnackBar.show(
           context,
           message: '선택된 일정 정보가 없습니다.',
@@ -524,22 +629,132 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
         );
         return;
       }
-      widget.onUpdateSubmit?.call(
-        LectureOriginUpdateInput(
-          lectureId: lectureId,
-          payload: payload,
-          expectedVersion: widget.initialLecture?.version,
-        ),
+      final LectureEditCommand command = LectureEditCommand(
+        occurrenceId: lecture.id,
+        lectureId: lecture.lectureId,
+        payload: payload,
+        scope: _editScope,
+        includeOverrides: _editScope == LectureEditScopeOption.occurrenceOnly
+            ? false
+            : _includeOverrides,
+        expectedVersion: lecture.version,
       );
+      widget.onUpdateSubmit?.call(command);
     }
-    if (context.mounted) {
-      Navigator.of(context).pop();
+    if (!mounted) {
+      return;
     }
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _handleDeletePressed() async {
+    final LectureViewModel? lecture = widget.initialLecture;
+    if (lecture == null || widget.onDeleteSubmit == null) {
+      AppSnackBar.show(
+        context,
+        message: '삭제할 일정 정보를 찾을 수 없습니다.',
+        type: AppSnackBarType.error,
+      );
+      return;
+    }
+    LectureDeleteScopeOption selected = LectureDeleteScopeOption.occurrenceOnly;
+    bool confirmed = false;
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (BuildContext ctx, void Function(void Function()) setState) {
+            return AlertDialog(
+              title: const Text('일정 삭제'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SegmentedButton<LectureDeleteScopeOption>(
+                    segments: const <ButtonSegment<LectureDeleteScopeOption>>[
+                      ButtonSegment<LectureDeleteScopeOption>(
+                        value: LectureDeleteScopeOption.occurrenceOnly,
+                        label: Text('현재 회차만'),
+                      ),
+                      ButtonSegment<LectureDeleteScopeOption>(
+                        value: LectureDeleteScopeOption.followingSeries,
+                        label: Text('이후 회차 포함'),
+                      ),
+                      ButtonSegment<LectureDeleteScopeOption>(
+                        value: LectureDeleteScopeOption.entireSeries,
+                        label: Text('전체 회차'),
+                      ),
+                    ],
+                    selected: <LectureDeleteScopeOption>{selected},
+                    onSelectionChanged: (Set<LectureDeleteScopeOption> values) {
+                      setState(() => selected = values.first);
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _describeDeleteScope(selected),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  if (selected != LectureDeleteScopeOption.occurrenceOnly)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Override occurrence를 포함하여 삭제됩니다.',
+                        style: TextStyle(color: Colors.redAccent),
+                      ),
+                    ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('취소'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    confirmed = true;
+                    Navigator.of(dialogContext).pop();
+                  },
+                  child: const Text('삭제'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    if (!confirmed) {
+      return;
+    }
+    widget.onDeleteSubmit?.call(
+      LectureDeleteCommand(
+        occurrenceId: lecture.id,
+        lectureId: lecture.lectureId,
+        expectedVersion: lecture.version,
+        scope: selected,
+        includeOverrides: selected != LectureDeleteScopeOption.occurrenceOnly,
+      ),
+    );
+    if (!mounted) {
+      return;
+    }
+    Navigator.of(context).pop();
   }
 
   String? _normalizeOptional(String value) {
     final String trimmed = value.trim();
     return trimmed.isEmpty ? null : trimmed;
+  }
+
+  String _describeDeleteScope(LectureDeleteScopeOption option) {
+    return switch (option) {
+      LectureDeleteScopeOption.occurrenceOnly =>
+        '해당 occurrence만 삭제됩니다.',
+      LectureDeleteScopeOption.followingSeries =>
+        '현재 occurrence와 이후 occurrence가 삭제됩니다.',
+      LectureDeleteScopeOption.entireSeries =>
+        'Origin과 override occurrence까지 모두 삭제됩니다.',
+    };
   }
 
 }

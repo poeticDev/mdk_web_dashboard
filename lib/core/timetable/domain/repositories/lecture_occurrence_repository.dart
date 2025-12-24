@@ -40,7 +40,14 @@ class LectureOccurrenceUpdateInput {
     this.end,
     this.status,
     this.cancelReason,
-    this.applyToFollowing = false,
+    this.scope = 'single',
+    this.applyToOverrides = false,
+    this.expectedVersion,
+    this.titleOverride,
+    this.colorHexOverride,
+    this.notesOverride,
+    this.departmentIdOverride,
+    this.instructorUserIdOverride,
   });
 
   final String occurrenceId;
@@ -48,15 +55,24 @@ class LectureOccurrenceUpdateInput {
   final DateTime? end;
   final LectureStatus? status;
   final String? cancelReason;
-  final bool applyToFollowing;
+  final String scope;
+  final bool applyToOverrides;
+  final int? expectedVersion;
+  final String? titleOverride;
+  final String? colorHexOverride;
+  final String? notesOverride;
+  final String? departmentIdOverride;
+  final String? instructorUserIdOverride;
 }
 
 class LectureOccurrenceDeleteInput {
   const LectureOccurrenceDeleteInput({
     required this.occurrenceId,
     this.applyToFollowing = false,
+    this.applyToOverrides = false,
   });
 
   final String occurrenceId;
   final bool applyToFollowing;
+  final bool applyToOverrides;
 }

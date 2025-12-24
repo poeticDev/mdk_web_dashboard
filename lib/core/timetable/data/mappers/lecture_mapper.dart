@@ -109,6 +109,7 @@ class LectureMapper {
       lectureId: input.lectureId,
       expectedVersion: input.expectedVersion,
       applyToFollowing: input.applyToFollowing,
+      applyToOverrides: input.applyToOverrides,
     );
   }
 }

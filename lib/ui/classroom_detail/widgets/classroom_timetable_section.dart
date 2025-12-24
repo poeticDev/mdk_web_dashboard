@@ -11,11 +11,14 @@ import 'package:web_dashboard/core/timetable/application/controllers/classroom_t
 import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart'
-    show LectureOriginWriteInput, LectureOriginUpdateInput, LectureField;
+    show LectureField, LectureOriginWriteInput;
+import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart'
+    show LectureOccurrenceDeleteInput, LectureOccurrenceUpdateInput;
 import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
 import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_resolver.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_dialogs.dart';
+import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_edit_options.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_modal.dart';
 
 const double _weekCalendarHeight = 800;
@@ -424,12 +427,16 @@ class _ClassroomTimetableSectionState
     );
   }
 
-  /// 공통 스낵바 메시지를 노출한다.
-  void _showPendingFeature(String message) {
+  void _showSnackBar(String message, AppSnackBarType type) {
     if (!mounted) {
       return;
     }
-    AppSnackBar.show(context, message: message, type: AppSnackBarType.info);
+    AppSnackBar.show(context, message: message, type: type);
+  }
+
+  /// 공통 스낵바 메시지를 노출한다.
+  void _showPendingFeature(String message) {
+    _showSnackBar(message, AppSnackBarType.info);
   }
 
   void _openCreateDialog(
@@ -472,8 +479,10 @@ class _ClassroomTimetableSectionState
       classroomName: vm.classroomName,
       initialStart: vm.start,
       initialLecture: vm,
-      onUpdateSubmit: (LectureOriginUpdateInput input) =>
-          _handleUpdateSubmit(controller, vm, input),
+      onUpdateSubmit: (LectureEditCommand command) =>
+          _handleEditCommand(controller, vm, command),
+      onDeleteSubmit: (LectureDeleteCommand command) =>
+          _handleDeleteCommand(controller, command),
     );
   }
 
@@ -488,33 +497,107 @@ class _ClassroomTimetableSectionState
     );
   }
 
-  Future<void> _handleUpdateSubmit(
+  Future<void> _handleEditCommand(
     ClassroomTimetableController controller,
     LectureViewModel original,
-    LectureOriginUpdateInput input,
+    LectureEditCommand command,
   ) async {
-    final Set<LectureField> changedFields = _computeChangedFields(
-      original,
-      input.payload,
-    );
-    if (changedFields.isEmpty) {
-      if (mounted) {
-        AppSnackBar.show(
-          context,
-          message: '변경된 내용이 없습니다.',
-          type: AppSnackBarType.info,
+    try {
+              final Set<LectureField> changedFields = _computeChangedFields(
+          original,
+          command.payload,
         );
-      }
-      return;
+        if (changedFields.isEmpty) {
+          _showSnackBar('변경된 내용이 없습니다.', AppSnackBarType.info);
+          return;
+        }
+      // if (command.scope == LectureEditScopeOption.occurrenceOnly) {
+      //   final bool noTimeChange =
+      //       _isSameMoment(original.start, command.payload.start) &&
+      //           _isSameMoment(original.end, command.payload.end);
+      //   if (noTimeChange) {
+      //     _showSnackBar('변경된 내용이 없습니다.', AppSnackBarType.info);
+      //     return;
+      //   }
+      // } else {
+      //   final Set<LectureField> changedFields = _computeChangedFields(
+      //     original,
+      //     command.payload,
+      //   );
+      //   if (changedFields.isEmpty) {
+      //     _showSnackBar('변경된 내용이 없습니다.', AppSnackBarType.info);
+      //     return;
+      //   }
+      // }
+      await controller.updateOccurrence(
+        LectureOccurrenceUpdateInput(
+          occurrenceId: command.occurrenceId,
+          start: command.payload.start,
+          end: command.payload.end,
+          scope: _scopeKeyFor(command.scope),
+          applyToOverrides: command.includeOverrides,
+          expectedVersion: command.expectedVersion,
+          titleOverride: _valueOrNull(command.payload.title),
+          colorHexOverride: _colorOverride(command.payload.colorHex),
+          notesOverride: _valueOrNull(command.payload.notes),
+          departmentIdOverride: _valueOrNull(command.payload.departmentId),
+          instructorUserIdOverride: _valueOrNull(command.payload.instructorId),
+        ),
+      );
+      _showSnackBar(
+        _successMessageForScope(command.scope),
+        AppSnackBarType.success,
+      );
+    } catch (_) {
+      _showSnackBar('일정 수정에 실패했습니다.', AppSnackBarType.error);
     }
-    await _saveLecture(
-      controller: controller,
-      payload: input.payload,
-      lectureId: input.lectureId,
-      expectedVersion: input.expectedVersion,
-      changedFields: changedFields,
-      successMessage: '일정이 수정되었습니다.',
-    );
+  }
+
+  Future<void> _handleDeleteCommand(
+    ClassroomTimetableController controller,
+    LectureDeleteCommand command,
+  ) async {
+    try {
+      switch (command.scope) {
+        case LectureDeleteScopeOption.occurrenceOnly:
+          await controller.deleteOccurrence(
+            LectureOccurrenceDeleteInput(
+              occurrenceId: command.occurrenceId,
+              applyToOverrides: command.includeOverrides,
+            ),
+          );
+          _showSnackBar('현재 회차가 삭제되었습니다.', AppSnackBarType.success);
+          break;
+        case LectureDeleteScopeOption.followingSeries:
+          await controller.deleteOccurrence(
+            LectureOccurrenceDeleteInput(
+              occurrenceId: command.occurrenceId,
+              applyToFollowing: true,
+              applyToOverrides: command.includeOverrides,
+            ),
+          );
+          _showSnackBar(
+            '현재 회차와 이후 시리즈가 삭제되었습니다.',
+            AppSnackBarType.success,
+          );
+          break;
+        case LectureDeleteScopeOption.entireSeries:
+          if (command.expectedVersion == null) {
+            _showSnackBar('버전 정보가 없어 삭제할 수 없습니다.', AppSnackBarType.error);
+            return;
+          }
+          await controller.deleteLectureSeries(
+            lectureId: command.lectureId,
+            expectedVersion: command.expectedVersion!,
+            applyToFollowing: false,
+            applyToOverrides: command.includeOverrides,
+          );
+          _showSnackBar('전체 시리즈가 삭제되었습니다.', AppSnackBarType.success);
+          break;
+      }
+    } catch (_) {
+      _showSnackBar('일정 삭제에 실패했습니다.', AppSnackBarType.error);
+    }
   }
 
   Future<void> _saveLecture({
@@ -523,6 +606,8 @@ class _ClassroomTimetableSectionState
     String? lectureId,
     int? expectedVersion,
     Set<LectureField>? changedFields,
+    bool applyToFollowing = false,
+    bool applyToOverrides = false,
     required String successMessage,
   }) async {
     try {
@@ -531,6 +616,8 @@ class _ClassroomTimetableSectionState
         lectureId: lectureId,
         expectedVersion: expectedVersion,
         updatedFields: changedFields,
+        applyToFollowing: applyToFollowing,
+        applyToOverrides: applyToOverrides,
       );
       if (!mounted) {
         return;
@@ -557,6 +644,9 @@ class _ClassroomTimetableSectionState
     LectureOriginWriteInput next,
   ) {
     final Set<LectureField> fields = <LectureField>{};
+    print('original.title.trim() != next.title.trim(): ${original.title.trim() != next.title.trim()}');
+    print(original.title.trim());
+    print(next.title.trim());
     if (original.title.trim() != next.title.trim()) {
       fields.add(LectureField.title);
     }
@@ -609,6 +699,39 @@ class _ClassroomTimetableSectionState
     final String normalized =
         value?.replaceAll('#', '').trim().toUpperCase() ?? '';
     return normalized;
+  }
+
+  String? _valueOrNull(String? value) {
+    final String trimmed = value?.trim() ?? '';
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  String? _colorOverride(String? hex) {
+    final String normalized = _normalizeHex(hex);
+    if (normalized.isEmpty) {
+      return null;
+    }
+    return hex?.startsWith('#') ?? false ? hex : '#$normalized';
+  }
+
+  String _scopeKeyFor(LectureEditScopeOption scope) {
+    if (scope == LectureEditScopeOption.followingSeries) {
+      return 'following';
+    }
+    if (scope == LectureEditScopeOption.entireSeries) {
+      return 'entire';
+    }
+    return 'single';
+  }
+
+  String _successMessageForScope(LectureEditScopeOption scope) {
+    if (scope == LectureEditScopeOption.followingSeries) {
+      return '현재 이후 시리즈가 수정되었습니다.';
+    }
+    if (scope == LectureEditScopeOption.entireSeries) {
+      return '전체 시리즈가 수정되었습니다.';
+    }
+    return '현재 회차가 수정되었습니다.';
   }
 }
 

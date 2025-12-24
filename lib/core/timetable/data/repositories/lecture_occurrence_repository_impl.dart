@@ -56,7 +56,14 @@ class LectureOccurrenceRepositoryImpl implements LectureOccurrenceRepository {
       endAt: input.end,
       status: input.status?.apiValue,
       cancelReason: input.cancelReason,
-      applyToFollowing: input.applyToFollowing,
+      scope: input.scope,
+      applyToOverrides: input.applyToOverrides,
+      // expectedVersion: input.expectedVersion,
+      titleOverride: input.titleOverride,
+      colorHexOverride: input.colorHexOverride,
+      notesOverride: input.notesOverride,
+      departmentIdOverride: input.departmentIdOverride,
+      instructorUserIdOverride: input.instructorUserIdOverride,
     );
     final LectureOccurrenceDto dto =
         await _remoteDataSource.updateOccurrence(request);
@@ -68,7 +75,9 @@ class LectureOccurrenceRepositoryImpl implements LectureOccurrenceRepository {
     final OccurrenceDeleteRequest request = OccurrenceDeleteRequest(
       occurrenceId: input.occurrenceId,
       applyToFollowing: input.applyToFollowing,
+      applyToOverrides: input.applyToOverrides,
     );
     await _remoteDataSource.deleteOccurrence(request);
   }
+
 }

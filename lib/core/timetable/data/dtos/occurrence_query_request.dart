@@ -54,7 +54,14 @@ class OccurrenceUpdateRequest {
     this.endAt,
     this.status,
     this.cancelReason,
-    this.applyToFollowing = false,
+    this.scope = 'single',
+    this.applyToOverrides = false,
+    // this.expectedVersion,
+    this.titleOverride,
+    this.colorHexOverride,
+    this.notesOverride,
+    this.departmentIdOverride,
+    this.instructorUserIdOverride,
   });
 
   final String occurrenceId;
@@ -62,11 +69,18 @@ class OccurrenceUpdateRequest {
   final DateTime? endAt;
   final String? status;
   final String? cancelReason;
-  final bool applyToFollowing;
+  final String scope;
+  final bool applyToOverrides;
+  final String? titleOverride;
+  final String? colorHexOverride;
+  final String? notesOverride;
+  final String? departmentIdOverride;
+  final String? instructorUserIdOverride;
 
   Map<String, Object?> toJson() {
     final Map<String, Object?> body = <String, Object?>{
-      'applyToFollowing': applyToFollowing,
+      'scope': scope,
+      'applyToOverrides': applyToOverrides,
     };
     void put(String key, Object? value) {
       if (value == null) {
@@ -83,6 +97,11 @@ class OccurrenceUpdateRequest {
     put('endAt', endAt);
     put('status', status);
     put('cancelReason', cancelReason);
+    put('title', titleOverride);
+    put('colorHex', colorHexOverride);
+    put('notes', notesOverride);
+    put('departmentId', departmentIdOverride);
+    put('instructorUserId', instructorUserIdOverride);
     return body;
   }
 }
@@ -91,14 +110,17 @@ class OccurrenceDeleteRequest {
   const OccurrenceDeleteRequest({
     required this.occurrenceId,
     this.applyToFollowing = false,
+    this.applyToOverrides = false,
   });
 
   final String occurrenceId;
   final bool applyToFollowing;
+  final bool applyToOverrides;
 
   Map<String, Object?> toQueryParameters() {
     return <String, Object?>{
       if (applyToFollowing) 'applyToFollowing': applyToFollowing,
+      if (applyToOverrides) 'applyToOverrides': applyToOverrides,
     };
   }
 }

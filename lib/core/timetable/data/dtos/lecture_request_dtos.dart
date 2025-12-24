@@ -158,9 +158,11 @@ class DeleteLectureRequest {
     required this.lectureId,
     required this.expectedVersion,
     this.applyToFollowing = false,
+    this.applyToOverrides = false,
   });
 
   final String lectureId;
   final int expectedVersion;
   final bool applyToFollowing;
+  final bool applyToOverrides;
 }

@@ -9,7 +9,7 @@ import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart'
-    show LectureField, LectureOriginWriteInput;
+    show LectureField, LectureOriginDeleteInput, LectureOriginWriteInput;
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart'
     show
         LectureOccurrenceDeleteInput,
@@ -184,6 +184,23 @@ class ClassroomTimetableController
             lectureId: lectureId,
             expectedVersion: expectedVersion,
             updatedFields: updatedFields,
+            applyToFollowing: applyToFollowing,
+            applyToOverrides: applyToOverrides,
+          ),
+        );
+    await loadLectures(range: state.visibleRange);
+  }
+
+  Future<void> deleteLectureSeries({
+    required String lectureId,
+    required int expectedVersion,
+    bool applyToFollowing = false,
+    bool applyToOverrides = false,
+  }) async {
+    await ref.read(deleteLectureUseCaseProvider).execute(
+          LectureOriginDeleteInput(
+            lectureId: lectureId,
+            expectedVersion: expectedVersion,
             applyToFollowing: applyToFollowing,
             applyToOverrides: applyToOverrides,
           ),
