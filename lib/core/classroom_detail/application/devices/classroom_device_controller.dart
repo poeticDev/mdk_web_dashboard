@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
 import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
 
+/// 강의실 장비 토글 상태를 관리하는 Riverpod Notifier.
 class ClassroomDeviceController extends Notifier<ClassroomDeviceControllerState> {
   ClassroomDeviceController(this.classroomId);
 
@@ -31,6 +32,7 @@ class ClassroomDeviceController extends Notifier<ClassroomDeviceControllerState>
     );
   }
 
+  /// 장비 토글 명령을 optimistic하게 반영한다.
   Future<void> toggleDevice(String deviceId, bool nextState) async {
     state = state.copyWith(isUpdating: true, errorMessage: null);
     try {

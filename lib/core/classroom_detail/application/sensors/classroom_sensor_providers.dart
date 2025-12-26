@@ -17,6 +17,7 @@ class EnvironmentMetricViewModel {
   final String unit;
 }
 
+/// 센서 더미 데이터를 생성하는 mock 데이터 소스 provider.
 final classroomSensorMockDataSourceProvider =
     Provider.autoDispose.family<ClassroomSensorMockDataSource, String>(
   (Ref ref, String classroomId) {
@@ -27,6 +28,7 @@ final classroomSensorMockDataSourceProvider =
   },
 );
 
+/// 5초마다 더미 센서 스냅샷을 내보내는 스트림 provider.
 final classroomSensorSnapshotProvider =
     StreamProvider.autoDispose.family<ClassroomSensorSnapshot, String>(
   (Ref ref, String classroomId) async* {
@@ -39,6 +41,7 @@ final classroomSensorSnapshotProvider =
   },
 );
 
+/// 스트림 스냅샷을 UI 친화적인 환경 지표 리스트로 변환하는 파생 provider.
 final classroomEnvironmentMetricsProvider = Provider.autoDispose
     .family<AsyncValue<List<EnvironmentMetricViewModel>>, String>(
   (Ref ref, String classroomId) {
