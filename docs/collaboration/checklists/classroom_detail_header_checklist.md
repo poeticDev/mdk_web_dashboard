@@ -21,8 +21,8 @@
    - [x] `classroomDeviceToggleControllerProvider` 초안 (optimistic state, 액션 stub)
    - [x] 향후 API 연동을 위한 TODO/인터페이스 명시
 5. **헤더 위젯 분해 및 provider 주입**
-   - [ ] `ClassroomDetailHeaderSection`을 shell + Identity/Session/Device/Environment 패널 위젯으로 분리
-   - [ ] 각 위젯이 직접 provider를 구독하도록 Consumer 리팩터링
+   - [x] `ClassroomDetailHeaderSection`을 shell + Identity/Session/Device/Environment 패널 위젯으로 분리
+   - [x] 각 위젯이 직접 provider를 구독하도록 Consumer 리팩터링
    - [ ] Header alert/status bar 구현 및 `classroomHeaderErrorProvider` 연결
 6. **페이지 책임 조정**
    - [ ] `ClassroomDetailPage`를 Consumer 기반으로 전환하고 ProviderScope override/roomId 전달 로직 정리

@@ -5,20 +5,56 @@ import 'package:web_dashboard/common/app_bar/common_app_bar_options.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
 import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
+import 'package:web_dashboard/core/classroom_detail/application/devices/classroom_device_controller.dart';
 import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_section.dart';
 
-class ClassroomDetailPage extends ConsumerWidget {
+class ClassroomDetailPage extends ConsumerStatefulWidget {
   const ClassroomDetailPage({required this.roomId, super.key});
 
   final String roomId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ClassroomDetailPage> createState() =>
+      _ClassroomDetailPageState();
+}
+
+class _ClassroomDetailPageState extends ConsumerState<ClassroomDetailPage> {
+  ProviderSubscription<ClassroomDeviceControllerState>? _deviceErrorSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _deviceErrorSub = ref.listenManual<ClassroomDeviceControllerState>(
+      classroomDeviceControllerProvider(widget.roomId),
+      (
+        ClassroomDeviceControllerState? previous,
+        ClassroomDeviceControllerState next,
+      ) {
+        if (next.errorMessage != null &&
+            next.errorMessage != previous?.errorMessage) {
+          AppSnackBar.show(
+            context,
+            message: next.errorMessage!,
+            type: AppSnackBarType.error,
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _deviceErrorSub?.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<ClassroomDetailEntity> detailValue = ref.watch(
-      classroomDetailInfoProvider(roomId),
+      classroomDetailInfoProvider(widget.roomId),
     );
     final String title = detailValue.maybeWhen(
       data: (ClassroomDetailEntity entity) => '${entity.name} 강의실',
@@ -38,14 +74,14 @@ class ClassroomDetailPage extends ConsumerWidget {
               Container(
                 constraints: const BoxConstraints(maxWidth: 1024),
                 child: ClassroomDetailHeaderSection(
-                  classroomId: roomId,
+                  classroomId: widget.roomId,
                   onCameraPressed: () => _showComingSoonSnackBar(context),
                 ),
               ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
-                child: ClassroomTimetableSection(classroomId: roomId),
+                child: ClassroomTimetableSection(classroomId: widget.roomId),
               ),
             ],
           ),
