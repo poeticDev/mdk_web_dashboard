@@ -9,7 +9,7 @@
 | `classroomDetailRepositoryProvider` | `Provider<ClassroomDetailRepository>` | - | ClassroomDetailDto ↔ 엔티티 매핑 및 API 호출 추상화. getIt에서 repository 주입. |
 | `classroomDetailParamsProvider` | `Provider<ClassroomDetailParams>` | - | 라우팅으로 전달된 `classroomId` · locale 등을 묶어 하위 family provider들이 공통 참조하도록 함. `ClassroomDetailPage`가 override. |
 | `classroomDetailInfoProvider` | `AutoDisposeAsyncNotifierProviderFamily<ClassroomDetailInfo, String>` | `classroomId` | 기본 정보 API 호출, DTO를 `ClassroomDetailInfo`(name, building, devices, config 등)로 변환. 실패 시 retry/error 상태를 노출. |
-| `classroomSummaryViewModelProvider` | `Provider.family<ClassroomSummaryInfo, String>` | `classroomId` | `classroomDetailInfoProvider` + (필요 시) 현재 세션/교수/수용인원 파생 데이터를 헤더용 요약 모델로 투영. |
+| `classroomSummaryViewModelProvider` | `Provider.autoDispose.family<ClassroomSummaryViewModel, String>` | `classroomId` | `classroomDetailInfoProvider`에서 곧바로 이름/학과/수용 인원 등 헤더 요약 정보를 파생한다. |
 | `classroomDeviceCatalogProvider` | `Provider.family<List<ClassroomDevice>, String>` | `classroomId` | 기본 정보에서 장비 목록만 슬라이싱해 장치 패널 전용 뷰 모델 생성. |
 | `classroomSensorSnapshotProvider` | `StreamProvider.autoDispose.family<ClassroomSensorSnapshot, String>` | `classroomId` | 더미 데이터 소스를 5초 주기로 호출해 snapshot 스트림을 만든다. 실제 API가 준비되면 동일한 스트림 제공자로 교체. |
 | `classroomEnvironmentMetricsProvider` | `Provider.autoDispose.family<AsyncValue<List<EnvironmentMetric>>, String>` | `classroomId` | snapshot 스트림을 구독해 `EnvironmentMetricViewModel` 리스트를 `AsyncValue` 형태로 노출한다. |
