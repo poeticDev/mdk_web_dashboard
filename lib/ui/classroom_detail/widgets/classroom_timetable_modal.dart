@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
 import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
+import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
+import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
@@ -106,10 +109,12 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   void _initFormFields() {
     final LectureViewModel? lecture = widget.initialLecture;
     _titleController = TextEditingController(text: lecture?.title ?? '');
-    _departmentController =
-        TextEditingController(text: lecture?.departmentName ?? '');
-    _instructorController =
-        TextEditingController(text: lecture?.instructorName ?? '');
+    _departmentController = TextEditingController(
+      text: lecture?.departmentName ?? '',
+    );
+    _instructorController = TextEditingController(
+      text: lecture?.instructorName ?? '',
+    );
     _memoController = TextEditingController(text: lecture?.notes ?? '');
     _repeatCountController = TextEditingController();
     _selectedType = lecture != null ? lecture.type : LectureType.lecture;
@@ -144,11 +149,23 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _ModalContextSummary(
-                  classroomName: widget.classroomName,
-                  mode: widget.mode,
+                Consumer(
+                  builder: (context, ref, child) {
+                    final AsyncValue<ClassroomDetailEntity> detail = ref.watch(
+                      classroomDetailInfoProvider(widget.classroomId),
+                    );
+                    return detail.when(
+                      data: (ClassroomDetailEntity detail) =>
+                          _ModalContextSummary(
+                            classroomName: detail.name,
+                            mode: widget.mode,
+                          ),
+                      loading: () => const Text(''),
+                      error: (_, __) => const Text('강의실명을 불러오지 못했습니다.'),
+                    );
+                  },
                 ),
                 if (widget.mode == ClassroomTimetableModalMode.edit)
                   _buildEditScopeSection(),
@@ -208,16 +225,15 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       actions: <AppDialogAction>[
         if (widget.mode == ClassroomTimetableModalMode.edit &&
             widget.onDeleteSubmit != null)
-          AppDialogAction(
-            label: '삭제',
-            onPressed: _handleDeletePressed,
-          ),
+          AppDialogAction(label: '삭제', onPressed: _handleDeletePressed),
         AppDialogAction(
           label: '닫기',
           onPressed: () => Navigator.of(context).pop(),
         ),
         AppDialogAction(
-          label: widget.mode == ClassroomTimetableModalMode.create ? '등록' : '수정',
+          label: widget.mode == ClassroomTimetableModalMode.create
+              ? '등록'
+              : '수정',
           isPrimary: true,
           onPressed: _handleSubmit,
         ),
@@ -229,8 +245,9 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
     return mode == ClassroomTimetableModalMode.create ? '새 일정 등록' : '일정 수정';
   }
 
-  Color get _effectiveColor =>
-      _isForcedColor(_selectedType) ? _forcedColorForType(_selectedType) : _selectedColor;
+  Color get _effectiveColor => _isForcedColor(_selectedType)
+      ? _forcedColorForType(_selectedType)
+      : _selectedColor;
 
   bool _isForcedColor(LectureType type) =>
       type == LectureType.event || type == LectureType.exam;
@@ -352,10 +369,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
           },
         ),
         const SizedBox(height: 8),
-        Text(
-          _describeEditScope(_editScope),
-          style: theme.textTheme.bodySmall,
-        ),
+        Text(_describeEditScope(_editScope), style: theme.textTheme.bodySmall),
         // if (_isOccurrenceScope)
         //   const Padding(
         //     padding: EdgeInsets.only(top: 4),
@@ -405,12 +419,9 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
 
   String _describeEditScope(LectureEditScopeOption option) {
     return switch (option) {
-      LectureEditScopeOption.occurrenceOnly =>
-        '선택한 회차만 수정합니다.',
-      LectureEditScopeOption.followingSeries =>
-        '현재 회차와 이후 회차를 수정합니다.',
-      LectureEditScopeOption.entireSeries =>
-        '모든 회차를 수정합니다.',
+      LectureEditScopeOption.occurrenceOnly => '선택한 회차만 수정합니다.',
+      LectureEditScopeOption.followingSeries => '현재 회차와 이후 회차를 수정합니다.',
+      LectureEditScopeOption.entireSeries => '모든 회차를 수정합니다.',
     };
   }
 
@@ -425,8 +436,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   Future<void> _pickRepeatUntilDate() async {
     final DateTime initial =
         _repeatUntilDate ?? _start.add(const Duration(days: 7));
-    final DateTime firstDate =
-        DateTime(_start.year, _start.month, _start.day);
+    final DateTime firstDate = DateTime(_start.year, _start.month, _start.day);
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initial,
@@ -446,8 +456,9 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       case WeeklyRepeatOption.none:
         return '반복 없음';
       case WeeklyRepeatOption.weeks:
-        final DateTime last =
-            _start.add(Duration(days: 7 * (_repeatWeekCount - 1)));
+        final DateTime last = _start.add(
+          Duration(days: 7 * (_repeatWeekCount - 1)),
+        );
         return '$_repeatWeekCount주간 반복 · '
             '${_formatKoreanDate(last)}까지 매주 반복됩니다.';
       case WeeklyRepeatOption.until:
@@ -590,7 +601,6 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   }
 
   void _handleSubmit() {
-    
     final FormState? state = _formKey.currentState;
 
     if (state == null || !state.validate()) {
@@ -748,22 +758,17 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
 
   String _describeDeleteScope(LectureDeleteScopeOption option) {
     return switch (option) {
-      LectureDeleteScopeOption.occurrenceOnly =>
-        '해당 occurrence만 삭제됩니다.',
+      LectureDeleteScopeOption.occurrenceOnly => '해당 occurrence만 삭제됩니다.',
       LectureDeleteScopeOption.followingSeries =>
         '현재 occurrence와 이후 occurrence가 삭제됩니다.',
       LectureDeleteScopeOption.entireSeries =>
         'Origin과 override occurrence까지 모두 삭제됩니다.',
     };
   }
-
 }
 
 class _ModalContextSummary extends StatelessWidget {
-  const _ModalContextSummary({
-    required this.classroomName,
-    required this.mode,
-  });
+  const _ModalContextSummary({required this.classroomName, required this.mode});
 
   final String classroomName;
   final ClassroomTimetableModalMode mode;
@@ -816,10 +821,7 @@ class _TitleField extends StatelessWidget {
 }
 
 class _TypeField extends StatelessWidget {
-  const _TypeField({
-    required this.value,
-    required this.onChanged,
-  });
+  const _TypeField({required this.value, required this.onChanged});
 
   final LectureType value;
   final ValueChanged<LectureType?> onChanged;
@@ -901,8 +903,9 @@ class _DateTimeFields extends StatelessWidget {
             label: '종료',
             value: end,
             onPicked: (DateTime newValue) {
-              final DateTime normalized =
-                  newValue.isAfter(start) ? newValue : start.add(const Duration(hours: 1));
+              final DateTime normalized = newValue.isAfter(start)
+                  ? newValue
+                  : start.add(const Duration(hours: 1));
               onChanged(start, normalized);
             },
           ),

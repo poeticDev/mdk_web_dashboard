@@ -68,7 +68,7 @@ final class ClassroomTimetableControllerProvider
 }
 
 String _$classroomTimetableControllerHash() =>
-    r'5f1ed13833168a8160ff731eeca78095d85df5f5';
+    r'901be1e12127096e2a0b16e9ca32b333c5ad4893';
 
 /// 강의실 상세 화면에서 사용하는 캘린더 컨트롤러.
 

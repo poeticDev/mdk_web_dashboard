@@ -7,7 +7,7 @@ import 'package:web_dashboard/core/auth/domain/value_objects/login_credentials.d
 
 part 'auth_controller.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
   @override
   AuthState build() => AuthState.initial();
