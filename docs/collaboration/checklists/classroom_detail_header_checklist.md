@@ -15,8 +15,8 @@
    - [x] `classroomDetailInfoProvider`를 `AutoDisposeAsyncNotifierProviderFamily`로 구현 (API + mapper 연결)
    - [x] `classroomSummaryViewModelProvider`, `classroomDeviceCatalogProvider` 파생 provider 추가 및 단위 테스트 작성
 3. **센서/환경 provider**
-   - [ ] 더미 데이터 소스(`classroom_sensor_mock.dart`) 작성
-   - [ ] `classroomSensorSnapshotProvider` + `classroomEnvironmentMetricsProvider` 구현, 주기적 갱신 로직 포함
+   - [x] 더미 데이터 소스(`classroom_sensor_mock.dart`) 작성
+   - [x] `classroomSensorSnapshotProvider` + `classroomEnvironmentMetricsProvider` 구현, 주기적 갱신 로직 포함
 4. **디바이스 토글 컨트롤러**
    - [ ] `classroomDeviceToggleControllerProvider` 초안 (optimistic state, 액션 stub)
    - [ ] 향후 API 연동을 위한 TODO/인터페이스 명시

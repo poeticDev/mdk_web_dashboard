@@ -11,8 +11,8 @@
 | `classroomDetailInfoProvider` | `AutoDisposeAsyncNotifierProviderFamily<ClassroomDetailInfo, String>` | `classroomId` | 기본 정보 API 호출, DTO를 `ClassroomDetailInfo`(name, building, devices, config 등)로 변환. 실패 시 retry/error 상태를 노출. |
 | `classroomSummaryViewModelProvider` | `Provider.family<ClassroomSummaryInfo, String>` | `classroomId` | `classroomDetailInfoProvider` + (필요 시) 현재 세션/교수/수용인원 파생 데이터를 헤더용 요약 모델로 투영. |
 | `classroomDeviceCatalogProvider` | `Provider.family<List<ClassroomDevice>, String>` | `classroomId` | 기본 정보에서 장비 목록만 슬라이싱해 장치 패널 전용 뷰 모델 생성. |
-| `classroomSensorSnapshotProvider` | `AutoDisposeNotifierProviderFamily<ClassroomSensorSnapshot, String>` | `classroomId` | 센서 API 미구현 단계에서 더미 데이터를 관리. 이후 실제 REST 클라이언트 연동 시 이 provider 구현만 교체. 내부적으로 `Timer`로 모의 갱신 또는 seed 데이터를 유지. |
-| `classroomEnvironmentMetricsProvider` | `Provider.family<List<EnvironmentMetric>, String>` | `classroomId` | `classroomSensorSnapshotProvider`를 구독해 UI에 필요한 값/단위를 `EnvironmentMetric` 리스트로 변환. |
+| `classroomSensorSnapshotProvider` | `StreamProvider.autoDispose.family<ClassroomSensorSnapshot, String>` | `classroomId` | 더미 데이터 소스를 5초 주기로 호출해 snapshot 스트림을 만든다. 실제 API가 준비되면 동일한 스트림 제공자로 교체. |
+| `classroomEnvironmentMetricsProvider` | `Provider.autoDispose.family<AsyncValue<List<EnvironmentMetric>>, String>` | `classroomId` | snapshot 스트림을 구독해 `EnvironmentMetricViewModel` 리스트를 `AsyncValue` 형태로 노출한다. |
 | `classroomDeviceToggleControllerProvider` | `AutoDisposeNotifierProviderFamily<DeviceToggleControllerState, String>` | `classroomId` | 장비 토글 상태를 노출하고 변경 커맨드를 큐잉. 기본 정보/센서 provider에서 초기 상태를 받아 optimistic 업데이트를 처리. 추후 실제 명령 API 추가 시 이 provider가 책임. |
 | (기존) `classroomTimetableControllerProvider` | `StateNotifierProviderFamily` | `classroomId` | 시간표/occurrence 데이터 관리. 헤더 세션 표시에서 현재 수업 정보가 필요하면 selector provider로 조합. |
 | `classroomCurrentSessionProvider` | `Provider.family<ClassroomSessionSnapshot?, String>` | `classroomId` | `classroomTimetableControllerProvider`의 state를 참조해 현재/다음 수업 정보를 헤더 세션 카드에 제공. |
@@ -38,10 +38,10 @@
 | `HeaderAlertBanner` | `classroomHeaderErrorProvider(roomId)` | fetch 실패 시 재시도 액션 제공.
 
 ## 4. 센서 정보 provider의 임시 전략
-- `classroomSensorSnapshotProvider`는 `AutoDisposeNotifier`로 선언하고, `@visibleForTesting`한 `seedData`를 주입받아 더미 JSON을 유지한다.
-- 기본 구현은 `Future.value(_mockSnapshot)`을 반환하거나 `StateNotifier` 내에서 `Timer.periodic`으로 값을 약간씩 변형시켜 UI 갱신을 검증한다.
-- 실제 API가 준비되면 notifier 내부에서 REST 호출/웹소켓 구독으로 교체하되, 외부 위젯/상위 provider는 `EnvironmentMetric`만 의존하므로 수정 영향이 최소화된다.
-- 더미 데이터 소스는 `lib/ui/classroom_detail/mocks/classroom_sensor_mock.dart` 등 별도 파일에 두고, provider는 현재 sandbox인지 여부(예: `kReleaseMode`)를 기준으로 더미/실제 구현을 선택하도록 설계.
+- `classroomSensorSnapshotProvider`는 `StreamProvider.autoDispose.family`로 선언하고, `classroom_sensor_mock.dart`가 제공하는 snapshot을 5초 주기로 emit한다.
+- `classroomEnvironmentMetricsProvider`는 snapshot 스트림을 `AsyncValue<List<EnvironmentMetricViewModel>>` 형태로 투영해 UI 구독 시 로딩/오류 상태를 유지한다.
+- 실제 API가 준비되면 stream 생성부만 REST/웹소켓 통합으로 교체하면 되고, 상위 위젯은 동일한 provider 서명을 계속 사용한다.
+- 테스트에서는 `ProviderContainer.listen`을 활용해 첫 데이터가 로드될 때까지 기다리는 방식으로 동작을 검증한다.
 
 ## 5. ClassroomDetailPage 책임 범위
 - `ClassroomDetailPage`를 `ConsumerWidget`(또는 `ConsumerStatefulWidget`)으로 전환하되, **레이아웃/탭/스크롤** 만 담당한다.
@@ -57,4 +57,3 @@
 - 헤더 각 위젯은 `classroomId`만 매개변수로 받고 내부에서 `Consumer`로 provider를 구독하도록 리팩터링한다.
 - 추후 `ClassroomDetailHeaderData` 모델은 UI 편의용 DTO로 유지하되, provider 조합 결과를 담는 용도로만 사용하거나 위젯 단위로 더 잘게 분할해도 된다.
 - 테스트: 각 provider family에 대한 단위 테스트를 작성하여 더미/실제 구현 스위칭 시 회귀를 방지한다.
-
