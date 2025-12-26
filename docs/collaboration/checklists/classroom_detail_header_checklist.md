@@ -12,8 +12,8 @@
    - [x] `lib/core/classroom_detail/data`/`domain` 구조 점검 및 repository contract 정의(필요 시 stub)
    - [x] `classroom_detail_repository_provider` 등 공통 Provider 정의 파일(`classroom_detail_providers.dart`) 생성
 2. **기본 정보 provider**
-   - [ ] `classroomDetailInfoProvider`를 `AutoDisposeAsyncNotifierProviderFamily`로 구현 (API + mapper 연결)
-   - [ ] `classroomSummaryViewModelProvider`, `classroomDeviceCatalogProvider` 파생 provider 추가 및 단위 테스트 작성
+   - [x] `classroomDetailInfoProvider`를 `AutoDisposeAsyncNotifierProviderFamily`로 구현 (API + mapper 연결)
+   - [x] `classroomSummaryViewModelProvider`, `classroomDeviceCatalogProvider` 파생 provider 추가 및 단위 테스트 작성
 3. **센서/환경 provider**
    - [ ] 더미 데이터 소스(`classroom_sensor_mock.dart`) 작성
    - [ ] `classroomSensorSnapshotProvider` + `classroomEnvironmentMetricsProvider` 구현, 주기적 갱신 로직 포함
