@@ -5,6 +5,8 @@ import 'package:web_dashboard/core/auth/data/datasources/auth_remote_data_source
 import 'package:web_dashboard/core/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:web_dashboard/core/auth/data/repositories/auth_repository_impl.dart';
 import 'package:web_dashboard/core/auth/domain/repositories/auth_repository.dart';
+import 'package:web_dashboard/core/classroom_detail/data/repositories/classroom_detail_repository_mock.dart';
+import 'package:web_dashboard/core/classroom_detail/domain/repositories/classroom_detail_repository.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart'
     as timetable_remote;
@@ -64,6 +66,11 @@ Future<void> initDependencies() async {
         remoteDataSource: di(),
         mapper: di(),
       ),
+    );
+  }
+  if (!di.isRegistered<ClassroomDetailRepository>()) {
+    di.registerLazySingleton<ClassroomDetailRepository>(
+      () => const ClassroomDetailRepositoryMock(),
     );
   }
 }
