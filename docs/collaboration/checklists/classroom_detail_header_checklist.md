@@ -18,8 +18,8 @@
    - [x] 더미 데이터 소스(`classroom_sensor_mock.dart`) 작성
    - [x] `classroomSensorSnapshotProvider` + `classroomEnvironmentMetricsProvider` 구현, 주기적 갱신 로직 포함
 4. **디바이스 토글 컨트롤러**
-   - [ ] `classroomDeviceToggleControllerProvider` 초안 (optimistic state, 액션 stub)
-   - [ ] 향후 API 연동을 위한 TODO/인터페이스 명시
+   - [x] `classroomDeviceToggleControllerProvider` 초안 (optimistic state, 액션 stub)
+   - [x] 향후 API 연동을 위한 TODO/인터페이스 명시
 5. **헤더 위젯 분해 및 provider 주입**
    - [ ] `ClassroomDetailHeaderSection`을 shell + Identity/Session/Device/Environment 패널 위젯으로 분리
    - [ ] 각 위젯이 직접 provider를 구독하도록 Consumer 리팩터링

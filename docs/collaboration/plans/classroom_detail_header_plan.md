@@ -13,7 +13,7 @@
 | `classroomDeviceCatalogProvider` | `Provider.family<List<ClassroomDevice>, String>` | `classroomId` | 기본 정보에서 장비 목록만 슬라이싱해 장치 패널 전용 뷰 모델 생성. |
 | `classroomSensorSnapshotProvider` | `StreamProvider.autoDispose.family<ClassroomSensorSnapshot, String>` | `classroomId` | 더미 데이터 소스를 5초 주기로 호출해 snapshot 스트림을 만든다. 실제 API가 준비되면 동일한 스트림 제공자로 교체. |
 | `classroomEnvironmentMetricsProvider` | `Provider.autoDispose.family<AsyncValue<List<EnvironmentMetric>>, String>` | `classroomId` | snapshot 스트림을 구독해 `EnvironmentMetricViewModel` 리스트를 `AsyncValue` 형태로 노출한다. |
-| `classroomDeviceToggleControllerProvider` | `AutoDisposeNotifierProviderFamily<DeviceToggleControllerState, String>` | `classroomId` | 장비 토글 상태를 노출하고 변경 커맨드를 큐잉. 기본 정보/센서 provider에서 초기 상태를 받아 optimistic 업데이트를 처리. 추후 실제 명령 API 추가 시 이 provider가 책임. |
+| `classroomDeviceToggleControllerProvider` | `NotifierProvider.autoDispose.family<ClassroomDeviceController, ClassroomDeviceControllerState, String>` | `classroomId` | 기본 정보 provider가 내려준 장비 목록을 초기 상태로 담고, 토글 명령을 optimistic하게 반영한다. 실제 장비 제어 API가 준비되면 이 컨트롤러가 command service를 주입받아 호출하도록 확장한다. |
 | (기존) `classroomTimetableControllerProvider` | `StateNotifierProviderFamily` | `classroomId` | 시간표/occurrence 데이터 관리. 헤더 세션 표시에서 현재 수업 정보가 필요하면 selector provider로 조합. |
 | `classroomCurrentSessionProvider` | `Provider.family<ClassroomSessionSnapshot?, String>` | `classroomId` | `classroomTimetableControllerProvider`의 state를 참조해 현재/다음 수업 정보를 헤더 세션 카드에 제공. |
 | `classroomHeaderErrorProvider` | `Provider.family<ClassroomHeaderErrorState, String>` | `classroomId` | 기본 정보 · 센서 · 디바이스 토글 provider들의AsyncError를 모아 페이지 상단 SnackBar 노출 여부를 중앙 관리. |
@@ -57,3 +57,4 @@
 - 헤더 각 위젯은 `classroomId`만 매개변수로 받고 내부에서 `Consumer`로 provider를 구독하도록 리팩터링한다.
 - 추후 `ClassroomDetailHeaderData` 모델은 UI 편의용 DTO로 유지하되, provider 조합 결과를 담는 용도로만 사용하거나 위젯 단위로 더 잘게 분할해도 된다.
 - 테스트: 각 provider family에 대한 단위 테스트를 작성하여 더미/실제 구현 스위칭 시 회귀를 방지한다.
+- 디바이스 컨트롤러는 현재 mock 기반 토글만 제공하므로, 실제 장비 제어 API 계약이 확정되면 `ClassroomDeviceController.toggleDevice` 내부에 command service를 주입해 REST 호출 및 에러 매핑을 수행한다.

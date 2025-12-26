@@ -59,3 +59,4 @@
 - `docs/reference_guides/flutter_rules.md`: Flutter/Dart 작업 전반의 코딩 규칙, 패키지 관리, 스타일 가이드를 반드시 준수.
 - `docs/reference_guides/theme_design.md`: AdaptiveTheme + AppTheme(AppColors/AppTypography) 구조 및 테마 정책.
 - `docs/reference_guides/login_page_design.md`: 로그인 화면 설계(UX/데이터/상태/라우팅 요구사항).
+- `docs/reference_guides/riverpod_rules.md`: Riverpod 3.x 전용 규칙/체크리스트. 상태 설계·Provider 선언 시 항상 이 문서를 우선 참조한다.

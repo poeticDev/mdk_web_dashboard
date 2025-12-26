@@ -49,6 +49,15 @@ class ClassroomDeviceViewModel {
   final String name;
   final String type;
   final bool isEnabled;
+
+  ClassroomDeviceViewModel copyWith({bool? isEnabled}) {
+    return ClassroomDeviceViewModel(
+      id: id,
+      name: name,
+      type: type,
+      isEnabled: isEnabled ?? this.isEnabled,
+    );
+  }
 }
 
 final classroomDetailInfoProvider =
