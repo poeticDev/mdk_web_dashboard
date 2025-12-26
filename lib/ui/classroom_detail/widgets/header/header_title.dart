@@ -20,8 +20,8 @@ class ClassroomHeaderTitle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<ClassroomSummaryViewModel> summary = ref.watch(
-      classroomSummaryViewModelProvider(classroomId),
+    final AsyncValue<ClassroomDetailEntity> detail = ref.watch(
+      classroomDetailInfoProvider(classroomId),
     );
     final TextTheme textTheme = Theme.of(context).textTheme;
     return ResponsiveRowColumn(
@@ -33,21 +33,21 @@ class ClassroomHeaderTitle extends ConsumerWidget {
       rowMainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <ResponsiveRowColumnItem>[
         ResponsiveRowColumnItem(
-          child: summary.when(
-            data: (ClassroomSummaryViewModel data) => SizedBox(
+          child: detail.when(
+            data: (ClassroomDetailEntity data) => SizedBox(
               width: isWideLayout ? 300 : null,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    data.roomName,
+                    data.name,
                     style: textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  if (data.departmentName != null)
+                  if (data.department != null)
                     Text(
-                      data.departmentName!,
+                      data.department!.name,
                       style: textTheme.titleMedium?.copyWith(
                         color: textTheme.headlineSmall?.color?.withValues(
                           alpha: 0.9,
@@ -103,7 +103,7 @@ class _OccupancyBadge extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 6,
             children: <Widget>[
-              Text('수용 인원', style: theme.textTheme.labelLarge),
+              Text('재실상태', style: theme.textTheme.labelLarge),
               Text(
                 '${entity.capacity ?? 0}명',
                 style: theme.textTheme.titleLarge?.copyWith(

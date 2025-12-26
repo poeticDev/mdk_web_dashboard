@@ -9,6 +9,7 @@ import 'package:web_dashboard/core/timetable/application/usecases/save_lecture_u
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_occurrence_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
+import 'package:web_dashboard/core/timetable/data/mappers/lecture_occurrence_mapper.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 import 'package:web_dashboard/di/service_locator.dart';
@@ -16,6 +17,12 @@ import 'package:web_dashboard/di/service_locator.dart';
 /// Lecture(master) DTO ↔ Entity 변환기.
 final Provider<LectureMapper> lectureMapperProvider = Provider<LectureMapper>(
   (Ref ref) => di<LectureMapper>(),
+);
+
+/// Lecture occurrence DTO ↔ Entity 변환기.
+final Provider<LectureOccurrenceMapper> lectureOccurrenceMapperProvider =
+    Provider<LectureOccurrenceMapper>(
+  (Ref ref) => di<LectureOccurrenceMapper>(),
 );
 
 /// Lecture(master) REST 호출 데이터 소스.

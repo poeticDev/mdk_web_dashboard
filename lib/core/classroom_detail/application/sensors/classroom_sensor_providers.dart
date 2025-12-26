@@ -61,13 +61,13 @@ final classroomEnvironmentMetricsProvider = Provider.autoDispose
           value: data.humidity.toStringAsFixed(1),
           unit: '%',
         ),
-        if (data.pm25 != null)
-          EnvironmentMetricViewModel(
-            id: 'pm25',
-            label: 'PM2.5',
-            value: data.pm25!.toStringAsFixed(0),
-            unit: 'μg/m³',
-          ),
+        // if (data.pm25 != null)
+        //   EnvironmentMetricViewModel(
+        //     id: 'pm25',
+        //     label: 'PM2.5',
+        //     value: data.pm25!.toStringAsFixed(0),
+        //     unit: 'μg/m³',
+        //   ),
       ],
     );
   },

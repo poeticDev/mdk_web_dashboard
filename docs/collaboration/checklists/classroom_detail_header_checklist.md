@@ -25,9 +25,9 @@
    - [x] 각 위젯이 직접 provider를 구독하도록 Consumer 리팩터링
    - [ ] Header alert/status bar 구현 및 `classroomHeaderErrorProvider` 연결
 6. **페이지 책임 조정**
-   - [ ] `ClassroomDetailPage`를 Consumer 기반으로 전환하고 ProviderScope override/roomId 전달 로직 정리
-   - [ ] AppBar/에러 Snackbar 등이 provider 상태를 반영하도록 수정
+   - [x] `ClassroomDetailPage`를 Consumer 기반으로 전환하고 ProviderScope override/roomId 전달 로직 정리
+   - [x] AppBar/에러 Snackbar 등이 provider 상태를 반영하도록 수정
 7. **검증 및 문서 갱신**
-   - [ ] 새 provider/위젯 단위 테스트 및 기존 timetable 테스트 통과 확인
-   - [ ] 설계 문서와 본 체크리스트 진행 상황 업데이트
+   - [x] 새 provider/위젯 단위 테스트 및 기존 timetable 테스트 통과 확인
+   - [x] 설계 문서와 본 체크리스트 진행 상황 업데이트
    - [ ] PR 노트/가이드라인에 주요 설계 변경 요약

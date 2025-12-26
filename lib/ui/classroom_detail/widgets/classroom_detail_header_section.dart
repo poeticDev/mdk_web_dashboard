@@ -49,9 +49,9 @@ class ClassroomDetailHeaderSection extends ConsumerWidget {
                     rowFlex: 3,
                     child: RoomSummaryCard(classroomId: classroomId),
                   ),
-                  ResponsiveRowColumnItem(
-                    child: DevicePanel(classroomId: classroomId),
-                  ),
+                  // ResponsiveRowColumnItem(
+                  //   child: DevicePanel(classroomId: classroomId),
+                  // ),
                   ResponsiveRowColumnItem(
                     child: EnvironmentPanel(classroomId: classroomId),
                   ),
