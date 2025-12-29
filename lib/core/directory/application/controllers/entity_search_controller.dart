@@ -12,6 +12,7 @@ import 'package:web_dashboard/core/directory/domain/models/pagination_meta.dart'
 
 part 'entity_search_controller.g.dart';
 
+/// 학과/유저 검색 요청을 수행하고 Riverpod 상태를 노출하는 컨트롤러.
 @riverpod
 class EntitySearchController extends _$EntitySearchController {
   late EntitySearchArgs _args;

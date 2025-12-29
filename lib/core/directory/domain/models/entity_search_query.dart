@@ -1,3 +1,4 @@
+/// 검색 키워드·페이지 사이즈를 통일된 형태로 전달하는 값 객체.
 class EntitySearchQuery {
   const EntitySearchQuery({
     this.keyword,

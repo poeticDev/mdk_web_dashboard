@@ -13,6 +13,7 @@ import 'package:web_dashboard/core/directory/domain/repositories/user_directory_
 
 typedef _Clock = DateTime Function();
 
+/// 유저 검색 API 호출과 TTL 캐시를 책임지는 리포지토리 구현.
 class UserDirectoryRepositoryImpl implements UserDirectoryRepository {
   UserDirectoryRepositoryImpl({
     required UserDirectoryRemoteDataSource remoteDataSource,

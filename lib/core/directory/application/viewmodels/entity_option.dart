@@ -1,3 +1,4 @@
+/// 검색 결과를 UI 친화적 구조로 래핑한 뷰모델.
 class EntityOption {
   const EntityOption({
     required this.id,

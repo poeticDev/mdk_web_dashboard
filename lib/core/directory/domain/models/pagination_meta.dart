@@ -1,3 +1,4 @@
+/// 페이지네이션 정보를 표현하는 공통 메타 모델.
 class PaginationMeta {
   const PaginationMeta({
     required this.page,

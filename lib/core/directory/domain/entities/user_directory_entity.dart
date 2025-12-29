@@ -1,3 +1,4 @@
+/// 유저 검색 결과 요약을 담는 도메인 엔티티.
 class UserDirectoryEntity {
   const UserDirectoryEntity({
     required this.id,

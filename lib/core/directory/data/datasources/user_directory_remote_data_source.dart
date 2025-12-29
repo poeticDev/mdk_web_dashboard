@@ -3,6 +3,7 @@ import 'package:web_dashboard/common/constants/api_constants.dart';
 import 'package:web_dashboard/core/directory/data/dtos/pagination_meta_dto.dart';
 import 'package:web_dashboard/core/directory/data/dtos/user_directory_dto.dart';
 
+/// 유저 목록 API를 호출하는 데이터 소스 계약.
 abstract class UserDirectoryRemoteDataSource {
   Future<PaginatedResponseDto<UserDirectoryDto>> searchUsers({
     String? keyword,
@@ -11,6 +12,7 @@ abstract class UserDirectoryRemoteDataSource {
   });
 }
 
+/// Dio 기반 유저 검색 원격 데이터 소스 구현.
 class UserDirectoryRemoteDataSourceImpl
     implements UserDirectoryRemoteDataSource {
   UserDirectoryRemoteDataSourceImpl({required Dio dio}) : _dio = dio;

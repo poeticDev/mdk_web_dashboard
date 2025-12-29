@@ -1,3 +1,4 @@
+/// API에서 내려주는 meta 필드를 그대로 역직렬화하는 DTO.
 class PaginationMetaDto {
   const PaginationMetaDto({
     required this.page,
@@ -27,6 +28,7 @@ class PaginationMetaDto {
   final bool hasNext;
 }
 
+/// items + meta 구조를 한 번에 파싱하기 위한 래퍼.
 class PaginatedResponseDto<T> {
   const PaginatedResponseDto({required this.items, required this.meta});
 

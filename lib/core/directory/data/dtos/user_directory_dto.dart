@@ -1,3 +1,4 @@
+/// 사용자 API 요약 응답을 표현하는 DTO.
 class UserDirectoryDto {
   const UserDirectoryDto({
     required this.id,

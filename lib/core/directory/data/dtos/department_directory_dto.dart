@@ -1,3 +1,4 @@
+/// 학과 API 응답을 파싱하는 DTO.
 class DepartmentDirectoryDto {
   const DepartmentDirectoryDto({
     required this.id,

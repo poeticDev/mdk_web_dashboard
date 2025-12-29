@@ -1,3 +1,4 @@
+/// 학과 검색 결과를 표현하는 도메인 엔티티.
 class DepartmentDirectoryEntity {
   const DepartmentDirectoryEntity({
     required this.id,

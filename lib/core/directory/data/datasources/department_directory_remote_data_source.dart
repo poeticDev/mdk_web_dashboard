@@ -3,6 +3,7 @@ import 'package:web_dashboard/common/constants/api_constants.dart';
 import 'package:web_dashboard/core/directory/data/dtos/department_directory_dto.dart';
 import 'package:web_dashboard/core/directory/data/dtos/pagination_meta_dto.dart';
 
+/// 학과 검색/배치 API를 호출하는 데이터 소스 계약.
 abstract class DepartmentDirectoryRemoteDataSource {
   Future<PaginatedResponseDto<DepartmentDirectoryDto>> searchDepartments({
     String? keyword,
@@ -13,6 +14,7 @@ abstract class DepartmentDirectoryRemoteDataSource {
   Future<List<DepartmentDirectoryDto>> fetchByIds(List<String> ids);
 }
 
+/// Dio를 사용해 실제 HTTP를 수행하는 학과 데이터 소스 구현.
 class DepartmentDirectoryRemoteDataSourceImpl
     implements DepartmentDirectoryRemoteDataSource {
   DepartmentDirectoryRemoteDataSourceImpl({required Dio dio}) : _dio = dio;

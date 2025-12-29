@@ -13,6 +13,7 @@ import 'package:web_dashboard/core/directory/domain/repositories/department_dire
 
 typedef _Clock = DateTime Function();
 
+/// 학과 검색 API + 캐시 전략을 통합한 리포지토리 구현.
 class DepartmentDirectoryRepositoryImpl
     implements DepartmentDirectoryRepository {
   DepartmentDirectoryRepositoryImpl({
