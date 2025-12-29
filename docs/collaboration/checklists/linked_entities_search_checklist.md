@@ -9,8 +9,8 @@
 - [x] Riverpod Provider 등록 + DI 연동 (`service_locator.dart`)
 
 ## Riverpod 상태 & Controller
-- [ ] `EntitySearchController` (AsyncNotifier) 구현 및 autoDispose.family Provider 선언
-- [ ] 검색 디바운스, 요청 취소, 재시도 로직 테스트
+- [x] `EntitySearchController` (AsyncNotifier) 구현 및 autoDispose.family Provider 선언
+- [x] 검색 디바운스, 요청 취소, 재시도 로직 테스트
 - [ ] Provider 기반 재사용 예제/샘플 Widget 작성
 
 ## 공통 검색 UI 컴포넌트
