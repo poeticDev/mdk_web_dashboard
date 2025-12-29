@@ -24,6 +24,7 @@
 - 매직 넘버 사용 금지 → 의미 있는 `const`로 추출.
 - 단일 export 원칙(파일당 하나의 `export`).
 - 린트/포맷: `dart format .` 후 `flutter analyze` 체크.
+- 단계별 구현 완료 시 해당 단계에서 생성/수정한 핵심 클래스·함수·파일 상단에 한국어로 역할/책임을 명시하는 주석을 추가한다.
 
 ## Testing Guidelines
 

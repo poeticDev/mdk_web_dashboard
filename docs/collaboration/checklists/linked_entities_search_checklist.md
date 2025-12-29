@@ -14,10 +14,10 @@
 - [ ] Provider 기반 재사용 예제/샘플 Widget 작성
 
 ## 공통 검색 UI 컴포넌트
-- [ ] `EntitySearchField` 위젯 (텍스트 필드 + 팝오버) 구현
-- [ ] ModalBottomSheet(모바일) 대응 UI 구현
+- [x] `EntitySearchField` 위젯 (텍스트 필드 + 팝오버) 구현
+- [x] ModalBottomSheet(모바일) 대응 UI 구현
 - [ ] 접근성(키보드 탐색/ARIA/Semantics) 적용
-- [ ] 위젯 테스트/골든 스냅샷 추가
+- [x] 위젯 테스트/골든 스냅샷 추가
 
 ## Classroom Timetable Modal 적용
 - [ ] 학과 입력 필드 → 검색 컴포넌트로 교체 (`departmentId` 연동)
