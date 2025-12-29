@@ -4,8 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
 import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
+import 'package:web_dashboard/common/widgets/entity_search/entity_search_field.dart';
 import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
 import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
+import 'package:web_dashboard/core/directory/application/controllers/entity_search_args.dart';
+import 'package:web_dashboard/core/directory/application/viewmodels/entity_option.dart';
 import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
 import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
@@ -83,14 +86,14 @@ class ClassroomTimetableModal extends StatefulWidget {
 class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
-  late TextEditingController _departmentController;
-  late TextEditingController _instructorController;
   late TextEditingController _memoController;
   late TextEditingController _repeatCountController;
   late LectureType _selectedType;
   late DateTime _start;
   late DateTime _end;
   late Color _selectedColor;
+  EntityOption? _selectedDepartment;
+  EntityOption? _selectedInstructor;
   WeeklyRepeatOption _repeatOption = WeeklyRepeatOption.none;
   int _repeatWeekCount = 1;
   DateTime? _repeatUntilDate;
@@ -109,18 +112,24 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   void _initFormFields() {
     final LectureViewModel? lecture = widget.initialLecture;
     _titleController = TextEditingController(text: lecture?.title ?? '');
-    _departmentController = TextEditingController(
-      text: lecture?.departmentName ?? '',
-    );
-    _instructorController = TextEditingController(
-      text: lecture?.instructorName ?? '',
-    );
     _memoController = TextEditingController(text: lecture?.notes ?? '');
     _repeatCountController = TextEditingController();
     _selectedType = lecture != null ? lecture.type : LectureType.lecture;
     _start = lecture?.start ?? widget.initialStart;
     _end = lecture?.end ?? widget.initialStart.add(const Duration(hours: 1));
     _selectedColor = lecture?.color ?? _lectureColorPalette.first;
+    _selectedDepartment = lecture?.departmentName != null
+        ? EntityOption(
+            id: lecture!.departmentName!,
+            label: lecture.departmentName!,
+          )
+        : null;
+    _selectedInstructor = lecture?.instructorName != null
+        ? EntityOption(
+            id: lecture!.instructorName!,
+            label: lecture.instructorName!,
+          )
+        : null;
     if (_isForcedColor(_selectedType)) {
       _selectedColor = _forcedColorForType(_selectedType);
     }
@@ -132,8 +141,6 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
   @override
   void dispose() {
     _titleController.dispose();
-    _departmentController.dispose();
-    _instructorController.dispose();
     _memoController.dispose();
     _repeatCountController.dispose();
     super.dispose();
@@ -187,9 +194,39 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
                   },
                 ),
                 const SizedBox(height: 12),
-                _DepartmentField(controller: _departmentController),
+                EntitySearchField(
+                  searchType: EntitySearchType.department,
+                  labelText: '학과',
+                  hintText: '학과명을 검색하세요',
+                  initialOption: _selectedDepartment,
+                  onSelected: (EntityOption option) {
+                    setState(() {
+                      _selectedDepartment = option;
+                    });
+                  },
+                  onCleared: () {
+                    setState(() {
+                      _selectedDepartment = null;
+                    });
+                  },
+                ),
                 const SizedBox(height: 12),
-                _InstructorField(controller: _instructorController),
+                EntitySearchField(
+                  searchType: EntitySearchType.user,
+                  labelText: '강의자',
+                  hintText: '강의자명을 검색하세요',
+                  initialOption: _selectedInstructor,
+                  onSelected: (EntityOption option) {
+                    setState(() {
+                      _selectedInstructor = option;
+                    });
+                  },
+                  onCleared: () {
+                    setState(() {
+                      _selectedInstructor = null;
+                    });
+                  },
+                ),
                 const SizedBox(height: 12),
                 _DateTimeFields(
                   start: _start,
@@ -620,8 +657,8 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
       classroomId: widget.classroomId,
       start: _start,
       end: _end,
-      departmentId: _normalizeOptional(_departmentController.text),
-      instructorId: _normalizeOptional(_instructorController.text),
+      departmentId: _selectedDepartment?.id,
+      instructorId: _selectedInstructor?.id,
       colorHex: _colorHexForSubmission(),
       recurrenceRule: _buildRecurrenceRule(),
       notes: _normalizeOptional(_memoController.text),
@@ -841,34 +878,6 @@ class _TypeField extends StatelessWidget {
           )
           .toList(),
       onChanged: onChanged,
-    );
-  }
-}
-
-class _DepartmentField extends StatelessWidget {
-  const _DepartmentField({required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: const InputDecoration(labelText: '학과'),
-    );
-  }
-}
-
-class _InstructorField extends StatelessWidget {
-  const _InstructorField({required this.controller});
-
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: const InputDecoration(labelText: '강의자'),
     );
   }
 }

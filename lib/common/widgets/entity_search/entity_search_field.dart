@@ -21,6 +21,7 @@ class EntitySearchField extends ConsumerStatefulWidget {
     this.emptyPlaceholder = '검색 결과가 없습니다.',
     this.errorPlaceholder = '검색 중 오류가 발생했습니다.',
     super.key,
+    this.onCleared,
   });
 
   final EntitySearchType searchType;
@@ -33,6 +34,7 @@ class EntitySearchField extends ConsumerStatefulWidget {
   final bool enableBottomSheetOnNarrow;
   final String emptyPlaceholder;
   final String errorPlaceholder;
+  final VoidCallback? onCleared;
 
   @override
   ConsumerState<EntitySearchField> createState() => _EntitySearchFieldState();
@@ -96,33 +98,36 @@ class _EntitySearchFieldState extends ConsumerState<EntitySearchField> {
               style: Theme.of(context).textTheme.labelLarge,
             ),
           ),
-        TextField(
-          controller: _controller,
-          focusNode: _focusNode,
-          readOnly: useBottomSheet,
-          onChanged: useBottomSheet ? null : _handleQueryChanged,
-          onTap: useBottomSheet ? _openBottomSheet : null,
-          decoration: InputDecoration(
-            hintText: widget.hintText ?? '검색어를 입력하세요',
-            suffixIcon: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                if (_controller.text.isNotEmpty)
-                  IconButton(
-                    onPressed: _handleClear,
-                    icon: const Icon(Icons.clear),
-                    tooltip: '지우기',
-                  ),
-                if (asyncState.isLoading)
-                  const Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+        Semantics(
+          label: '검색어 입력',
+          child: TextField(
+            controller: _controller,
+            focusNode: _focusNode,
+            readOnly: useBottomSheet,
+            onChanged: useBottomSheet ? null : _handleQueryChanged,
+            onTap: useBottomSheet ? _openBottomSheet : null,
+            decoration: InputDecoration(
+              hintText: widget.hintText ?? '검색어를 입력하세요',
+              suffixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (_controller.text.isNotEmpty)
+                    IconButton(
+                      onPressed: _handleClear,
+                      icon: const Icon(Icons.clear),
+                      tooltip: '지우기',
                     ),
-                  ),
-              ],
+                  if (asyncState.isLoading)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -197,6 +202,7 @@ class _EntitySearchFieldState extends ConsumerState<EntitySearchField> {
     _debounce?.cancel();
     _controller.clear();
     ref.read(entitySearchControllerProvider(_args).notifier).clearSelection();
+    widget.onCleared?.call();
   }
 
   void _handleFocusChange() {
@@ -235,6 +241,10 @@ class _EntitySearchFieldState extends ConsumerState<EntitySearchField> {
             onSelected: (EntityOption option) {
               Navigator.of(ctx).pop();
               _handleSelect(option);
+            },
+            onCleared: () {
+              Navigator.of(ctx).pop();
+              _handleClear();
             },
           ),
         );
@@ -345,6 +355,7 @@ class _EntitySearchBottomSheet extends ConsumerStatefulWidget {
     required this.errorPlaceholder,
     required this.hintText,
     required this.onSelected,
+    this.onCleared,
   });
 
   final EntitySearchArgs args;
@@ -354,6 +365,7 @@ class _EntitySearchBottomSheet extends ConsumerStatefulWidget {
   final String errorPlaceholder;
   final String hintText;
   final ValueChanged<EntityOption> onSelected;
+  final VoidCallback? onCleared;
 
   @override
   ConsumerState<_EntitySearchBottomSheet> createState() =>
@@ -405,25 +417,29 @@ class _EntitySearchBottomSheetState
                 borderRadius: BorderRadius.circular(999),
               ),
             ),
-            TextField(
-              controller: _controller,
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: widget.hintText,
-                suffixIcon: _controller.text.isNotEmpty
-                    ? IconButton(
-                        onPressed: () {
-                          _controller.clear();
-                          ref
-                              .read(entitySearchControllerProvider(widget.args)
-                                  .notifier)
-                              .clearSelection();
-                        },
-                        icon: const Icon(Icons.clear),
-                      )
-                    : null,
+            Semantics(
+              label: '검색어 입력',
+              child: TextField(
+                controller: _controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: widget.hintText,
+                  suffixIcon: _controller.text.isNotEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            _controller.clear();
+                            ref
+                                .read(entitySearchControllerProvider(widget.args)
+                                    .notifier)
+                                .clearSelection();
+                            widget.onCleared?.call();
+                          },
+                          icon: const Icon(Icons.clear),
+                        )
+                      : null,
+                ),
+                onChanged: _handleChanged,
               ),
-              onChanged: _handleChanged,
             ),
             const SizedBox(height: 12),
             ConstrainedBox(

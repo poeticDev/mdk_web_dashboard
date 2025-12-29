@@ -32,7 +32,7 @@ class DepartmentDirectoryRemoteDataSourceImpl
       queryParameters: <String, Object?>{
         if (keyword != null && keyword.trim().isNotEmpty) 'q': keyword.trim(),
         'page': page,
-        'pageSize': limit,
+        'limit': limit,
       },
     );
     final Map<String, Object?> payload =
