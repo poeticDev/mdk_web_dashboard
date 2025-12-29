@@ -12,6 +12,8 @@ class ApiConstants {
   static const String lectureOccurrences = '/lectures/occurrence';
   static const String dashboardsNow = '$lectureOccurrences/dashboards/now';
   static const String classrooms = '/classrooms';
+  static const String departments = '/departments';
+  static const String users = '/users';
   static const String expectedVersionHeader = 'x-expected-version';
 
   static String classroomTimetablePath(String classroomId) {

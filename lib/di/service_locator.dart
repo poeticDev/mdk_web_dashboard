@@ -10,6 +10,15 @@ import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_n
 import 'package:web_dashboard/core/classroom_detail/data/mappers/classroom_detail_mapper.dart';
 import 'package:web_dashboard/core/classroom_detail/data/repositories/classroom_detail_repository_impl.dart';
 import 'package:web_dashboard/core/classroom_detail/domain/repositories/classroom_detail_repository.dart';
+import 'package:web_dashboard/core/directory/data/datasources/department_directory_remote_data_source.dart';
+import 'package:web_dashboard/core/directory/data/datasources/user_directory_remote_data_source.dart';
+import 'package:web_dashboard/core/directory/data/mappers/department_directory_mapper.dart';
+import 'package:web_dashboard/core/directory/data/mappers/pagination_meta_mapper.dart';
+import 'package:web_dashboard/core/directory/data/mappers/user_directory_mapper.dart';
+import 'package:web_dashboard/core/directory/data/repositories/department_directory_repository_impl.dart';
+import 'package:web_dashboard/core/directory/data/repositories/user_directory_repository_impl.dart';
+import 'package:web_dashboard/core/directory/domain/repositories/department_directory_repository.dart';
+import 'package:web_dashboard/core/directory/domain/repositories/user_directory_repository.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart';
 import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart'
     as timetable_remote;
@@ -92,6 +101,49 @@ Future<void> initDependencies() async {
   if (!di.isRegistered<ClassroomNowRemoteDataSource>()) {
     di.registerLazySingleton<ClassroomNowRemoteDataSource>(
       () => ClassroomNowRemoteDataSourceImpl(dio: di()),
+    );
+  }
+  if (!di.isRegistered<PaginationMetaMapper>()) {
+    di.registerLazySingleton<PaginationMetaMapper>(
+      () => const PaginationMetaMapper(),
+    );
+  }
+  if (!di.isRegistered<DepartmentDirectoryMapper>()) {
+    di.registerLazySingleton<DepartmentDirectoryMapper>(
+      () => const DepartmentDirectoryMapper(),
+    );
+  }
+  if (!di.isRegistered<UserDirectoryMapper>()) {
+    di.registerLazySingleton<UserDirectoryMapper>(
+      () => const UserDirectoryMapper(),
+    );
+  }
+  if (!di.isRegistered<DepartmentDirectoryRemoteDataSource>()) {
+    di.registerLazySingleton<DepartmentDirectoryRemoteDataSource>(
+      () => DepartmentDirectoryRemoteDataSourceImpl(dio: di()),
+    );
+  }
+  if (!di.isRegistered<UserDirectoryRemoteDataSource>()) {
+    di.registerLazySingleton<UserDirectoryRemoteDataSource>(
+      () => UserDirectoryRemoteDataSourceImpl(dio: di()),
+    );
+  }
+  if (!di.isRegistered<DepartmentDirectoryRepository>()) {
+    di.registerLazySingleton<DepartmentDirectoryRepository>(
+      () => DepartmentDirectoryRepositoryImpl(
+        remoteDataSource: di(),
+        mapper: di(),
+        metaMapper: di(),
+      ),
+    );
+  }
+  if (!di.isRegistered<UserDirectoryRepository>()) {
+    di.registerLazySingleton<UserDirectoryRepository>(
+      () => UserDirectoryRepositoryImpl(
+        remoteDataSource: di(),
+        mapper: di(),
+        metaMapper: di(),
+      ),
     );
   }
 }

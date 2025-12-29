@@ -1,0 +1,115 @@
+import 'package:dio/dio.dart';
+import 'package:web_dashboard/core/directory/data/datasources/department_directory_remote_data_source.dart';
+import 'package:web_dashboard/core/directory/data/dtos/department_directory_dto.dart';
+import 'package:web_dashboard/core/directory/data/dtos/pagination_meta_dto.dart';
+import 'package:web_dashboard/core/directory/data/mappers/department_directory_mapper.dart';
+import 'package:web_dashboard/core/directory/data/mappers/pagination_meta_mapper.dart';
+import 'package:web_dashboard/core/directory/data/repositories/directory_repository_exception.dart';
+import 'package:web_dashboard/core/directory/domain/entities/department_directory_entity.dart';
+import 'package:web_dashboard/core/directory/domain/models/entity_search_query.dart';
+import 'package:web_dashboard/core/directory/domain/models/entity_search_result.dart';
+import 'package:web_dashboard/core/directory/domain/models/pagination_meta.dart';
+import 'package:web_dashboard/core/directory/domain/repositories/department_directory_repository.dart';
+
+typedef _Clock = DateTime Function();
+
+class DepartmentDirectoryRepositoryImpl
+    implements DepartmentDirectoryRepository {
+  DepartmentDirectoryRepositoryImpl({
+    required DepartmentDirectoryRemoteDataSource remoteDataSource,
+    required DepartmentDirectoryMapper mapper,
+    required PaginationMetaMapper metaMapper,
+    Duration cacheTtl = const Duration(seconds: 30),
+    _Clock clock = DateTime.now,
+  })  : _remoteDataSource = remoteDataSource,
+        _mapper = mapper,
+        _metaMapper = metaMapper,
+        _cacheTtl = cacheTtl,
+        _now = clock;
+
+  final DepartmentDirectoryRemoteDataSource _remoteDataSource;
+  final DepartmentDirectoryMapper _mapper;
+  final PaginationMetaMapper _metaMapper;
+  final Duration _cacheTtl;
+  final _Clock _now;
+  final Map<String, _CacheEntry> _cache = <String, _CacheEntry>{};
+
+  @override
+  Future<EntitySearchResult<DepartmentDirectoryEntity>> searchDepartments(
+    EntitySearchQuery query,
+  ) async {
+    final String cacheKey = _buildCacheKey(query);
+    final _CacheEntry? cached = _cache[cacheKey];
+    if (cached != null && !_isExpired(cached)) {
+      return cached.result;
+    }
+    final PaginatedResponseDto<DepartmentDirectoryDto> response =
+        await _safeSearch(query);
+    final EntitySearchResult<DepartmentDirectoryEntity> mapped =
+        _mapResponse(response);
+    _cache[cacheKey] = _CacheEntry(mapped, _now());
+    return mapped;
+  }
+
+  @override
+  Future<List<DepartmentDirectoryEntity>> fetchByIds(
+    List<String> ids,
+  ) async {
+    if (ids.isEmpty) {
+      return <DepartmentDirectoryEntity>[];
+    }
+    final List<DepartmentDirectoryDto> dtos = await _safeFetchByIds(ids);
+    return dtos.map(_mapper.toEntity).toList();
+  }
+
+  EntitySearchResult<DepartmentDirectoryEntity> _mapResponse(
+    PaginatedResponseDto<DepartmentDirectoryDto> response,
+  ) {
+    final List<DepartmentDirectoryEntity> items =
+        response.items.map(_mapper.toEntity).toList();
+    final PaginationMeta meta = _metaMapper.toEntity(response.meta);
+    return EntitySearchResult<DepartmentDirectoryEntity>(
+      items: items,
+      meta: meta,
+    );
+  }
+
+  bool _isExpired(_CacheEntry entry) {
+    return _now().difference(entry.fetchedAt) > _cacheTtl;
+  }
+
+  String _buildCacheKey(EntitySearchQuery query) {
+    final String keyword = query.normalizedKeyword.toLowerCase();
+    return '$keyword|${query.page}|${query.limit}';
+  }
+  Future<PaginatedResponseDto<DepartmentDirectoryDto>> _safeSearch(
+    EntitySearchQuery query,
+  ) async {
+    try {
+      return await _remoteDataSource.searchDepartments(
+        keyword: query.keyword,
+        page: query.page,
+        limit: query.limit,
+      );
+    } on DioException catch (error) {
+      throw DirectoryRepositoryException(error);
+    }
+  }
+
+  Future<List<DepartmentDirectoryDto>> _safeFetchByIds(
+    List<String> ids,
+  ) async {
+    try {
+      return await _remoteDataSource.fetchByIds(ids);
+    } on DioException catch (error) {
+      throw DirectoryRepositoryException(error);
+    }
+  }
+}
+
+class _CacheEntry {
+  const _CacheEntry(this.result, this.fetchedAt);
+
+  final EntitySearchResult<DepartmentDirectoryEntity> result;
+  final DateTime fetchedAt;
+}
