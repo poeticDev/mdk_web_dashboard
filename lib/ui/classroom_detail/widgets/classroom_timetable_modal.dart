@@ -32,7 +32,6 @@ class ClassroomTimetableModal extends StatefulWidget {
   const ClassroomTimetableModal({
     required this.mode,
     required this.classroomId,
-    required this.classroomName,
     required this.initialStart,
     this.onCreateSubmit,
     this.onUpdateSubmit,
@@ -43,7 +42,6 @@ class ClassroomTimetableModal extends StatefulWidget {
 
   final ClassroomTimetableModalMode mode;
   final String classroomId;
-  final String classroomName;
   final DateTime initialStart;
   final LectureViewModel? initialLecture;
   final ValueChanged<LectureOriginWriteInput>? onCreateSubmit;
@@ -54,7 +52,6 @@ class ClassroomTimetableModal extends StatefulWidget {
     required BuildContext context,
     required ClassroomTimetableModalMode mode,
     required String classroomId,
-    required String classroomName,
     required DateTime initialStart,
     LectureViewModel? initialLecture,
     ValueChanged<LectureOriginWriteInput>? onCreateSubmit,
@@ -67,7 +64,6 @@ class ClassroomTimetableModal extends StatefulWidget {
         return ClassroomTimetableModal(
           mode: mode,
           classroomId: classroomId,
-          classroomName: classroomName,
           initialStart: initialStart,
           initialLecture: initialLecture,
           onCreateSubmit: onCreateSubmit,
@@ -908,8 +904,9 @@ class _DateTimeFields extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _DateField(
+          child: _TimeOnlyField(
             label: '종료',
+            baseDate: start,
             value: end,
             onPicked: (DateTime newValue) {
               final DateTime normalized = newValue.isAfter(start)
@@ -951,7 +948,7 @@ class _DateField extends StatelessWidget {
           context: context,
           initialDate: value,
           firstDate: DateTime(2020),
-          lastDate: DateTime(2030),
+          lastDate: DateTime(2050),
         );
         if (pickedDate == null) {
           return;
@@ -977,6 +974,53 @@ class _DateField extends StatelessWidget {
           pickedTime.minute,
         );
         onPicked(result);
+      },
+    );
+  }
+}
+
+class _TimeOnlyField extends StatelessWidget {
+  const _TimeOnlyField({
+    required this.label,
+    required this.baseDate,
+    required this.value, // 현재 종료 DateTime
+    required this.onPicked,
+  });
+
+  final String label;
+  final DateTime baseDate;
+  final DateTime value;
+  final ValueChanged<DateTime> onPicked;
+
+  @override
+  Widget build(BuildContext context) {
+    final String formatted =
+        '${baseDate.year}-${baseDate.month}-${baseDate.day} ${value.hour}:${value.minute.toString().padLeft(2, '0')}';
+
+    return TextFormField(
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: label,
+        suffixIcon: const Icon(Icons.schedule),
+        // helperText: '날짜는 시작일과 동일',
+      ),
+      controller: TextEditingController(text: formatted),
+      onTap: () async {
+        final TimeOfDay? pickedTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(value),
+        );
+        if (pickedTime == null || !context.mounted) return;
+
+        onPicked(
+          DateTime(
+            baseDate.year,
+            baseDate.month,
+            baseDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          ),
+        );
       },
     );
   }

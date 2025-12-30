@@ -447,7 +447,6 @@ class _ClassroomTimetableSectionState
       context: context,
       mode: ClassroomTimetableModalMode.create,
       classroomId: widget.classroomId,
-      classroomName: '공학관 ${widget.classroomId}',
       initialStart: start,
       onCreateSubmit: (LectureOriginWriteInput input) =>
           _handleCreateSubmit(controller, input),
@@ -475,7 +474,6 @@ class _ClassroomTimetableSectionState
       context: context,
       mode: ClassroomTimetableModalMode.edit,
       classroomId: widget.classroomId,
-      classroomName: vm.classroomName,
       initialStart: vm.start,
       initialLecture: vm,
       onUpdateSubmit: (LectureEditCommand command) =>
