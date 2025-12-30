@@ -57,7 +57,7 @@ class _ClassroomDetailPageState extends ConsumerState<ClassroomDetailPage> {
       classroomDetailInfoProvider(widget.roomId),
     );
     final String title = detailValue.maybeWhen(
-      data: (ClassroomDetailEntity entity) => '${entity.name} 강의실',
+      data: (ClassroomDetailEntity entity) => entity.name,
       orElse: () => '강의실 상세',
     );
     return Scaffold(

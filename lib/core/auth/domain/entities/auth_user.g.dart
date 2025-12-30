@@ -9,6 +9,7 @@ part of 'auth_user.dart';
 _AuthUser _$AuthUserFromJson(Map<String, dynamic> json) => _AuthUser(
   id: json['id'] as String,
   username: json['username'] as String,
+  displayName: json['displayName'] as String?,
   roles:
       (json['roles'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$UserRoleEnumMap, e))
@@ -19,6 +20,7 @@ _AuthUser _$AuthUserFromJson(Map<String, dynamic> json) => _AuthUser(
 Map<String, dynamic> _$AuthUserToJson(_AuthUser instance) => <String, dynamic>{
   'id': instance.id,
   'username': instance.username,
+  'displayName': instance.displayName,
   'roles': instance.roles.map((e) => _$UserRoleEnumMap[e]!).toList(),
 };
 

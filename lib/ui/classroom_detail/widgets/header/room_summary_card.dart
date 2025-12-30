@@ -70,9 +70,9 @@ class RoomSummaryCard extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                if (data.isInSession)
+                // if (data.isInSession)
                   Text(
-                    data.currentCourseName ?? '제목 없음',
+                    data.currentCourseName ?? '현재 진행 중인 강의가 없습니다.',
                     style: textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

@@ -147,7 +147,7 @@ class _UserBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
     final AuthUser? user = authState.currentUser;
-    final String displayName = user?.username ?? '게스트 사용자';
+    final String displayName = user?.displayName ?? user?.username ?? '게스트 사용자';
     final String roleLabel = _roleDisplay(user);
     final String initials = _initials(displayName);
 

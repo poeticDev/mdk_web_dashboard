@@ -60,6 +60,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final Map<String, dynamic> normalized = <String, dynamic>{
       'id': '${source['id']}',
       'username': _extractUsername(source),
+      'displayName': source['displayName'] as String?, 
       'roles': _extractRoles(source['roles']),
     };
 

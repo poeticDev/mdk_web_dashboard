@@ -21,6 +21,7 @@ abstract class AuthUser with _$AuthUser {
   const factory AuthUser({
     required String id,
     required String username,
+    String? displayName,
     @Default(<UserRole>[]) List<UserRole> roles,
   }) = _AuthUser;
 

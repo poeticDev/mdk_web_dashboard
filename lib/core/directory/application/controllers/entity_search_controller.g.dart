@@ -8,12 +8,15 @@ part of 'entity_search_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// 학과/유저 검색 요청을 수행하고 Riverpod 상태를 노출하는 컨트롤러.
 
 @ProviderFor(EntitySearchController)
 const entitySearchControllerProvider = EntitySearchControllerFamily._();
 
+/// 학과/유저 검색 요청을 수행하고 Riverpod 상태를 노출하는 컨트롤러.
 final class EntitySearchControllerProvider
     extends $AsyncNotifierProvider<EntitySearchController, EntitySearchState> {
+  /// 학과/유저 검색 요청을 수행하고 Riverpod 상태를 노출하는 컨트롤러.
   const EntitySearchControllerProvider._({
     required EntitySearchControllerFamily super.from,
     required EntitySearchArgs super.argument,
@@ -54,6 +57,8 @@ final class EntitySearchControllerProvider
 String _$entitySearchControllerHash() =>
     r'55a5ee20b162384e85b80f36378c1d4a0f541123';
 
+/// 학과/유저 검색 요청을 수행하고 Riverpod 상태를 노출하는 컨트롤러.
+
 final class EntitySearchControllerFamily extends $Family
     with
         $ClassFamilyOverride<
@@ -72,12 +77,16 @@ final class EntitySearchControllerFamily extends $Family
         isAutoDispose: true,
       );
 
+  /// 학과/유저 검색 요청을 수행하고 Riverpod 상태를 노출하는 컨트롤러.
+
   EntitySearchControllerProvider call(EntitySearchArgs args) =>
       EntitySearchControllerProvider._(argument: args, from: this);
 
   @override
   String toString() => r'entitySearchControllerProvider';
 }
+
+/// 학과/유저 검색 요청을 수행하고 Riverpod 상태를 노출하는 컨트롤러.
 
 abstract class _$EntitySearchController
     extends $AsyncNotifier<EntitySearchState> {
