@@ -228,10 +228,34 @@ class ClassroomTimetableController
     return entity;
   }
 
+  Future<void> resumeOccurrence(
+    String occurrenceId,
+  ) async {
+    final LectureOccurrenceUpdateInput input  = LectureOccurrenceUpdateInput(
+      occurrenceId: occurrenceId,
+      status: LectureStatus.scheduled,
+    );
+
+    await updateOccurrence(input);
+  }
+
+    Future<void> suspendOccurrence(
+    String occurrenceId,
+  ) async {
+    final LectureOccurrenceUpdateInput input  = LectureOccurrenceUpdateInput(
+      occurrenceId: occurrenceId,
+      status: LectureStatus.canceled,
+    );
+
+    await updateOccurrence(input);
+  }
+
   Future<void> deleteOccurrence(
     LectureOccurrenceDeleteInput input,
   ) async {
     await ref.read(deleteLectureOccurrenceUseCaseProvider).execute(input);
     await loadLectures(range: state.visibleRange);
   }
+
+  
 }

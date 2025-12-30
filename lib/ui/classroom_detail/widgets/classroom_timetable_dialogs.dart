@@ -81,12 +81,18 @@ class ClassroomTimetableDialogs {
       lecture: lecture,
       rangeLabel: formatRange(lecture.start, lecture.end),
     );
+
+    final String suspendingLabel = lecture.statusLabel == '휴강'
+        ? '재개'
+        : '휴강 처리';
+    
     return AppDialog.show<void>(
       context: context,
-      title: '일정 상세 (더미)',
+      title: '일정 상세',
       content: content,
       actions: _buildDetailActions(
         context: context,
+        suspendingLabel: suspendingLabel,
         onSuspendPending: onSuspendPending,
         onEditPending: onEditPending,
       ),
@@ -115,6 +121,7 @@ class ClassroomTimetableDialogs {
 
   static List<AppDialogAction> _buildDetailActions({
     required BuildContext context,
+    required String suspendingLabel,
     required VoidCallback onSuspendPending,
     required VoidCallback onEditPending,
   }) {
@@ -124,7 +131,7 @@ class ClassroomTimetableDialogs {
         onPressed: () => Navigator.of(context).pop(),
       ),
       AppDialogAction(
-        label: '휴강 처리',
+        label: suspendingLabel,
         onPressed: () {
           Navigator.of(context).pop();
           onSuspendPending();

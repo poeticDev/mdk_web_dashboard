@@ -90,9 +90,9 @@ class _ClassroomTimetableSectionState
         .map(
           (LectureOccurrenceEntity occurrence) =>
               LectureViewModel.fromOccurrence(
-            occurrence,
-            color: colorResolver.resolveColorForOccurrence(occurrence),
-          ),
+                occurrence,
+                color: colorResolver.resolveColorForOccurrence(occurrence),
+              ),
         )
         .toList();
     final LectureCalendarDataSource dataSource = LectureCalendarDataSource(
@@ -334,15 +334,15 @@ class _ClassroomTimetableSectionState
     required LectureColorResolver colorResolver,
   }) async {
     final TimetableDateRange range = _rangeFromDates(from, to);
-    final List<LectureOccurrenceEntity> occurrences =
-        await controller.fetchOccurrencesByRange(range);
+    final List<LectureOccurrenceEntity> occurrences = await controller
+        .fetchOccurrencesByRange(range);
     return occurrences
         .map(
           (LectureOccurrenceEntity occurrence) =>
               LectureViewModel.fromOccurrence(
-            occurrence,
-            color: colorResolver.resolveColorForOccurrence(occurrence),
-          ),
+                occurrence,
+                color: colorResolver.resolveColorForOccurrence(occurrence),
+              ),
         )
         .toList();
   }
@@ -462,8 +462,7 @@ class _ClassroomTimetableSectionState
       context: context,
       lecture: vm,
       formatRange: _formatRange,
-      onSuspendPending: () =>
-          _showPendingFeature('휴강 처리 기능은 준비 중입니다.'),
+      onSuspendPending: () => _toggleOccurrenceStatus(controller, vm),
       onEditPending: () => _openEditDialog(controller, vm),
     );
   }
@@ -503,14 +502,14 @@ class _ClassroomTimetableSectionState
     LectureEditCommand command,
   ) async {
     try {
-              final Set<LectureField> changedFields = _computeChangedFields(
-          original,
-          command.payload,
-        );
-        if (changedFields.isEmpty) {
-          _showSnackBar('변경된 내용이 없습니다.', AppSnackBarType.info);
-          return;
-        }
+      final Set<LectureField> changedFields = _computeChangedFields(
+        original,
+        command.payload,
+      );
+      if (changedFields.isEmpty) {
+        _showSnackBar('변경된 내용이 없습니다.', AppSnackBarType.info);
+        return;
+      }
       // if (command.scope == LectureEditScopeOption.occurrenceOnly) {
       //   final bool noTimeChange =
       //       _isSameMoment(original.start, command.payload.start) &&
@@ -553,6 +552,23 @@ class _ClassroomTimetableSectionState
     }
   }
 
+  _toggleOccurrenceStatus(
+    ClassroomTimetableController controller,
+    LectureViewModel vm,
+  ) async {
+    try {
+      if (vm.statusLabel == '휴강') {
+        await controller.resumeOccurrence(vm.id);
+        _showSnackBar('일정이 재개되었습니다.', AppSnackBarType.success);
+      } else {
+        await controller.suspendOccurrence(vm.id);
+        _showSnackBar('일정이 휴강 처리되었습니다.', AppSnackBarType.success);
+      }
+    } catch (_) {
+      _showSnackBar('일정 상태 변경에 실패했습니다.', AppSnackBarType.error);
+    }
+  }
+
   Future<void> _handleDeleteCommand(
     ClassroomTimetableController controller,
     LectureDeleteCommand command,
@@ -576,10 +592,7 @@ class _ClassroomTimetableSectionState
               applyToOverrides: command.includeOverrides,
             ),
           );
-          _showSnackBar(
-            '현재 회차와 이후 시리즈가 삭제되었습니다.',
-            AppSnackBarType.success,
-          );
+          _showSnackBar('현재 회차와 이후 시리즈가 삭제되었습니다.', AppSnackBarType.success);
           break;
         case LectureDeleteScopeOption.entireSeries:
           if (command.expectedVersion == null) {
@@ -644,7 +657,9 @@ class _ClassroomTimetableSectionState
     LectureOriginWriteInput next,
   ) {
     final Set<LectureField> fields = <LectureField>{};
-    print('original.title.trim() != next.title.trim(): ${original.title.trim() != next.title.trim()}');
+    print(
+      'original.title.trim() != next.title.trim(): ${original.title.trim() != next.title.trim()}',
+    );
     print(original.title.trim());
     print(next.title.trim());
     if (original.title.trim() != next.title.trim()) {
@@ -840,9 +855,27 @@ class _LectureAppointmentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool isCanceled = viewModel.statusLabel == '휴강';
     final Color borderColor = isOngoing
         ? theme.colorScheme.onSurface
+        : isCanceled
+        ? theme.colorScheme.error
         : viewModel.color.withValues(alpha: 0.4);
+
+    Color textColor = Color(0xFFFAFAFA);
+    Shadow textShadow = Shadow(
+      color: Colors.black.withValues(alpha: 0.6),
+      blurRadius: 2,
+    );
+
+    if (viewModel.color.computeLuminance() > 0.5) {
+      textColor = Color(0xFF212121);
+      textShadow = Shadow(
+        color: Colors.white.withValues(alpha: 0.6),
+        blurRadius: 2,
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: viewModel.color,
@@ -855,23 +888,36 @@ class _LectureAppointmentTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
 
         children: <Widget>[
-          Text(
-            viewModel.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            spacing: 4,
+            children: [
+              if (isCanceled)
+                Text(
+                  '[휴강]',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.error,
+                    fontWeight: FontWeight.w600,
+                    shadows: <Shadow>[textShadow],
+                  ),
+                ),
+              Text(
+                viewModel.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w600,
+                  shadows: <Shadow>[textShadow],
+                ),
+              ),
+            ],
           ),
           if (viewModel.instructorName != null)
             Text(
               viewModel.instructorName!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.85),
-              ),
+              style: theme.textTheme.bodySmall?.copyWith(color: textColor),
             ),
         ],
       ),

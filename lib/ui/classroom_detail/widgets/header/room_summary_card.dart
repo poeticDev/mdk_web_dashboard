@@ -29,7 +29,7 @@ class RoomSummaryCard extends ConsumerWidget {
                 Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color:data.isInSession
+                    color: data.isInSession
                         ? colorTheme.primaryContainer.withValues(alpha: 0.7)
                         : colorTheme.secondaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -58,8 +58,7 @@ class RoomSummaryCard extends ConsumerWidget {
                         color: colorTheme.onSurface,
                       ),
                       Text(
-                        '12:00 ~ 13:00',
-                        // '${TimeOfDay.fromDateTime(data.startTime!).format(context)} ~ ${TimeOfDay.fromDateTime(data.endTime!).format(context)}',
+                        '${TimeOfDay.fromDateTime(data.startTime!).format(context)} ~ ${TimeOfDay.fromDateTime(data.endTime!).format(context)}',
                       ),
                     ],
                   ),
@@ -72,18 +71,14 @@ class RoomSummaryCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 if (data.isInSession)
-                Text(
-                  data.currentCourseName ?? '제목 없음',
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (data.instructorName != null)
                   Text(
-                    data.instructorName!,
-                    style: textTheme.bodyLarge,
-                    
+                    data.currentCourseName ?? '제목 없음',
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                if (data.instructorName != null)
+                  Text(data.instructorName!, style: textTheme.bodyLarge),
               ],
             ),
           ],
