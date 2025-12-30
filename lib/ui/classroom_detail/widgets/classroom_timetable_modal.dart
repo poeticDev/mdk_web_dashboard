@@ -193,8 +193,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
                 EntitySearchField(
                   searchType: EntitySearchType.department,
                   labelText: '학과',
-                  hintText: '학과명을 검색하세요',
-                  initialOption: _selectedDepartment,
+                  hintText: _selectedDepartment == null ? '학과명을 검색하세요' : _selectedDepartment!.label,
                   onSelected: (EntityOption option) {
                     setState(() {
                       _selectedDepartment = option;
@@ -210,8 +209,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
                 EntitySearchField(
                   searchType: EntitySearchType.user,
                   labelText: '강의자',
-                  hintText: '강의자명을 검색하세요',
-                  initialOption: _selectedInstructor,
+                  hintText: _selectedInstructor == null ? '강의자명을 검색하세요' : _selectedInstructor!.label,
                   onSelected: (EntityOption option) {
                     setState(() {
                       _selectedInstructor = option;
