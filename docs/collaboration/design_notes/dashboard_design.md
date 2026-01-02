@@ -2,32 +2,40 @@
 
 본 문서는 `docs/reference_media/samples/1.png`, `docs/reference_media/samples/2.png` 와이어프레임을 기준으로 전체 강의실 대시보드(전체 화면)와 개별 강의실 화면을 구현하기 위한 설계 및 진행 순서를 정리한다.
 
+## 현재 구현 현황 (2025-12-30 기준)
+
+- 공통 AppBar(CommonAppBar)와 페이지 메타 구조는 이미 구현되어 대시보드/상세 화면에서 재사용 가능하다.
+- Classroom Detail 화면에는 연관 엔티티 검색 컴포넌트(EntitySearchField)·Riverpod Controller 구조가 적용되어 있으며, 대시보드 필터도 같은 패턴을 사용할 예정이다.
+- Dashboard 메트릭/카드/필터 UI는 아직 본격 개발되지 않았으므로, 아래 설계 항목을 최신 컴포넌트 기준으로 업데이트해 차기 세션에서 착수한다.
+- Responsive 정책과 테마(AppTheme/AppTypography)는 AGENTS.md 및 reference guide에 따라 코드에 반영되어 있으므로, 대시보드 구현 시 동일 정책을 따른다.
+
 ## 1. 전체 강의실 화면 (docs/reference_media/samples/1.png)
 
 ### 1.1 화면 구조
 
 1. **헤더 바**
-   - 좌측: 페이지 타이틀(`관리 강의실 전체 보기`).
-   - 우측: 알림/사용자 메뉴(아이콘). 추후 공통 AppBar 위젯으로 추출.
+   - 공통 앱바 구현 완료(lib/common/app_bar)
+   - 페이지 타이틀 : `관리 강의실 전체 보기`
 2. **상단 메트릭 카드 영역**
-   - 현재 시각/날짜 표시(실시간).
-   - 전체 강의실 수, 사용 중, 미사용, 미연동 카드.
-   - 검색 필드(건물/호수/학과명).
-   - 이 영역은 `Wrap` 또는 `ResponsiveGrid`로 구현, 각 카드는 재사용 가능한 `StatusMetricCard` 위젯으로 만든다.
+   - 1. 현재 시각/날짜 표시(실시간) : 앱 공통 카드 위젯 활용
+   - 2. 전체 강의실 수, 사용 중, 미사용, 미연동 카드 : 각각을 앱 공통 카드 위젯을 활용하여 재사용 가능한 `StatusMetricCard` 위젯으로 만든다. 클릭(터치) 시, 각 사용 상태에 해당하는 하단 강의실 카드 그리드에 표시
+   - 3. 검색 필드(건물/호수/학과명).
+   - 이 영역은 `ResponsiveGrid`로 구현하되 1, 2, 3 각 항목을 하나의 자식으로 가지게 한다. 
 3. **강의실 카드 그리드**
-   - 강의실별 정보 카드: 호수, 학과, 수업명, 강의자, 시간, 상태 뱃지(사용 중/미사용).
+   - 강의실별 정보 카드: 강의실명, 학과, 현재 강의명, 현재 강의자, 현재 강의 시작/종료시간, 상태 뱃지(사용 중/미사용).
+   - 카드 상단 상태 뱃지: 좌측 2개(재실 상태-boolean, 장비 상태-boolean), 우측 1개(사용중/미사용-boolean, 미연동 = null)
    - 카드 내 액션 버튼(자세히 보기) → 개별 화면으로 라우트.
    - 그리드는 `SliverGrid` or `GridView`로 구현하고, 반응형 레이아웃(열 수) 조정 필요.
 
 ### 1.2 데이터 모델 및 상태
 
-- `ClassroomSummary` 모델: `id`, `building`, `room`, `department`, `status`, `courseName`, `professor`, `start`, `end`, `occupancy`.
+- `ClassroomSummary` 모델: `classroomId`, `classroomName`, `classroomCode`, `buildingName`, `buildingCode`, `departmentName`, `departmentId`, `status`, `courseName`, `professor`, `startAt`, `endAt`, `isOccupied`, `isOn`.
 - 상단 메트릭은 `List<ClassroomSummary>` 기반 계산.
 - 검색 및 필터 상태는 Riverpod `StateNotifier`로 관리.
 
 ### 1.3 컴포넌트 설계
 
-- `DashboardHeader`: 날짜/시간 표시 + 메트릭 + 검색 필드를 포함하는 컴파운드 위젯.
+- `DashboardHeader`: 날짜/시간 표시 + 메트릭 + 검색 필드를 포함하는 컴파운드 위젯. 검색 필드는 `EntitySearchField` 혹은 동일 인터페이스를 활용.
 - `ClassroomCard`: 상태 뱃지, 아이콘, 버튼 등을 포함. 상태별 컬러는 `AppColors`로 매핑.
 - `StatusBadge`: 사용 중/미사용/미연동 등 상태 텍스트를 색상으로 구분.
 
@@ -51,8 +59,8 @@
    - 오른쪽: 전등/장비 ON/OFF 스위치, 환경 정보(온도/습도), 실시간 카메라 버튼.
    - 재실 상태 아이콘
 3. **캘린더 영역**
-   - 주간/월간 토글, 날짜 네비게이션, 일정 블록(UI kit: `TableCalendar` or custom `CalendarGrid`).
-   - 아래 `일정 등록` 모달/패널: 강의명, 날짜, 시간, 교수자명, 반복 여부 등 입력.
+   - 현행 구현(`ClassroomTimetableSection`)을 재사용해 주간/월간 토글, 날짜 네비게이션, 일정 블록을 제공한다.
+   - `EntitySearchField` 기반 일정 등록 모달이 이미 마련되어 있으므로, 대시보드에서도 동일 모달을 호출한다.
 
 ### 2.2 데이터 및 상태
 

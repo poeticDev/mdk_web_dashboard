@@ -1,5 +1,5 @@
+# Depricated: 본 문서는 Depricated 되었음.
 # Timetable RRULE Presets v1 (Syncfusion 호환)
-
 ## 핵심 원칙(중요)
 1) RRULE은 "Syncfusion이 문서로 지원한다고 명시한 속성"만 사용한다.
    - FREQ, INTERVAL, COUNT, UNTIL, BYDAY, BYMONTHDAY, BYMONTH, BYSETPOS :contentReference[oaicite:2]{index=2}
