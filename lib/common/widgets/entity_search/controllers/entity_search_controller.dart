@@ -1,14 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:web_dashboard/core/directory/application/controllers/entity_search_args.dart';
-import 'package:web_dashboard/core/directory/application/directory_providers.dart';
-import 'package:web_dashboard/core/directory/application/state/entity_search_state.dart';
-import 'package:web_dashboard/core/directory/application/viewmodels/entity_option.dart';
-import 'package:web_dashboard/core/directory/domain/entities/department_directory_entity.dart';
-import 'package:web_dashboard/core/directory/domain/entities/user_directory_entity.dart';
-import 'package:web_dashboard/core/directory/domain/models/entity_search_query.dart';
-import 'package:web_dashboard/core/directory/domain/models/entity_search_result.dart';
-import 'package:web_dashboard/core/directory/domain/models/pagination_meta.dart';
+import 'package:web_dashboard/common/search/entity_search_query.dart';
+import 'package:web_dashboard/common/search/entity_search_result.dart';
+import 'package:web_dashboard/common/search/pagination_meta.dart';
+import 'package:web_dashboard/common/widgets/entity_search/controllers/entity_search_args.dart';
+import 'package:web_dashboard/common/widgets/entity_search/state/entity_search_state.dart';
+import 'package:web_dashboard/common/widgets/entity_search/viewmodels/entity_option.dart';
+import 'package:web_dashboard/domains/auth/application/user_directory_providers.dart';
+import 'package:web_dashboard/domains/auth/domain/entities/user_directory_entity.dart';
+import 'package:web_dashboard/domains/foundation/application/foundation_providers.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/department_directory_entity.dart';
 
 part 'entity_search_controller.g.dart';
 

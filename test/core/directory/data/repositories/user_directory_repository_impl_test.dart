@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/directory/data/datasources/user_directory_remote_data_source.dart';
-import 'package:web_dashboard/core/directory/data/dtos/pagination_meta_dto.dart';
-import 'package:web_dashboard/core/directory/data/dtos/user_directory_dto.dart';
-import 'package:web_dashboard/core/directory/data/mappers/pagination_meta_mapper.dart';
-import 'package:web_dashboard/core/directory/data/mappers/user_directory_mapper.dart';
-import 'package:web_dashboard/core/directory/data/repositories/directory_repository_exception.dart';
-import 'package:web_dashboard/core/directory/data/repositories/user_directory_repository_impl.dart';
-import 'package:web_dashboard/core/directory/domain/models/entity_search_query.dart';
+import 'package:web_dashboard/domains/auth/data/datasources/user_directory_remote_data_source.dart';
+import 'package:web_dashboard/common/search/pagination_meta_dto.dart';
+import 'package:web_dashboard/domains/auth/data/dtos/user_directory_dto.dart';
+import 'package:web_dashboard/common/search/pagination_meta_mapper.dart';
+import 'package:web_dashboard/domains/auth/data/mappers/user_directory_mapper.dart';
+import 'package:web_dashboard/common/search/directory_repository_exception.dart';
+import 'package:web_dashboard/domains/auth/data/repositories/user_directory_repository_impl.dart';
+import 'package:web_dashboard/common/search/entity_search_query.dart';
 
 void main() {
   late _FakeUserRemote remote;

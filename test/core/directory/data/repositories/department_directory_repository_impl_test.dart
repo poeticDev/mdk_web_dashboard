@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/directory/data/datasources/department_directory_remote_data_source.dart';
-import 'package:web_dashboard/core/directory/data/dtos/department_directory_dto.dart';
-import 'package:web_dashboard/core/directory/data/dtos/pagination_meta_dto.dart';
-import 'package:web_dashboard/core/directory/data/mappers/department_directory_mapper.dart';
-import 'package:web_dashboard/core/directory/data/mappers/pagination_meta_mapper.dart';
-import 'package:web_dashboard/core/directory/data/repositories/department_directory_repository_impl.dart';
-import 'package:web_dashboard/core/directory/data/repositories/directory_repository_exception.dart';
-import 'package:web_dashboard/core/directory/domain/models/entity_search_query.dart';
+import 'package:web_dashboard/domains/foundation/data/datasources/department_directory_remote_data_source.dart';
+import 'package:web_dashboard/domains/foundation/data/dtos/department_directory_dto.dart';
+import 'package:web_dashboard/common/search/pagination_meta_dto.dart';
+import 'package:web_dashboard/domains/foundation/data/mappers/department_directory_mapper.dart';
+import 'package:web_dashboard/common/search/pagination_meta_mapper.dart';
+import 'package:web_dashboard/domains/foundation/data/repositories/department_directory_repository_impl.dart';
+import 'package:web_dashboard/common/search/directory_repository_exception.dart';
+import 'package:web_dashboard/common/search/entity_search_query.dart';
 
 void main() {
   late _FakeDepartmentRemote remote;

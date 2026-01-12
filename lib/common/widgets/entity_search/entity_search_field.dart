@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:web_dashboard/core/directory/application/controllers/entity_search_args.dart';
-import 'package:web_dashboard/core/directory/application/controllers/entity_search_controller.dart';
-import 'package:web_dashboard/core/directory/application/state/entity_search_state.dart';
-import 'package:web_dashboard/core/directory/application/viewmodels/entity_option.dart';
+import 'package:web_dashboard/common/widgets/entity_search/controllers/entity_search_args.dart';
+import 'package:web_dashboard/common/widgets/entity_search/controllers/entity_search_controller.dart';
+import 'package:web_dashboard/common/widgets/entity_search/state/entity_search_state.dart';
+import 'package:web_dashboard/common/widgets/entity_search/viewmodels/entity_option.dart';
 
 /// 학과/유저 등 연관 엔티티를 검색해 선택할 수 있는 공통 입력 필드.
 class EntitySearchField extends ConsumerStatefulWidget {

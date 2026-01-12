@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
-import 'package:web_dashboard/core/directory/data/datasources/user_directory_remote_data_source.dart';
-import 'package:web_dashboard/core/directory/data/dtos/pagination_meta_dto.dart';
-import 'package:web_dashboard/core/directory/data/dtos/user_directory_dto.dart';
-import 'package:web_dashboard/core/directory/data/mappers/pagination_meta_mapper.dart';
-import 'package:web_dashboard/core/directory/data/mappers/user_directory_mapper.dart';
-import 'package:web_dashboard/core/directory/data/repositories/directory_repository_exception.dart';
-import 'package:web_dashboard/core/directory/domain/entities/user_directory_entity.dart';
-import 'package:web_dashboard/core/directory/domain/models/entity_search_query.dart';
-import 'package:web_dashboard/core/directory/domain/models/entity_search_result.dart';
-import 'package:web_dashboard/core/directory/domain/models/pagination_meta.dart';
-import 'package:web_dashboard/core/directory/domain/repositories/user_directory_repository.dart';
+import 'package:web_dashboard/domains/auth/data/datasources/user_directory_remote_data_source.dart';
+import 'package:web_dashboard/common/search/pagination_meta_dto.dart';
+import 'package:web_dashboard/domains/auth/data/dtos/user_directory_dto.dart';
+import 'package:web_dashboard/common/search/pagination_meta_mapper.dart';
+import 'package:web_dashboard/domains/auth/data/mappers/user_directory_mapper.dart';
+import 'package:web_dashboard/common/search/directory_repository_exception.dart';
+import 'package:web_dashboard/domains/auth/domain/entities/user_directory_entity.dart';
+import 'package:web_dashboard/common/search/entity_search_query.dart';
+import 'package:web_dashboard/common/search/entity_search_result.dart';
+import 'package:web_dashboard/common/search/pagination_meta.dart';
+import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';
 
 typedef _Clock = DateTime Function();
 

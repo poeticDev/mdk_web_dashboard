@@ -1,4 +1,4 @@
-import 'package:web_dashboard/core/directory/application/viewmodels/entity_option.dart';
+import 'package:web_dashboard/common/widgets/entity_search/viewmodels/entity_option.dart';
 
 /// 검색 쿼리·결과·선택 여부를 표현하는 UI 상태 모델.
 class EntitySearchState {

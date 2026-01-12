@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
-import 'package:web_dashboard/core/directory/data/dtos/pagination_meta_dto.dart';
-import 'package:web_dashboard/core/directory/data/dtos/user_directory_dto.dart';
+import 'package:web_dashboard/common/search/pagination_meta_dto.dart';
+import 'package:web_dashboard/domains/auth/data/dtos/user_directory_dto.dart';
 
 /// 유저 목록 API를 호출하는 데이터 소스 계약.
 abstract class UserDirectoryRemoteDataSource {
