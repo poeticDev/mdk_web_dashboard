@@ -29,8 +29,10 @@
 
 ### 1.2 데이터 모델 및 상태
 
-- `ClassroomSummary` 모델: `classroomId`, `classroomName`, `classroomCode`, `buildingName`, `buildingCode`, `departmentName`, `departmentId`, `status`, `courseName`, `professor`, `startAt`, `endAt`, `isOccupied`, `isOn`.
-- 상단 메트릭은 `List<ClassroomSummary>` 기반 계산.
+- 
+
+- `ClassroomNow` 모델: `classroomId`, `classroomName`, `classroomCode`, `buildingName`, `buildingCode`, `departmentName`, `status`, `courseName`, `professor`, `startAt`, `endAt`, `isOccupied`, `isOn`.
+- 상단 메트릭은 `List<ClassroomNow>` 기반 계산.
 - 검색 및 필터 상태는 Riverpod `StateNotifier`로 관리.
 
 ### 1.3 컴포넌트 설계
