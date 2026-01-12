@@ -114,18 +114,19 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
     _start = lecture?.start ?? widget.initialStart;
     _end = lecture?.end ?? widget.initialStart.add(const Duration(hours: 1));
     _selectedColor = lecture?.color ?? _lectureColorPalette.first;
-    _selectedDepartment = lecture?.departmentName != null
-        ? EntityOption(
-            id: lecture!.departmentName!,
-            label: lecture.departmentName!,
-          )
-        : null;
-    _selectedInstructor = lecture?.instructorName != null
-        ? EntityOption(
-            id: lecture!.instructorName!,
-            label: lecture.instructorName!,
-          )
-        : null;
+
+    // _selectedDepartment = lecture?.departmentName != null
+    //     ? EntityOption(
+    //         id: lecture!.departmentName!,
+    //         label: lecture.departmentName!,
+    //       )
+    //     : null;
+    // _selectedInstructor = lecture?.instructorName != null
+    //     ? EntityOption(
+    //         id: lecture!.instructorName!,
+    //         label: lecture.instructorName!,
+    //       )
+    //     : null;
     if (_isForcedColor(_selectedType)) {
       _selectedColor = _forcedColorForType(_selectedType);
     }
@@ -193,7 +194,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
                 EntitySearchField(
                   searchType: EntitySearchType.department,
                   labelText: '학과',
-                  hintText: _selectedDepartment == null ? '학과명을 검색하세요' : _selectedDepartment!.label,
+                  hintText: widget.initialLecture?.departmentName == null ? '학과명을 검색하세요' : widget.initialLecture!.departmentName!,
                   onSelected: (EntityOption option) {
                     setState(() {
                       _selectedDepartment = option;
@@ -209,7 +210,7 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
                 EntitySearchField(
                   searchType: EntitySearchType.user,
                   labelText: '강의자',
-                  hintText: _selectedInstructor == null ? '강의자명을 검색하세요' : _selectedInstructor!.label,
+                  hintText: widget.initialLecture?.instructorName == null ? '강의자명을 검색하세요' : widget.initialLecture!.instructorName!,
                   onSelected: (EntityOption option) {
                     setState(() {
                       _selectedInstructor = option;
