@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/timetable/application/usecases/create_lecture_occurrence_usecase.dart';
-import 'package:web_dashboard/core/timetable/application/usecases/update_lecture_occurrence_usecase.dart';
-import 'package:web_dashboard/core/timetable/application/usecases/delete_lecture_occurrence_usecase.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_query.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart';
+import 'package:web_dashboard/domains/schedule/application/usecases/create_lecture_occurrence_usecase.dart';
+import 'package:web_dashboard/domains/schedule/application/usecases/update_lecture_occurrence_usecase.dart';
+import 'package:web_dashboard/domains/schedule/application/usecases/delete_lecture_occurrence_usecase.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_query.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
+import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_occurrence_repository.dart';
 
 void main() {
   late _FakeOccurrenceRepository repository;

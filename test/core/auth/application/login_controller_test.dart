@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:web_dashboard/core/auth/application/auth_controller.dart';
-import 'package:web_dashboard/core/auth/application/login_controller.dart';
-import 'package:web_dashboard/core/auth/domain/errors/auth_exception.dart';
-import 'package:web_dashboard/core/auth/domain/state/auth_state.dart';
-import 'package:web_dashboard/core/auth/domain/state/login_form_state.dart';
-import 'package:web_dashboard/core/auth/domain/value_objects/login_credentials.dart';
+import 'package:web_dashboard/domains/auth/application/auth_controller.dart';
+import 'package:web_dashboard/domains/auth/application/login_controller.dart';
+import 'package:web_dashboard/domains/auth/domain/errors/auth_exception.dart';
+import 'package:web_dashboard/domains/auth/domain/state/auth_state.dart';
+import 'package:web_dashboard/domains/auth/domain/state/login_form_state.dart';
+import 'package:web_dashboard/domains/auth/domain/value_objects/login_credentials.dart';
 
 void main() {
   group('LoginController', () {

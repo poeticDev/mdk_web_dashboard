@@ -1,4 +1,4 @@
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
+import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart';
 
 enum LectureEditScopeOption {
   occurrenceOnly,

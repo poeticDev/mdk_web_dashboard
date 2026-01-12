@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/timetable/data/dtos/lecture_dto.dart';
-import 'package:web_dashboard/core/timetable/data/mappers/lecture_mapper.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
+import 'package:web_dashboard/domains/schedule/data/dtos/lecture_dto.dart';
+import 'package:web_dashboard/domains/schedule/data/mappers/lecture_mapper.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
+import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart';
 
 void main() {
   const LectureMapper mapper = LectureMapper();

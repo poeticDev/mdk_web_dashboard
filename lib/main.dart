@@ -7,7 +7,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
-import 'package:web_dashboard/core/auth/application/auth_controller.dart';
+import 'package:web_dashboard/domains/auth/application/auth_controller.dart';
 import 'package:web_dashboard/di/service_locator.dart';
 import 'package:web_dashboard/routes/app_router.dart';
 

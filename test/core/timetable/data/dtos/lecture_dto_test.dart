@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/timetable/data/dtos/lecture_dto.dart';
+import 'package:web_dashboard/domains/schedule/data/dtos/lecture_dto.dart';
 
 void main() {
   test('LectureDto serializes to and from json', () {

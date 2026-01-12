@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
-import 'package:web_dashboard/core/auth/application/login_controller.dart';
-import 'package:web_dashboard/core/auth/domain/state/login_form_state.dart';
+import 'package:web_dashboard/domains/auth/application/login_controller.dart';
+import 'package:web_dashboard/domains/auth/domain/state/login_form_state.dart';
 
 const double _cardMaxWidth = 420;
 const double _cardMinWidth = 320;

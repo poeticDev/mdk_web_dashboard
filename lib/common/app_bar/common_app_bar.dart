@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/common/app_bar/common_app_bar_options.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/common/widgets/app_theme_toggle.dart';
-import 'package:web_dashboard/core/auth/application/auth_controller.dart';
-import 'package:web_dashboard/core/auth/domain/entities/auth_user.dart';
+import 'package:web_dashboard/domains/auth/application/auth_controller.dart';
+import 'package:web_dashboard/domains/auth/domain/entities/auth_user.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
 
 const double _kAppBarHeight = 72;

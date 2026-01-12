@@ -9,9 +9,9 @@ import 'package:web_dashboard/core/classroom_detail/application/classroom_detail
 import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
 import 'package:web_dashboard/core/directory/application/controllers/entity_search_args.dart';
 import 'package:web_dashboard/core/directory/application/viewmodels/entity_option.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
-import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
+import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_edit_options.dart';
 
 const List<Color> _lectureColorPalette = <Color>[

@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
-import 'package:web_dashboard/core/timetable/data/datasources/lecture_origin_remote_data_source.dart';
-import 'package:web_dashboard/core/timetable/data/dtos/lecture_request_dtos.dart';
+import 'package:web_dashboard/domains/schedule/data/datasources/lecture_origin_remote_data_source.dart';
+import 'package:web_dashboard/domains/schedule/data/dtos/lecture_request_dtos.dart';
 
 void main() {
   late Dio dio;

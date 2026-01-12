@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:web_dashboard/core/auth/application/auth_controller.dart';
-import 'package:web_dashboard/core/auth/domain/errors/auth_exception.dart';
+import 'package:web_dashboard/domains/auth/application/auth_controller.dart';
+import 'package:web_dashboard/domains/auth/domain/errors/auth_exception.dart';
 import 'package:web_dashboard/routes/route_paths.dart';
 import 'package:web_dashboard/ui/dashboard/dashboard_page.dart';
 import 'package:web_dashboard/ui/classroom_detail/classroom_detail_page.dart';

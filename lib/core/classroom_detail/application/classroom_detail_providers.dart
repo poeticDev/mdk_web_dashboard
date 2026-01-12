@@ -2,9 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_now_remote_data_source.dart';
 import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
 import 'package:web_dashboard/core/classroom_detail/domain/repositories/classroom_detail_repository.dart';
-import 'package:web_dashboard/core/timetable/application/timetable_providers.dart';
-import 'package:web_dashboard/core/timetable/data/mappers/lecture_occurrence_mapper.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
+import 'package:web_dashboard/domains/schedule/application/timetable_providers.dart';
+import 'package:web_dashboard/domains/schedule/data/mappers/lecture_occurrence_mapper.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/di/service_locator.dart';
 
 class ClassroomDetailParams {

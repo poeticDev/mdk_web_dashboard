@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
 
 void main() {
   group('LectureEntity', () {

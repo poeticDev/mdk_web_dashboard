@@ -4,19 +4,19 @@ import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:web_dashboard/common/utils/date_time_utils.dart';
 import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
-import 'package:web_dashboard/core/auth/application/auth_controller.dart';
-import 'package:web_dashboard/core/auth/domain/entities/auth_user.dart';
-import 'package:web_dashboard/core/auth/domain/state/auth_state.dart';
-import 'package:web_dashboard/core/timetable/application/controllers/classroom_timetable_controller.dart';
-import 'package:web_dashboard/core/timetable/application/state/classroom_timetable_state.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_occurrence_entity.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart'
+import 'package:web_dashboard/domains/auth/application/auth_controller.dart';
+import 'package:web_dashboard/domains/auth/domain/entities/auth_user.dart';
+import 'package:web_dashboard/domains/auth/domain/state/auth_state.dart';
+import 'package:web_dashboard/domains/schedule/application/controllers/classroom_timetable_controller.dart';
+import 'package:web_dashboard/domains/schedule/application/state/classroom_timetable_state.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
+import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart'
     show LectureField, LectureOriginWriteInput;
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_occurrence_repository.dart'
+import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_occurrence_repository.dart'
     show LectureOccurrenceDeleteInput, LectureOccurrenceUpdateInput;
-import 'package:web_dashboard/core/timetable/presentation/datasources/lecture_calendar_data_source.dart';
-import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_resolver.dart';
-import 'package:web_dashboard/core/timetable/presentation/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/datasources/lecture_calendar_data_source.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/utils/lecture_color_resolver.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_dialogs.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_edit_options.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_modal.dart';

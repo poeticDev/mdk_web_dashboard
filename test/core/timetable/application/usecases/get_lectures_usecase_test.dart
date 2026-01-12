@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/timetable/application/usecases/get_lectures_usecase.dart';
-import 'package:web_dashboard/core/timetable/application/usecases/save_lecture_usecase.dart';
-import 'package:web_dashboard/core/timetable/application/usecases/delete_lecture_usecase.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/domain/repositories/lecture_origin_repository.dart';
+import 'package:web_dashboard/domains/schedule/application/usecases/get_lectures_usecase.dart';
+import 'package:web_dashboard/domains/schedule/application/usecases/save_lecture_usecase.dart';
+import 'package:web_dashboard/domains/schedule/application/usecases/delete_lecture_usecase.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
+import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart';
 
 void main() {
   late _FakeRepository repository;

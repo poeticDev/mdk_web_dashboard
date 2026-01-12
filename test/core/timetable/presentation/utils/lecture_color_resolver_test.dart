@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mdk_app_theme/mdk_app_theme.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_entity.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_status.dart';
-import 'package:web_dashboard/core/timetable/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/core/timetable/presentation/utils/lecture_color_resolver.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_entity.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
+import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/utils/lecture_color_resolver.dart';
 
 void main() {
   final resolver = LectureColorResolver(AppColors.light(ThemeBrand.defaultBrand));

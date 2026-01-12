@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
-import 'package:web_dashboard/core/timetable/data/dtos/lecture_occurrence_dto.dart';
+import 'package:web_dashboard/domains/schedule/data/dtos/lecture_occurrence_dto.dart';
 
 abstract class ClassroomNowRemoteDataSource {
   Future<ClassroomNowResponseDto?> fetchCurrent({required String classroomId});
