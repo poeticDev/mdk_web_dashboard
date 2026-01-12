@@ -79,11 +79,11 @@
 
 | 계층 | 경로 예시 | 책임 |
 | --- | --- | --- |
-| Domain | `lib/core/timetable/domain/entities/lecture_entity.dart` | 순수 엔티티, 값 객체, `LectureType` enum |
-| Domain Repository Contract | `lib/core/timetable/domain/repositories/lecture_repository.dart` | 캘린더 화면이 의존하는 추상화 |
-| Application (UseCase/Controller) | `lib/core/timetable/application/get_lectures_usecase.dart`, `lib/ui/dashboard/controllers/classroom_timetable_controller.dart` | 필터 적용, 상태 관리(Riverpod StateNotifier) |
-| Data | `lib/core/timetable/data/datasources/lecture_remote_data_source.dart`, `lecture_dto.dart` | `syncfusion_flutter_calendar`에 전달할 모델 변환, API 통신 |
-| Presentation | `lib/ui/dashboard/widgets/calendar/` | `SfCalendar`, `LectureDataSource`, 모달 |
+| Domain | `lib/domains/schedule/domain/entities/lecture_entity.dart` | 순수 엔티티, 값 객체, `LectureType` enum |
+| Domain Repository Contract | `lib/domains/schedule/domain/repositories/lecture_origin_repository.dart` | 캘린더 화면이 의존하는 추상화 |
+| Application (UseCase/Controller) | `lib/domains/schedule/application/usecases/get_lectures_usecase.dart`, `lib/domains/schedule/application/controllers/classroom_timetable_controller.dart` | 필터 적용, 상태 관리(Riverpod Controller) |
+| Data | `lib/domains/schedule/data/datasources/lecture_origin_remote_data_source.dart`, `lecture_dto.dart` | `syncfusion_flutter_calendar`에 전달할 모델 변환, API 통신 |
+| Presentation | `lib/features/classroom_detail/presentation/` | `SfCalendar`, `LectureDataSource`, 모달 |
 
 * Controller는 `getIt`에 레이지 싱글톤으로 등록하고, Repository/Service 싱글톤 → RemoteDataSource/Dio 주입 사슬을 유지한다.
 * UI 단에서는 Domain 엔티티 → Application 상태 → `LectureViewModel` → `CalendarDataSource` 순으로 불변 데이터가 흘러간다.

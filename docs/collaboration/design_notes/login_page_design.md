@@ -169,8 +169,8 @@ Codex CLI는 이 문서를 기반으로 다음 항목들을 자동 생성할 수
 ### 10.2 파일 구조 예시
 - `lib/ui/login/login_page.dart`
 - `lib/ui/login/login_viewmodel.dart`
-- `lib/core/auth/auth_repository.dart`
-- `lib/core/auth/auth_state.dart`
+- `lib/domains/auth/auth_repository.dart`
+- `lib/domains/auth/auth_state.dart`
 - `lib/routes/app_router.dart`
 
 ### 10.3 Codex에게 전달할 프롬프트 예시

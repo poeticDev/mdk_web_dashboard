@@ -26,17 +26,23 @@
 - [x] `docs/architecture/directory_structure.md`의 최종 구조와 불일치 항목 확인/기록
 
 ### 단계 1. 최상위 구조 생성
-- [ ] `lib/domains/` 폴더 생성
-- [ ] `lib/features/` 폴더 생성
-- [ ] `lib/di`, `lib/routes`, `lib/common` 현 위치 유지 확인
+- [x] `lib/domains/` 폴더 생성
+- [x] `lib/features/` 폴더 생성
+- [x] `lib/di`, `lib/routes`, `lib/common` 현 위치 유지 확인
 
 ### 단계 2. 도메인 이동/정리
-- [ ] `core/auth` → `domains/auth` 이동
-- [ ] `core/classroom_detail` 데이터 스키마 분리 계획 확정
-- [ ] `foundation` 도메인 이동 완료(classroom, room_config 등)
-- [ ] `schedule` 도메인 이동 완료(lecture, lecture_occurrence)
+- [x] `core/auth` → `domains/auth` 이동
+- [x] `core/timetable` 도메인 분해 계획 확정
+- [x] `core/timetable` → `domains/schedule` 이동(domain/data/application)
+- [x] `core/timetable/presentation` → `features/classroom_detail` 이동
+- [ ] `core/directory` 분해 계획 확정(학과→foundation, 유저→auth)
+- [ ] `core/directory` → `domains/foundation` 이동(학과 관련)
+- [ ] `core/directory` → `domains/auth` 이동(유저 관련)
+- [ ] `core/classroom_detail` 엔티티 분해 계획 확정
+- [ ] `foundation` 도메인 이동 완료(classroom, building, department, room_config)
 - [ ] `devices` 도메인 이동 완료(device, sensor_reading)
 - [ ] `realtime` 도메인 이동 완료(room_state)
+- [ ] `classroom_detail` 합성 엔티티를 feature viewmodel로 이관
 - [ ] DTO/Mapper/DataSource 엔드포인트 단위 분리 적용
 - [ ] 매퍼를 통해 단일 엔티티로 합류 확인
 
