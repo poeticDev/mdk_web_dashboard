@@ -11,8 +11,8 @@ import 'package:web_dashboard/common/widgets/entity_search/controllers/entity_se
 import 'package:web_dashboard/common/widgets/entity_search/viewmodels/entity_option.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart';
-import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_edit_options.dart';
+import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_timetable_edit_options.dart';
 
 const List<Color> _lectureColorPalette = <Color>[
   Color(0xFFE3EFF7),

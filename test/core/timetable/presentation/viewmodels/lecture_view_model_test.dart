@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
-import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';
 
 void main() {
   test('LectureViewModel maps entity fields', () {

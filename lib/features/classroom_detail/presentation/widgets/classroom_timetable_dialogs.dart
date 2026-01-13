@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
-import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';
 
 typedef TimetableRangeFormatter = String Function(DateTime start, DateTime end);
 

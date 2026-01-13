@@ -11,7 +11,7 @@
 | 옵션/메타 데이터 | `lib/common/app_bar/common_app_bar_options.dart`, `lib/routes/page_meta.dart` | 페이지 메타/옵션 구조 정의, title/아이콘 매핑 |
 | 공통 위젯 | `lib/common/app_bar/common_app_bar.dart` | `PreferredSizeWidget` 형태의 `CommonAppBar` 및 내부 구성(로고, 타이틀, 테마 토글, 사용자 배너, 뒤로가기 버튼) |
 | 사용자 배너 | `lib/common/app_bar/common_app_bar.dart` 내 `_UserBanner` | PopupMenu 포함, 향후 로그아웃/프로필 메뉴 TODO 남김 |
-| 적용 예시 | `lib/ui/dashboard/dashboard_page.dart`, `lib/ui/classroom_detail/classroom_detail_page.dart` | 옵션 기반 AppBar 적용 및 override 샘플 |
+| 적용 예시 | `lib/features/dashboard/presentation/pages/dashboard_page.dart`, `lib/features/classroom_detail/presentation/pages/classroom_detail_page.dart` | 옵션 기반 AppBar 적용 및 override 샘플 |
 
 ## 3. 완료 상태
 - 체크리스트 상 모든 구현 항목 완료(설계, 위젯, 스타일, 적용, 테스트).

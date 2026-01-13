@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';
 
 typedef LectureRangeLoader =
     Future<List<LectureViewModel>> Function(DateTime from, DateTime to);

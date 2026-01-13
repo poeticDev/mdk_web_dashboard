@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/features/classroom_detail/application/realtime/classroom_sensor_providers.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/header_shared_tiles.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/header_shared_tiles.dart';
 
 /// 온도·습도 등 실시간 환경 지표를 보여주는 패널.
 class EnvironmentPanel extends ConsumerWidget {

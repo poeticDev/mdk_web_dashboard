@@ -8,8 +8,8 @@ import 'package:web_dashboard/features/classroom_detail/application/classroom_de
 import 'package:web_dashboard/features/classroom_detail/application/devices/classroom_device_controller.dart';
 import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_detail_header_section.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_section.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_detail_header_section.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_timetable_section.dart';
 
 class ClassroomDetailPage extends ConsumerStatefulWidget {
   const ClassroomDetailPage({required this.roomId, super.key});

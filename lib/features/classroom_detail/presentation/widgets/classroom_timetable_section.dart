@@ -16,10 +16,10 @@ import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_occur
     show LectureOccurrenceDeleteInput, LectureOccurrenceUpdateInput;
 import 'package:web_dashboard/features/classroom_detail/presentation/datasources/lecture_calendar_data_source.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/utils/lecture_color_resolver.dart';
-import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_dialogs.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_edit_options.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/classroom_timetable_modal.dart';
+import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_timetable_dialogs.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_timetable_edit_options.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_timetable_modal.dart';
 
 const double _weekCalendarHeight = 800;
 const double _monthCalendarHeight = 600;

@@ -14,7 +14,7 @@
 
 ## 3. 컨트롤러 & 상태 교체
 - [x] 기존 ThemeController 구현 삭제 후 `lib/common/theme/theme_controller_provider.dart`에서 패키지 ThemeController를 Provider로 노출.
-- [x] UI에서 ThemeToggle 소비 방식을 `AppThemeToggle`로 재구성하여 패키지 Provider 사용. (lib/ui/dashboard/dashboard_page.dart, lib/ui/classroom_detail/**)
+- [x] UI에서 ThemeToggle 소비 방식을 `AppThemeToggle`로 재구성하여 패키지 Provider 사용. (lib/features/dashboard/presentation/pages/dashboard_page.dart, lib/features/classroom_detail/presentation/**)
 - [ ] `ThemeControllerState`/Notifier 기반 상태 검증은 추후 필요 시 도입.
 
 ## 4. 위젯 & 토큰 교체

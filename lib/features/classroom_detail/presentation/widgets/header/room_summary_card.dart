@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/common/widgets/custom_card.dart';
 import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/header_shared_tiles.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/header_shared_tiles.dart';
 
 /// 현재 진행 중인 강의 상태를 보여주는 카드.
 class RoomSummaryCard extends ConsumerWidget {

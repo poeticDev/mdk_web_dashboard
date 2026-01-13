@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/common/widgets/custom_card.dart';
 import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
 import 'package:web_dashboard/features/classroom_detail/application/devices/classroom_device_controller.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/header_shared_tiles.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/header_shared_tiles.dart';
 
 /// 제어 가능한 장비 목록을 노출하고 토글 명령을 컨트롤러에 위임한다.
 class DevicePanel extends ConsumerWidget {

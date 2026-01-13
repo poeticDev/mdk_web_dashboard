@@ -11,7 +11,7 @@
 | 데이터 | `lib/domains/foundation/...`, `lib/domains/auth/...`, `lib/common/search/...` | 학과/유저 DTO, RemoteDataSource, Repository, UseCase, 공통 검색 모델 |
 | 상태 | `lib/common/widgets/entity_search/controllers/entity_search_controller.dart` | Riverpod Family AsyncNotifier + 테스트 |
 | 공통 UI | `lib/common/widgets/entity_search/entity_search_field.dart` | 텍스트 필드 + 드롭다운/BottomSheet 검색 위젯 (accessibility 적용) |
-| 소비처 | `lib/ui/classroom_detail/widgets/classroom_timetable_modal.dart` | 학과/담당자 필드가 EntitySearchField로 교체, id 기반 제출 |
+| 소비처 | `lib/features/classroom_detail/presentation/widgets/classroom_timetable_modal.dart` | 학과/담당자 필드가 EntitySearchField로 교체, id 기반 제출 |
 | 테스트 | `test/core/directory/...`, `test/common/widgets/entity_search_field_test.dart` | 데이터/컨트롤러/위젯 단위 테스트(리팩터링 후 경로 정비 예정) |
 
 ## 3. 남은 작업 / 주의사항

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/datasources/lecture_calendar_data_source.dart';
-import 'package:web_dashboard/features/classroom_detail/presentation/viewmodels/lecture_view_model.dart';
+import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';
 
 void main() {
   test('LectureCalendarDataSource exposes view model values', () {

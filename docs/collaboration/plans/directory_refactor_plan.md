@@ -47,10 +47,12 @@
 - [x] 매퍼를 통해 단일 엔티티로 합류 확인
 
 ### 단계 3. 피처 이동/정리
-- [ ] `ui/dashboard` → `features/dashboard` 이동
-- [ ] `classroom_detail` 화면 로직 → `features/classroom_detail` 이동
-- [ ] 피처별 `application/viewmodels/presentation` 구조로 정리
-- [ ] 계획용 폴더 미생성 원칙 재확인
+- [x] `ui/dashboard` → `features/dashboard` 이동
+- [x] `classroom_detail` 화면 로직 → `features/classroom_detail` 이동
+- [x] `classroom_detail` viewmodels 경로 정리 (`presentation/viewmodels` → `features/classroom_detail/viewmodels`)
+- [x] `classroom_detail` presentation 보조 구조 점검(utils/datasources 유지 확인)
+- [x] 피처별 `application/viewmodels/presentation` 구조로 정리(대시보드는 presentation만 사용)
+- [x] 계획용 폴더 미생성 원칙 재확인
 
 ### 단계 4. DI 및 Provider 정리
 - [ ] 도메인별 provider 등록 위치 정리
@@ -71,7 +73,7 @@
 - `lib/core/classroom_detail/data/**` → `lib/domains/{foundation|schedule|devices|realtime}/data/**`
 - `lib/core/classroom_detail/domain/**` → `lib/domains/{foundation|schedule|devices|realtime}/domain/**`
 - `lib/ui/dashboard/**` → `lib/features/dashboard/**`
-- `lib/ui/classroom_detail/**` → `lib/features/classroom_detail/**` (존재 시)
+- `lib/features/classroom_detail/presentation/**` → `lib/features/classroom_detail/**` (존재 시)
 
 ## 6. 검증 체크리스트
 - [ ] 빌드 오류 없이 `flutter analyze` 통과

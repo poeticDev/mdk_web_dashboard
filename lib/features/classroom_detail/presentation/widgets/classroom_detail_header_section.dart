@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/device_panel.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/environment_panel.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/header_title.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/room_summary_card.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/device_panel.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/environment_panel.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/header_title.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/room_summary_card.dart';
 
 const double _headerHeight = 132;
 const double _panelSpacing = 16;

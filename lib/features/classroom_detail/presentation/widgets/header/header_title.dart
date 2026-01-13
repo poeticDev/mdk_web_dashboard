@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
 import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/ui/classroom_detail/widgets/header/header_shared_tiles.dart';
+import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/header_shared_tiles.dart';
 
 /// 요약 provider를 구독해 강의실 타이틀과 카메라 진입 버튼을 노출한다.
 class ClassroomHeaderTitle extends ConsumerWidget {
