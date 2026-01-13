@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:web_dashboard/core/classroom_detail/data/mocks/classroom_sensor_mock.dart';
+import 'package:web_dashboard/domains/realtime/data/mocks/classroom_sensor_mock_data_source.dart';
+import 'package:web_dashboard/domains/realtime/domain/entities/classroom_sensor_snapshot.dart';
 
 class EnvironmentMetricViewModel {
   const EnvironmentMetricViewModel({

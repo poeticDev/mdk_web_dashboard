@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
-import 'package:web_dashboard/core/classroom_detail/data/dtos/classroom_detail_dto.dart';
+import 'package:web_dashboard/domains/foundation/data/dtos/classroom_detail_dto.dart';
 
 /// Dio를 통해 강의실 상세 API를 호출하는 데이터 소스 계약.
 abstract class ClassroomDetailRemoteDataSource {

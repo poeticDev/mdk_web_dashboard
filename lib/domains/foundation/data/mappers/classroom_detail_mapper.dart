@@ -1,12 +1,17 @@
-import 'package:web_dashboard/core/classroom_detail/data/dtos/classroom_detail_dto.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
+import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
+import 'package:web_dashboard/domains/foundation/data/dtos/classroom_detail_dto.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/building_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_type.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/department_directory_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/room_config_entity.dart';
 
 /// 강의실 상세 DTO를 도메인 엔티티로 변환하는 책임을 가진 매퍼.
 class ClassroomDetailMapper {
   const ClassroomDetailMapper();
 
-  ClassroomDetailEntity toEntity(ClassroomDetailResponseDto dto) {
-    return ClassroomDetailEntity(
+  ClassroomEntity toClassroom(ClassroomDetailResponseDto dto) {
+    return ClassroomEntity(
       id: dto.id,
       name: dto.name,
       code: dto.code,
@@ -16,9 +21,12 @@ class ClassroomDetailMapper {
       building: dto.building != null ? _mapBuilding(dto.building!) : null,
       department:
           dto.department != null ? _mapDepartment(dto.department!) : null,
-      devices: dto.devices.map(_mapDevice).toList(),
       config: dto.config != null ? _mapConfig(dto.config!) : null,
     );
+  }
+
+  List<DeviceEntity> toDevices(ClassroomDetailResponseDto dto) {
+    return dto.devices.map(_mapDevice).toList();
   }
 
   ClassroomType _mapType(String raw) {
@@ -36,12 +44,12 @@ class ClassroomDetailMapper {
     }
   }
 
-  BuildingSummaryEntity _mapBuilding(BuildingDto dto) {
-    return BuildingSummaryEntity(id: dto.id, name: dto.name, code: dto.code);
+  BuildingEntity _mapBuilding(BuildingDto dto) {
+    return BuildingEntity(id: dto.id, name: dto.name, code: dto.code);
   }
 
-  DepartmentSummaryEntity _mapDepartment(DepartmentDto dto) {
-    return DepartmentSummaryEntity(
+  DepartmentDirectoryEntity _mapDepartment(DepartmentDto dto) {
+    return DepartmentDirectoryEntity(
       id: dto.id,
       name: dto.name,
       code: dto.code,
@@ -49,8 +57,8 @@ class ClassroomDetailMapper {
     );
   }
 
-  ClassroomDeviceEntity _mapDevice(ClassroomDeviceDto dto) {
-    return ClassroomDeviceEntity(
+  DeviceEntity _mapDevice(ClassroomDeviceDto dto) {
+    return DeviceEntity(
       id: dto.id,
       name: dto.name,
       type: dto.type,
@@ -65,8 +73,8 @@ class ClassroomDetailMapper {
     );
   }
 
-  ClassroomConfigEntity _mapConfig(ClassroomConfigDto dto) {
-    return ClassroomConfigEntity(
+  RoomConfigEntity _mapConfig(ClassroomConfigDto dto) {
+    return RoomConfigEntity(
       autoPowerOnLecture: dto.autoPowerOnLecture,
       autoPowerOnTime: dto.autoPowerOnTime,
       autoPowerOffTime: dto.autoPowerOffTime,

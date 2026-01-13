@@ -1,23 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:web_dashboard/core/classroom_detail/application/devices/classroom_device_controller.dart';
-import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/repositories/classroom_detail_repository.dart';
+import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
+import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
+import 'package:web_dashboard/features/classroom_detail/application/devices/classroom_device_controller.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
 
 void main() {
   test('toggleDevice updates device state', () async {
     final ProviderContainer container = ProviderContainer(
       overrides: <Override>[
-        classroomDetailRepositoryProvider.overrideWithValue(
+        classroomDeviceRepositoryProvider.overrideWithValue(
           _FakeRepository(),
         ),
       ],
     );
     addTearDown(container.dispose);
 
-    await container.read(classroomDetailInfoProvider('room-1').future);
+    await container.read(classroomDeviceCatalogProvider('room-1').future);
     final ProviderSubscription<ClassroomDeviceControllerState> subscription =
         container.listen<ClassroomDeviceControllerState>(
       classroomDeviceControllerProvider('room-1'),
@@ -28,7 +28,11 @@ void main() {
       classroomDeviceControllerProvider('room-1').notifier,
     );
     expect(
-      container.read(classroomDeviceControllerProvider('room-1')).devices.first.isEnabled,
+      container
+          .read(classroomDeviceControllerProvider('room-1'))
+          .devices
+          .first
+          .isEnabled,
       true,
     );
 
@@ -41,21 +45,16 @@ void main() {
   });
 }
 
-class _FakeRepository implements ClassroomDetailRepository {
+class _FakeRepository implements ClassroomDeviceRepository {
   @override
-  Future<ClassroomDetailEntity> fetchById(String classroomId) async {
-    return ClassroomDetailEntity(
-      id: classroomId,
-      name: 'Mock Room',
-      type: ClassroomType.pbl,
-      devices: const <ClassroomDeviceEntity>[
-        ClassroomDeviceEntity(
-          id: 'dev-1',
-          name: 'Light',
-          type: 'lighting',
-          isEnabled: true,
-        ),
-      ],
-    );
+  Future<List<DeviceEntity>> fetchDevices(String classroomId) async {
+    return const <DeviceEntity>[
+      DeviceEntity(
+        id: 'dev-1',
+        name: 'Light',
+        type: 'lighting',
+        isEnabled: true,
+      ),
+    ];
   }
 }

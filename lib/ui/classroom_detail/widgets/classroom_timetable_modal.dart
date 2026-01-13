@@ -5,8 +5,8 @@ import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
 import 'package:web_dashboard/common/widgets/app_snack_bar.dart';
 import 'package:web_dashboard/common/widgets/entity_search/entity_search_field.dart';
-import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
 import 'package:web_dashboard/common/widgets/entity_search/controllers/entity_search_args.dart';
 import 'package:web_dashboard/common/widgets/entity_search/viewmodels/entity_option.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';
@@ -157,11 +157,11 @@ class _ClassroomTimetableModalState extends State<ClassroomTimetableModal> {
               children: <Widget>[
                 Consumer(
                   builder: (context, ref, child) {
-                    final AsyncValue<ClassroomDetailEntity> detail = ref.watch(
+                    final AsyncValue<ClassroomEntity> detail = ref.watch(
                       classroomDetailInfoProvider(widget.classroomId),
                     );
                     return detail.when(
-                      data: (ClassroomDetailEntity detail) =>
+                      data: (ClassroomEntity detail) =>
                           _ModalContextSummary(
                             classroomName: detail.name,
                             mode: widget.mode,

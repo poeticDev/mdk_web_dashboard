@@ -9,13 +9,13 @@
 
 ## 구현 단계
 1. **Provider 토대 구성**
-   - [x] `lib/core/classroom_detail/data`/`domain` 구조 점검 및 repository contract 정의(필요 시 stub)
-   - [x] `classroom_detail_repository_provider` 등 공통 Provider 정의 파일(`classroom_detail_providers.dart`) 생성
+   - [x] `lib/domains/foundation`/`lib/domains/devices` 구조 점검 및 repository contract 정의(필요 시 stub)
+   - [x] `classroomRepositoryProvider`/`classroomDeviceRepositoryProvider` 등 공통 Provider 정의 파일(`classroom_detail_providers.dart`) 생성
 2. **기본 정보 provider**
    - [x] `classroomDetailInfoProvider`를 `AutoDisposeAsyncNotifierProviderFamily`로 구현 (API + mapper 연결)
    - [x] `classroomSummaryViewModelProvider`, `classroomDeviceCatalogProvider` 파생 provider 추가 및 단위 테스트 작성
 3. **센서/환경 provider**
-   - [x] 더미 데이터 소스(`classroom_sensor_mock.dart`) 작성
+   - [x] 더미 데이터 소스(`classroom_sensor_mock_data_source.dart`) 작성
    - [x] `classroomSensorSnapshotProvider` + `classroomEnvironmentMetricsProvider` 구현, 주기적 갱신 로직 포함
 4. **디바이스 토글 컨트롤러**
    - [x] `classroomDeviceToggleControllerProvider` 초안 (optimistic state, 액션 stub)

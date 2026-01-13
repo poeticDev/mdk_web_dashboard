@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
 
 /// 강의실 장비 토글 상태를 관리하는 Riverpod Notifier.
 class ClassroomDeviceController extends Notifier<ClassroomDeviceControllerState> {
@@ -10,25 +9,18 @@ class ClassroomDeviceController extends Notifier<ClassroomDeviceControllerState>
 
   @override
   ClassroomDeviceControllerState build() {
-    final AsyncValue<ClassroomDetailEntity> detail =
-        ref.watch(classroomDetailInfoProvider(classroomId));
-    final List<ClassroomDeviceViewModel> devices = detail.maybeWhen(
-      data: (ClassroomDetailEntity entity) => entity.devices
-          .map(
-            (ClassroomDeviceEntity device) => ClassroomDeviceViewModel(
-              id: device.id,
-              name: device.name,
-              type: device.type,
-              isEnabled: device.isEnabled,
-            ),
-          )
-          .toList(),
+    final AsyncValue<List<ClassroomDeviceViewModel>> devicesValue =
+        ref.watch(classroomDeviceCatalogProvider(classroomId));
+    final List<ClassroomDeviceViewModel> devices = devicesValue.maybeWhen(
+      data: (List<ClassroomDeviceViewModel> data) => data,
       orElse: () => <ClassroomDeviceViewModel>[],
     );
     return ClassroomDeviceControllerState(
       devices: devices,
       isUpdating: false,
-      errorMessage: detail is AsyncError ? detail.error.toString() : null,
+      errorMessage: devicesValue is AsyncError
+          ? devicesValue.error.toString()
+          : null,
     );
   }
 
@@ -40,7 +32,9 @@ class ClassroomDeviceController extends Notifier<ClassroomDeviceControllerState>
       final List<ClassroomDeviceViewModel> updated = state.devices
           .map(
             (ClassroomDeviceViewModel device) =>
-                device.id == deviceId ? device.copyWith(isEnabled: nextState) : device,
+                device.id == deviceId
+                    ? device.copyWith(isEnabled: nextState)
+                    : device,
           )
           .toList();
       state = state.copyWith(devices: updated, isUpdating: false);

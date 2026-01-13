@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
 import 'package:web_dashboard/ui/classroom_detail/widgets/header/header_shared_tiles.dart';
 
 /// 요약 provider를 구독해 강의실 타이틀과 카메라 진입 버튼을 노출한다.
@@ -20,7 +20,7 @@ class ClassroomHeaderTitle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<ClassroomDetailEntity> detail = ref.watch(
+    final AsyncValue<ClassroomEntity> detail = ref.watch(
       classroomDetailInfoProvider(classroomId),
     );
     final TextTheme textTheme = Theme.of(context).textTheme;
@@ -34,7 +34,7 @@ class ClassroomHeaderTitle extends ConsumerWidget {
       children: <ResponsiveRowColumnItem>[
         ResponsiveRowColumnItem(
           child: detail.when(
-            data: (ClassroomDetailEntity data) => SizedBox(
+            data: (ClassroomEntity data) => SizedBox(
               width: isWideLayout ? 300 : null,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,12 +87,12 @@ class _OccupancyBadge extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<ClassroomDetailEntity> detail = ref.watch(
+    final AsyncValue<ClassroomEntity> detail = ref.watch(
       classroomDetailInfoProvider(classroomId),
     );
     final ThemeData theme = Theme.of(context);
     return detail.when(
-      data: (ClassroomDetailEntity entity) => DecoratedBox(
+      data: (ClassroomEntity entity) => DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(16)),
           color: theme.colorScheme.primaryContainer,

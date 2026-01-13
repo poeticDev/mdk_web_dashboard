@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_now_remote_data_source.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/repositories/classroom_detail_repository.dart';
+import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
+import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_type.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/classroom_repository.dart';
 import 'package:web_dashboard/domains/schedule/application/timetable_providers.dart';
+import 'package:web_dashboard/domains/schedule/data/datasources/classroom_now_remote_data_source.dart';
 import 'package:web_dashboard/domains/schedule/data/mappers/lecture_occurrence_mapper.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/di/service_locator.dart';
@@ -19,9 +22,14 @@ final Provider<ClassroomDetailParams> classroomDetailParamsProvider =
           throw UnimplementedError('ClassroomDetailParams must be overridden'),
     );
 
-final Provider<ClassroomDetailRepository> classroomDetailRepositoryProvider =
-    Provider<ClassroomDetailRepository>(
-      (Ref ref) => di<ClassroomDetailRepository>(),
+final Provider<ClassroomRepository> classroomRepositoryProvider =
+    Provider<ClassroomRepository>(
+      (Ref ref) => di<ClassroomRepository>(),
+    );
+
+final Provider<ClassroomDeviceRepository> classroomDeviceRepositoryProvider =
+    Provider<ClassroomDeviceRepository>(
+      (Ref ref) => di<ClassroomDeviceRepository>(),
     );
 
 final Provider<ClassroomNowRemoteDataSource>
@@ -88,9 +96,9 @@ class ClassroomDeviceViewModel {
 
 /// 강의실 기본 정보를 원격 저장소에서 조회하는 최상위 provider.
 final classroomDetailInfoProvider = FutureProvider.autoDispose
-    .family<ClassroomDetailEntity, String>((Ref ref, String classroomId) async {
-      final ClassroomDetailRepository repository = ref.read(
-        classroomDetailRepositoryProvider,
+    .family<ClassroomEntity, String>((Ref ref, String classroomId) async {
+      final ClassroomRepository repository = ref.read(
+        classroomRepositoryProvider,
       );
       return repository.fetchById(classroomId);
     });
@@ -128,11 +136,11 @@ final classroomSummaryViewModelProvider = Provider.autoDispose
       Ref ref,
       String classroomId,
     ) {
-      final AsyncValue<ClassroomDetailEntity> detail = ref.watch(
+      final AsyncValue<ClassroomEntity> detail = ref.watch(
         classroomDetailInfoProvider(classroomId),
       );
       return detail.whenData(
-        (ClassroomDetailEntity entity) => ClassroomSummaryViewModel(
+        (ClassroomEntity entity) => ClassroomSummaryViewModel(
           roomName: entity.name,
           buildingName: entity.building?.name,
           departmentName: entity.department?.name,
@@ -144,24 +152,24 @@ final classroomSummaryViewModelProvider = Provider.autoDispose
     });
 
 /// 헤더 장비 패널에서 초기 장비 목록을 그릴 때 사용하는 파생 provider.
-final classroomDeviceCatalogProvider = Provider.autoDispose
-    .family<AsyncValue<List<ClassroomDeviceViewModel>>, String>((
+final classroomDeviceCatalogProvider = FutureProvider.autoDispose
+    .family<List<ClassroomDeviceViewModel>, String>((
       Ref ref,
       String classroomId,
-    ) {
-      final AsyncValue<ClassroomDetailEntity> detail = ref.watch(
-        classroomDetailInfoProvider(classroomId),
+    ) async {
+      final ClassroomDeviceRepository repository = ref.read(
+        classroomDeviceRepositoryProvider,
       );
-      return detail.whenData(
-        (ClassroomDetailEntity entity) => entity.devices
-            .map(
-              (ClassroomDeviceEntity device) => ClassroomDeviceViewModel(
-                id: device.id,
-                name: device.name,
-                type: device.type,
-                isEnabled: device.isEnabled,
-              ),
-            )
-            .toList(),
-      );
+      final List<DeviceEntity> devices =
+          await repository.fetchDevices(classroomId);
+      return devices
+          .map(
+            (DeviceEntity device) => ClassroomDeviceViewModel(
+              id: device.id,
+              name: device.name,
+              type: device.type,
+              isEnabled: device.isEnabled,
+            ),
+          )
+          .toList();
     });

@@ -5,11 +5,12 @@ import 'package:web_dashboard/domains/auth/data/datasources/auth_remote_data_sou
 import 'package:web_dashboard/domains/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:web_dashboard/domains/auth/data/repositories/auth_repository_impl.dart';
 import 'package:web_dashboard/domains/auth/domain/repositories/auth_repository.dart';
-import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_detail_remote_data_source.dart';
-import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_now_remote_data_source.dart';
-import 'package:web_dashboard/core/classroom_detail/data/mappers/classroom_detail_mapper.dart';
-import 'package:web_dashboard/core/classroom_detail/data/repositories/classroom_detail_repository_impl.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/repositories/classroom_detail_repository.dart';
+import 'package:web_dashboard/domains/foundation/data/datasources/classroom_detail_remote_data_source.dart';
+import 'package:web_dashboard/domains/schedule/data/datasources/classroom_now_remote_data_source.dart';
+import 'package:web_dashboard/domains/foundation/data/mappers/classroom_detail_mapper.dart';
+import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
+import 'package:web_dashboard/domains/foundation/data/repositories/classroom_detail_repository_impl.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/classroom_repository.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/department_directory_remote_data_source.dart';
 import 'package:web_dashboard/domains/auth/data/datasources/user_directory_remote_data_source.dart';
 import 'package:web_dashboard/domains/foundation/data/mappers/department_directory_mapper.dart';
@@ -90,12 +91,22 @@ Future<void> initDependencies() async {
       () => ClassroomDetailRemoteDataSourceImpl(dio: di()),
     );
   }
-  if (!di.isRegistered<ClassroomDetailRepository>()) {
-    di.registerLazySingleton<ClassroomDetailRepository>(
+  if (!di.isRegistered<ClassroomDetailRepositoryImpl>()) {
+    di.registerLazySingleton<ClassroomDetailRepositoryImpl>(
       () => ClassroomDetailRepositoryImpl(
         remoteDataSource: di(),
         mapper: di(),
       ),
+    );
+  }
+  if (!di.isRegistered<ClassroomRepository>()) {
+    di.registerLazySingleton<ClassroomRepository>(
+      () => di<ClassroomDetailRepositoryImpl>(),
+    );
+  }
+  if (!di.isRegistered<ClassroomDeviceRepository>()) {
+    di.registerLazySingleton<ClassroomDeviceRepository>(
+      () => di<ClassroomDetailRepositoryImpl>(),
     );
   }
   if (!di.isRegistered<ClassroomNowRemoteDataSource>()) {

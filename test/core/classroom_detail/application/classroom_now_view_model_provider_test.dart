@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:web_dashboard/core/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_now_remote_data_source.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
+import 'package:web_dashboard/domains/schedule/data/datasources/classroom_now_remote_data_source.dart';
 import 'package:web_dashboard/domains/schedule/application/timetable_providers.dart';
 import 'package:web_dashboard/domains/schedule/data/dtos/lecture_occurrence_dto.dart';
 import 'package:web_dashboard/domains/schedule/data/mappers/lecture_occurrence_mapper.dart';

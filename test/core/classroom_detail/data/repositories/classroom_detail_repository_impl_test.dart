@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_detail_remote_data_source.dart';
-import 'package:web_dashboard/core/classroom_detail/data/dtos/classroom_detail_dto.dart';
-import 'package:web_dashboard/core/classroom_detail/data/mappers/classroom_detail_mapper.dart';
-import 'package:web_dashboard/core/classroom_detail/data/repositories/classroom_detail_repository_impl.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
+import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
+import 'package:web_dashboard/domains/foundation/data/datasources/classroom_detail_remote_data_source.dart';
+import 'package:web_dashboard/domains/foundation/data/dtos/classroom_detail_dto.dart';
+import 'package:web_dashboard/domains/foundation/data/mappers/classroom_detail_mapper.dart';
+import 'package:web_dashboard/domains/foundation/data/repositories/classroom_detail_repository_impl.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
 
 void main() {
   late _FakeRemoteDataSource remoteDataSource;
@@ -23,16 +24,23 @@ void main() {
     );
   });
 
-  test('fetchById returns mapped entity from remote', () async {
+  test('fetchById returns mapped classroom entity from remote', () async {
     remoteDataSource.nextResponse = _buildDto(id: 'room-1');
 
-    final ClassroomDetailEntity actual =
-        await repository.fetchById('room-1');
+    final ClassroomEntity actual = await repository.fetchById('room-1');
 
     expect(actual.id, 'room-1');
     expect(actual.name, '공학관 A101');
-    expect(actual.devices.length, 1);
     expect(remoteDataSource.fetchCount, 1);
+  });
+
+  test('fetchDevices returns mapped device list', () async {
+    remoteDataSource.nextResponse = _buildDto(id: 'room-2');
+
+    final List<DeviceEntity> devices = await repository.fetchDevices('room-2');
+
+    expect(devices, hasLength(1));
+    expect(devices.first.name, '조명');
   });
 
   test('fetchById reuses cached value within TTL', () async {

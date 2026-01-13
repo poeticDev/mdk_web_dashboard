@@ -1,33 +1,8 @@
 import 'dart:async';
 
-class ClassroomSensorSnapshot {
-  const ClassroomSensorSnapshot({
-    required this.temperature,
-    required this.humidity,
-    // this.pm25,
-    this.updatedAt,
-  });
+import 'package:web_dashboard/domains/realtime/domain/entities/classroom_sensor_snapshot.dart';
 
-  final double temperature;
-  final double humidity;
-  // final double? pm25;
-  final DateTime? updatedAt;
-
-  ClassroomSensorSnapshot copyWith({
-    double? temperature,
-    double? humidity,
-    // double? pm25,
-    DateTime? updatedAt,
-  }) {
-    return ClassroomSensorSnapshot(
-      temperature: temperature ?? this.temperature,
-      humidity: humidity ?? this.humidity,
-      // pm25: pm25 ?? this.pm25,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
-}
-
+/// 더미 센서 데이터를 생성하는 Mock 데이터 소스.
 class ClassroomSensorMockDataSource {
   ClassroomSensorMockDataSource()
       : _snapshot = const ClassroomSensorSnapshot(
@@ -44,8 +19,8 @@ class ClassroomSensorMockDataSource {
 
   void start() {
     _timer ??= Timer.periodic(const Duration(seconds: 10), (_) {
-      final double deltaTemp = (_randomDelta());
-      final double deltaHumidity = (_randomDelta());
+      final double deltaTemp = _randomDelta();
+      final double deltaHumidity = _randomDelta();
       _snapshot = _snapshot.copyWith(
         temperature: (_snapshot.temperature + deltaTemp).clamp(20.0, 27.0),
         humidity: (_snapshot.humidity + deltaHumidity).clamp(30.0, 60.0),

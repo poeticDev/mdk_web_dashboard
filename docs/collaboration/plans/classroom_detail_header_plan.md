@@ -6,11 +6,12 @@
 ## 1. Provider 목록과 역할
 | Provider | 타입/스코프 | 입력 key | 책임 & 주요 의존성 |
 | --- | --- | --- | --- |
-| `classroomDetailRepositoryProvider` | `Provider<ClassroomDetailRepository>` | - | ClassroomDetailDto ↔ 엔티티 매핑 및 API 호출 추상화. getIt에서 repository 주입. |
+| `classroomRepositoryProvider` | `Provider<ClassroomRepository>` | - | ClassroomDetailDto ↔ ClassroomEntity 매핑 및 API 호출 추상화. getIt에서 repository 주입. |
+| `classroomDeviceRepositoryProvider` | `Provider<ClassroomDeviceRepository>` | - | ClassroomDetailDto ↔ DeviceEntity 매핑 및 장비 목록 제공. getIt에서 repository 주입. |
 | `classroomDetailParamsProvider` | `Provider<ClassroomDetailParams>` | - | 라우팅으로 전달된 `classroomId` · locale 등을 묶어 하위 family provider들이 공통 참조하도록 함. `ClassroomDetailPage`가 override. |
-| `classroomDetailInfoProvider` | `AutoDisposeAsyncNotifierProviderFamily<ClassroomDetailInfo, String>` | `classroomId` | 기본 정보 API 호출, DTO를 `ClassroomDetailInfo`(name, building, devices, config 등)로 변환. 실패 시 retry/error 상태를 노출. |
+| `classroomDetailInfoProvider` | `FutureProvider.autoDispose.family<ClassroomEntity, String>` | `classroomId` | 기본 정보 API 호출, DTO를 `ClassroomEntity`로 변환. 실패 시 error 상태를 노출. |
 | `classroomSummaryViewModelProvider` | `Provider.autoDispose.family<ClassroomSummaryViewModel, String>` | `classroomId` | `classroomDetailInfoProvider`에서 곧바로 이름/학과/수용 인원 등 헤더 요약 정보를 파생한다. |
-| `classroomDeviceCatalogProvider` | `Provider.family<List<ClassroomDevice>, String>` | `classroomId` | 기본 정보에서 장비 목록만 슬라이싱해 장치 패널 전용 뷰 모델 생성. |
+| `classroomDeviceCatalogProvider` | `FutureProvider.autoDispose.family<List<ClassroomDeviceViewModel>, String>` | `classroomId` | 장비 목록을 뷰 모델로 변환해 장치 패널 전용 데이터 제공. |
 | `classroomSensorSnapshotProvider` | `StreamProvider.autoDispose.family<ClassroomSensorSnapshot, String>` | `classroomId` | 더미 데이터 소스를 5초 주기로 호출해 snapshot 스트림을 만든다. 실제 API가 준비되면 동일한 스트림 제공자로 교체. |
 | `classroomEnvironmentMetricsProvider` | `Provider.autoDispose.family<AsyncValue<List<EnvironmentMetric>>, String>` | `classroomId` | snapshot 스트림을 구독해 `EnvironmentMetricViewModel` 리스트를 `AsyncValue` 형태로 노출한다. |
 | `classroomDeviceToggleControllerProvider` | `NotifierProvider.autoDispose.family<ClassroomDeviceController, ClassroomDeviceControllerState, String>` | `classroomId` | 기본 정보 provider가 내려준 장비 목록을 초기 상태로 담고, 토글 명령을 optimistic하게 반영한다. 실제 장비 제어 API가 준비되면 이 컨트롤러가 command service를 주입받아 호출하도록 확장한다. |
@@ -38,7 +39,7 @@
 | `HeaderAlertBanner` | `classroomHeaderErrorProvider(roomId)` | fetch 실패 시 재시도 액션 제공.
 
 ## 4. 센서 정보 provider의 임시 전략
-- `classroomSensorSnapshotProvider`는 `StreamProvider.autoDispose.family`로 선언하고, `classroom_sensor_mock.dart`가 제공하는 snapshot을 5초 주기로 emit한다.
+- `classroomSensorSnapshotProvider`는 `StreamProvider.autoDispose.family`로 선언하고, `classroom_sensor_mock_data_source.dart`가 제공하는 snapshot을 5초 주기로 emit한다.
 - `classroomEnvironmentMetricsProvider`는 snapshot 스트림을 `AsyncValue<List<EnvironmentMetricViewModel>>` 형태로 투영해 UI 구독 시 로딩/오류 상태를 유지한다.
 - 실제 API가 준비되면 stream 생성부만 REST/웹소켓 통합으로 교체하면 되고, 상위 위젯은 동일한 provider 서명을 계속 사용한다.
 - 테스트에서는 `ProviderContainer.listen`을 활용해 첫 데이터가 로드될 때까지 기다리는 방식으로 동작을 검증한다.

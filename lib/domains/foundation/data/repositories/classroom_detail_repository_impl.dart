@@ -1,14 +1,17 @@
 import 'package:dio/dio.dart';
-import 'package:web_dashboard/core/classroom_detail/data/datasources/classroom_detail_remote_data_source.dart';
-import 'package:web_dashboard/core/classroom_detail/data/dtos/classroom_detail_dto.dart';
-import 'package:web_dashboard/core/classroom_detail/data/mappers/classroom_detail_mapper.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/entities/classroom_detail_entity.dart';
-import 'package:web_dashboard/core/classroom_detail/domain/repositories/classroom_detail_repository.dart';
+import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
+import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
+import 'package:web_dashboard/domains/foundation/data/datasources/classroom_detail_remote_data_source.dart';
+import 'package:web_dashboard/domains/foundation/data/dtos/classroom_detail_dto.dart';
+import 'package:web_dashboard/domains/foundation/data/mappers/classroom_detail_mapper.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/classroom_repository.dart';
 
 typedef _Clock = DateTime Function();
 
 /// 강의실 상세 정보를 서버에서 조회하고 TTL 캐시를 적용하는 리포지토리 구현.
-class ClassroomDetailRepositoryImpl implements ClassroomDetailRepository {
+class ClassroomDetailRepositoryImpl
+    implements ClassroomRepository, ClassroomDeviceRepository {
   ClassroomDetailRepositoryImpl({
     required ClassroomDetailRemoteDataSource remoteDataSource,
     required ClassroomDetailMapper mapper,
@@ -26,18 +29,27 @@ class ClassroomDetailRepositoryImpl implements ClassroomDetailRepository {
   final Map<String, _CacheEntry> _cache = <String, _CacheEntry>{};
 
   @override
-  Future<ClassroomDetailEntity> fetchById(String classroomId) async {
+  Future<ClassroomEntity> fetchById(String classroomId) async {
+    final ClassroomDetailResponseDto dto = await _fetchDto(classroomId);
+    return _mapper.toClassroom(dto);
+  }
+
+  @override
+  Future<List<DeviceEntity>> fetchDevices(String classroomId) async {
+    final ClassroomDetailResponseDto dto = await _fetchDto(classroomId);
+    return _mapper.toDevices(dto);
+  }
+
+  Future<ClassroomDetailResponseDto> _fetchDto(String classroomId) async {
     final _CacheEntry? cached = _cache[classroomId];
     if (cached != null && !_isExpired(cached)) {
-      return cached.entity;
+      return cached.dto;
     }
-
     try {
       final ClassroomDetailResponseDto dto =
           await _remoteDataSource.fetchDetail(classroomId);
-      final ClassroomDetailEntity entity = _mapper.toEntity(dto);
-      _cache[classroomId] = _CacheEntry(entity: entity, fetchedAt: _now());
-      return entity;
+      _cache[classroomId] = _CacheEntry(dto: dto, fetchedAt: _now());
+      return dto;
     } on DioException catch (error) {
       throw _mapDioException(error, classroomId);
     } on FormatException catch (error) {
@@ -98,8 +110,8 @@ class ClassroomDetailUnexpectedException implements Exception {
 }
 
 class _CacheEntry {
-  const _CacheEntry({required this.entity, required this.fetchedAt});
+  const _CacheEntry({required this.dto, required this.fetchedAt});
 
-  final ClassroomDetailEntity entity;
+  final ClassroomDetailResponseDto dto;
   final DateTime fetchedAt;
 }

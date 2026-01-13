@@ -38,13 +38,13 @@
 - [x] `core/directory` 분해 계획 확정(학과→foundation, 유저→auth)
 - [x] `core/directory` → `domains/foundation` 이동(학과 관련)
 - [x] `core/directory` → `domains/auth` 이동(유저 관련)
-- [ ] `core/classroom_detail` 엔티티 분해 계획 확정
-- [ ] `foundation` 도메인 이동 완료(classroom, building, department, room_config)
-- [ ] `devices` 도메인 이동 완료(device, sensor_reading)
-- [ ] `realtime` 도메인 이동 완료(room_state)
-- [ ] `classroom_detail` 합성 엔티티를 feature viewmodel로 이관
-- [ ] DTO/Mapper/DataSource 엔드포인트 단위 분리 적용
-- [ ] 매퍼를 통해 단일 엔티티로 합류 확인
+- [x] `core/classroom_detail` 엔티티 분해 계획 확정
+- [x] `foundation` 도메인 이동 완료(classroom, building, department, room_config)
+- [x] `devices` 도메인 이동 완료(device, sensor_reading)
+- [x] `realtime` 도메인 이동 완료(room_state)
+- [x] `classroom_detail` 합성 엔티티를 feature viewmodel로 이관
+- [x] DTO/Mapper/DataSource 엔드포인트 단위 분리 적용
+- [x] 매퍼를 통해 단일 엔티티로 합류 확인
 
 ### 단계 3. 피처 이동/정리
 - [ ] `ui/dashboard` → `features/dashboard` 이동
