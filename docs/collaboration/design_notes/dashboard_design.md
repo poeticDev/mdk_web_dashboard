@@ -30,28 +30,48 @@
 ### 1.2 데이터 모델 및 상태
 
 #### 1) 데이터 소스 기준(현 시점, `/api/v1`)
-- **Classroom 목록**: `GET /api/v1/classrooms` (items + meta)
-- **Classroom 상세/배치**: `POST /api/v1/classrooms/batch` (building/department/config/devices 포함)
-- **현재 진행 강의**: `GET /api/v1/dashboards/now` (classroomId 기준, `occurrence` 또는 `isIdle`)
-- **실시간 상태(RoomState)**: `foundation.room_states` 기반 **실시간 스트림**
+- **Foundation 기준 강의실 목록**: `GET /api/v1/foundations/{foundationType}/{foundationId}/classrooms`
+  - 응답에 `buildingName`, `departmentName`을 포함하도록 확장 예정
+- **RoomState 구독 생성**: `POST /api/v1/stream/room-states/subscriptions`
+- **RoomState SSE 연결**: `GET /api/v1/stream/room-states?subscriptionId=...`
+- **Current Lecture 구독 생성**: `POST /api/v1/stream/occurrences/now/subscriptions`
+- **Current Lecture SSE 연결**: `GET /api/v1/stream/occurrences/now?subscriptionId=...`
 
-> RoomState는 실시간 스트림으로 확정. **SSE(A안) 기본**, WebSocket(B안) 보조로 기록하고, 폴링(C안)은 fallback으로 유지한다.
+#### 2) 데이터 합성 플로우(확정안)
+1. `GET /api/v1/foundations/{foundationType}/{foundationId}/classrooms` → 대시보드 대상 classroomIds 확보
+    - 초기 foundation 값은 로그인 응답에 포함된 `site/building/department` 정보를 기준으로 선택한다.
+    - 기본은 `site`이며, 사용자 컨텍스트에 따라 `building`/`department`로 좁힐 수 있다.
+2. **RoomState 구독 생성** → `subscriptionId` 확보
+   - 요청 payload: `classroomIds`, `sensors=["presence"]`, `equipment=["power"]`
+   - 추후 `temperature/humidity` 등 추가 확장 가능하도록 설계
+3. **RoomState SSE 연결** → `roomState.snapshot` + `roomState.delta` 수신
+4. **Current Lecture 구독 생성**(include: `scheduleSummary`) → `subscriptionId` 확보
+5. **Current Lecture SSE 연결** → `occurrence.now.snapshot` 수신
+6. 위 결과를 합성해 카드/메트릭 계산
 
-#### 2) 대시보드 ViewModel (합성 결과)
+#### 3) ViewModel (합성 결과)
 - `DashboardClassroomCardVM`
-  - `id`, `name`, `code`
+  - `id`, `name`, `code`, `siteId`
   - `buildingName`, `departmentName`
   - `usageStatus`: `inUse | idle | unlinked`
-  - `currentLecture`: `title`, `instructorName`, `startAt`, `endAt`
-  - `roomState`(실시간): `isOccupied`, `isEquipmentOn`, `temperature`, `humidity`, `updatedAt`
+    - `inUse`: `currentLecture != null` && `currentLecture.status != cancelled`
+    - `idle`: 현재 진행 강의 없음
+    - `unlinked`: RoomState 미수신 또는 `status.isStale == true`
+  - `currentLecture`: `title`, `instructorName`, `startAt`, `endAt`, `status`
+  - `roomState`: `isOccupied`, `isEquipmentOn`, `updatedAt`, `statusFlags`
+    - `isEquipmentOn`은 `equipment.power.isOn == true`로 판단
 
 - `DashboardMetricsVM`
-  - `totalCount`, `inUseCount`, `idleCount`, `unlinkedCount`
+  - `totalCount`, `inUseCount`, `idleCount`, `unlinkedCount` → scheduleSummary 기반(서버 계산)
   - `timestamp`
+  - `scheduleSummary?` (occurrence SSE include)
+  - `occupancySummary?` (roomState snapshot, notLinked 포함)
+  - KPI는 `scheduleSummary`를 우선 사용하며, 클라이언트에서 `usageStatus`로 재계산하지 않는다.
+  - `unlinkedCount`는 `occupancySummary.notLinked`를 기준으로 사용한다.
 
-#### 3) 필터/상태 모델
+#### 4) 상태 모델
 - `DashboardFilterState`
-  - `query`(건물/강의실/학과 name+code)
+  - `query` (건물/강의실/학과 name+code)
   - `usageStatus` (Set)
   - `departmentIds?`, `buildingIds?`
 - `DashboardState`
@@ -60,12 +80,118 @@
   - `filters: DashboardFilterState`
   - `isLoading`, `errorMessage`, `lastUpdatedAt`
 
-#### 4) 합성 플로우(초안)
-1. `GET /classrooms` → 기본 목록
-2. `POST /classrooms/batch` → building/department 등 상세 보강
-3. `GET /dashboards/now` → 현재 진행 강의 합성
-4. **RoomState 스트림(SSE 기본, WS 보조)** → 실시간 재실/장비/환경 상태 반영
-5. 위 결과를 합성해 카드/메트릭 계산
+#### 5) 필터/검색 정책
+- 검색 대상: `classroom.name`, `classroom.code`, `building.name`, `building.code`, `department.name`, `department.code`
+- 상태 필터:
+  - `inUse`: `usageStatus == inUse`
+  - `idle`: `usageStatus == idle`
+  - `unlinked`: 재실 센서 값을 알 수 없는 강의실
+
+#### 6) 실시간 업데이트 정책(초안)
+- **SSE 기본**
+  - RoomState: `event: roomState.snapshot`, `event: roomState.delta`
+  - Occurrence: `event: occurrence.now.snapshot` (기본), 필요 시 delta
+  - UI 반영: 수신 즉시 카드/메트릭 갱신(300ms 디바운스)
+
+#### 7) SSE → ViewModel 매핑 규칙
+**A. RoomState Snapshot**
+- 입력: `roomState.snapshot.payload.classrooms[]`
+- 매핑:
+  - `roomState.isOccupied` ← `sensors.presence.value` (boolean)
+  - `roomState.updatedAt` ← `lastUpdatedAt`
+  - `roomState.statusFlags` ← `status` (isStale/hasError/hasSensorError/hasEquipmentError)
+  - `roomState.isEquipmentOn` ← `equipment.power.isOn`
+
+**B. RoomState Delta**
+- 입력: `roomState.delta.payload.updates[]`
+- 매핑:
+  - `type == "sensor"` + `sensorType == "presence"` → `roomState.isOccupied` 갱신
+  - `type == "equipment"` + `equipmentType == "power"` → `roomState.isEquipmentOn` 갱신
+  - `occupancySummary` 포함 시 `DashboardMetricsVM.occupancySummary` 갱신
+
+**C. Current Lecture Snapshot**
+- 입력: `occurrence.now.snapshot.payload.currents[]`
+- 매핑:
+  - `currentLecture` ← `title`, `instructorName`, `startAt`, `endAt`, `status`
+  - `usageStatus` ← `currentLecture != null && status != cancelled ? inUse : idle`
+  - `scheduleSummary` 포함 시 `DashboardMetricsVM.scheduleSummary` 갱신
+
+**D. Current Lecture Delta(옵션)**
+- 입력: `occurrence.now.delta` (도입 시)
+- 매핑:
+  - snapshot과 동일 규칙으로 해당 classroomId만 갱신
+
+**E. Unlinked 판단**
+- `roomState` 미수신 또는 `status.isStale == true`인 경우 `usageStatus = unlinked`
+- `unlinked`는 RoomState 우선, occurrence 정보와 무관하게 표시
+- 초기 snapshot 도착 전에는 모든 카드가 일시적으로 `unlinked` 상태로 표기한다.
+
+#### 8) 상태 전이 / 로딩 정책
+**A. 초기 진입**
+1. foundation classrooms 조회 → 로딩 상태 유지
+2. SSE 구독 생성(룸 상태, 강의 진행) → `isStreaming=true`
+3. 첫 snapshot 수신 시 `cards/metrics` 채움, `isLoading=false`
+
+**B. SSE 재연결**
+- `Last-Event-ID`를 사용해 서버에 재연결
+- 재연결 동안 `isStreaming=false`, UI에는 “연결 재시도 중” 배지 표시
+- 재연결 성공 시 최신 snapshot으로 복구
+
+**C. 부분 업데이트**
+- delta 수신 시 해당 classroomId만 업데이트
+- 메트릭은 변경된 클래스룸만 반영해 재계산
+
+**D. 오류 처리**
+- foundation 조회 실패: `errorMessage` 표시, 재시도 버튼 제공
+- SSE 연결 실패: `errorMessage` 없이 연결 상태 배지로 안내(기존 데이터 유지)
+
+**E. 필터 변경**
+- 로컬 필터만 적용(서버 재요청 없음)
+- 필터 변경 시 cards 재정렬/재계산, metrics는 **원본 데이터 기준** 유지
+
+#### 9) UI 섹션별 데이터 매핑
+**A. 상단 KPI 카드**
+- `전체`: `metrics.totalCount`
+- `사용 중`: `metrics.inUseCount`
+- `미사용`: `metrics.idleCount`
+- `미연동`: `metrics.unlinkedCount`
+- `현재 시각`: KST 기준 실시간 날짜+시각
+
+**B. 검색/필터**
+- 입력값은 `DashboardFilterState.query`에만 반영
+- 상태 필터 클릭 시 `DashboardFilterState.usageStatus` 토글
+
+**C. 강의실 카드**
+- 제목: `card.name` (없으면 `buildingName + code` 조합)
+- 학과: `departmentName` (없으면 "미지정")
+- 상태 뱃지(우측): `usageStatus`
+- 재실/장비 아이콘(좌측):
+  - 재실: `roomState.isOccupied`
+  - 장비: `roomState.isEquipmentOn`
+- 현재 강의:
+  - 존재 시 `title`, `instructorName`, `startAt ~ endAt`
+  - `status == cancelled`일 때 제목 앞에 `(휴강)` 표시
+  - 없으면 “일정 없음”
+- CTA: `자세히 보기` → classroom_detail 라우팅
+
+**D. 빈 상태**
+- 검색 결과가 0일 때 “검색 결과 없음” 안내
+- SSE 미연결 시 카드 상단에 “연결 끊김” 뱃지 표시
+
+#### 10) 테스트 전략(초안)
+**A. 단위 테스트**
+- `DashboardMetricsVM` 계산 로직 (scheduleSummary 기반)
+- `usageStatus` 판정 로직 (inUse/idle/unlinked)
+- RoomState delta 병합 로직 (classroomId 단위 업데이트)
+
+**B. 위젯 테스트**
+- KPI 카드가 metrics에 맞게 렌더링되는지 검증
+- 필터/검색 입력에 따라 카드 수가 변하는지 검증
+- RoomState 미수신 시 “연결 끊김” 뱃지 노출 확인
+
+**C. 통합 테스트(선택)**
+- SSE snapshot 수신 후 카드가 갱신되는지 확인(테스트 더블 사용)
+- 재연결 시 `Last-Event-ID` 경로가 호출되는지 확인
 
 ### 1.3 컴포넌트 설계
 
