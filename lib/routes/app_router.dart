@@ -6,7 +6,7 @@ import 'package:web_dashboard/domains/auth/domain/errors/auth_exception.dart';
 import 'package:web_dashboard/routes/route_paths.dart';
 import 'package:web_dashboard/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/pages/classroom_detail_page.dart';
-import 'package:web_dashboard/ui/login/login_page.dart';
+import 'package:web_dashboard/features/login/presentation/pages/login_page.dart';
 
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
   final authState = ref.watch(authControllerProvider);

@@ -1,3 +1,4 @@
+// 로그인 화면 UI와 인증 상태 연동을 담당한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';

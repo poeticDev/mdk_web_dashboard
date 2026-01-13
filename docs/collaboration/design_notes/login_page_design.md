@@ -167,8 +167,8 @@ Codex CLI는 이 문서를 기반으로 다음 항목들을 자동 생성할 수
 - 라우팅/가드 생성
 
 ### 10.2 파일 구조 예시
-- `lib/ui/login/login_page.dart`
-- `lib/ui/login/login_viewmodel.dart`
+- `lib/features/login/presentation/pages/login_page.dart`
+- `lib/domains/auth/application/login_controller.dart`
 - `lib/domains/auth/auth_repository.dart`
 - `lib/domains/auth/auth_state.dart`
 - `lib/routes/app_router.dart`

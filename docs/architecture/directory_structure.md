@@ -46,7 +46,9 @@ lib/domains/
 └── contents/
 ```
 
-각 도메인은 아래 기본 구조를 따른다.
+> `ops`, `contents` 등은 **실제 사용 시점에 생성**한다.
+
+각 도메인은 아래 기본 구조를 따른다. (필요한 레이어만 생성)
 
 ```
 <domain>/
@@ -63,6 +65,8 @@ lib/domains/
     providers/
 ```
 
+> 실제 구현 시 `data/`, `application/` 등은 **필요할 때만 생성**한다. 계획용 폴더는 만들지 않는다.
+
 ### 도메인별 책임
 - **auth**: 사용자/세션 도메인.
 - **ops**: 감사 로그 등 조회 중심 데이터.
@@ -77,7 +81,8 @@ lib/domains/
 ```
 lib/features/
 ├── dashboard/
-└── classroom_detail/
+├── classroom_detail/
+└── login/
 ```
 
 각 feature는 화면 중심으로 아래 구조를 따른다.

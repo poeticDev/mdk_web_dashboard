@@ -134,7 +134,7 @@ class LectureViewModel {
 }
 ```
 
-* 생성 위치: `lib/ui/dashboard/models/lecture_view_model.dart`
+* 생성 위치: `lib/features/classroom_detail/viewmodels/lecture_view_model.dart`
 * 생성 책임: 컨트롤러가 Domain 엔티티 + Theme 토큰을 조합해 ViewModel을 만든다.
 
 ---

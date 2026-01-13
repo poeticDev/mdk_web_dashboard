@@ -76,10 +76,13 @@
 - `lib/features/classroom_detail/presentation/**` → `lib/features/classroom_detail/**` (존재 시)
 
 ## 6. 검증 체크리스트
-- [ ] 빌드 오류 없이 `flutter analyze` 통과
-- [ ] 주요 테스트 최소 1회 실행(`flutter test`)
-- [ ] 문서(`directory_structure.md`)와 구조 일치 확인
-- [ ] 기존 기능 동작 회귀 없음
+- [x] 빌드 오류 없이 `flutter analyze` 통과
+- [x] 주요 테스트 최소 1회 실행(`flutter test`)
+- [x] 문서(`directory_structure.md`)와 구조 일치 확인
+- [x] 기존 기능 동작 회귀 없음(정적 점검 기준)
+
+문서 대비 불일치(2026-01-13 확인)
+- `domains/devices`, `domains/realtime`에 `data/application` 미구성(필요 시 생성)
 
 ## 7. 리스크 및 대응
 - **리스크**: import 경로 대량 변경에 따른 빌드 실패  
