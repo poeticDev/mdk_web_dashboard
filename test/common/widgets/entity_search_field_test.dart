@@ -20,7 +20,7 @@ void main() {
       _FakeDepartmentRepository();
   final _FakeUserRepository fakeUserRepository = _FakeUserRepository();
 
-  ProviderScope _buildScope(Widget child) {
+  ProviderScope buildScope(Widget child) {
     return ProviderScope(
       overrides: <Override>[
         departmentDirectoryRepositoryProvider.overrideWithValue(
@@ -51,7 +51,7 @@ void main() {
     EntityOption? selected;
 
     await tester.pumpWidget(
-      _buildScope(
+      buildScope(
         MaterialApp(
           home: Scaffold(
             body: EntitySearchField(
@@ -98,7 +98,7 @@ void main() {
     );
 
     await tester.pumpWidget(
-      _buildScope(
+      buildScope(
         MaterialApp(
           home: MediaQuery(
             data: const MediaQueryData(size: Size(360, 640)),

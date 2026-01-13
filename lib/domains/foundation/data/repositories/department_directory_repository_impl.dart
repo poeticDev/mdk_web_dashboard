@@ -1,3 +1,4 @@
+// 학과 검색 캐시 전략을 적용한 리포지토리 구현체다.
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/department_directory_remote_data_source.dart';
 import 'package:web_dashboard/domains/foundation/data/dtos/department_directory_dto.dart';
@@ -11,7 +12,7 @@ import 'package:web_dashboard/common/search/entity_search_result.dart';
 import 'package:web_dashboard/common/search/pagination_meta.dart';
 import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_repository.dart';
 
-typedef _Clock = DateTime Function();
+typedef Clock = DateTime Function();
 
 /// 학과 검색 API + 캐시 전략을 통합한 리포지토리 구현.
 class DepartmentDirectoryRepositoryImpl
@@ -21,7 +22,7 @@ class DepartmentDirectoryRepositoryImpl
     required DepartmentDirectoryMapper mapper,
     required PaginationMetaMapper metaMapper,
     Duration cacheTtl = const Duration(seconds: 30),
-    _Clock clock = DateTime.now,
+    Clock clock = DateTime.now,
   })  : _remoteDataSource = remoteDataSource,
         _mapper = mapper,
         _metaMapper = metaMapper,
@@ -32,7 +33,7 @@ class DepartmentDirectoryRepositoryImpl
   final DepartmentDirectoryMapper _mapper;
   final PaginationMetaMapper _metaMapper;
   final Duration _cacheTtl;
-  final _Clock _now;
+  final Clock _now;
   final Map<String, _CacheEntry> _cache = <String, _CacheEntry>{};
 
   @override

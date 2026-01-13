@@ -1,8 +1,8 @@
+// 강의실 상세 헤더 영역의 레이아웃과 구성 요소를 배치한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
-import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/device_panel.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/environment_panel.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/header_title.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/widgets/header/room_summary_card.dart';

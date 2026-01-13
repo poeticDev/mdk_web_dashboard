@@ -1,3 +1,4 @@
+// 유저 검색 캐시 전략을 적용한 리포지토리 구현체다.
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/domains/auth/data/datasources/user_directory_remote_data_source.dart';
 import 'package:web_dashboard/common/search/pagination_meta_dto.dart';
@@ -11,7 +12,7 @@ import 'package:web_dashboard/common/search/entity_search_result.dart';
 import 'package:web_dashboard/common/search/pagination_meta.dart';
 import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';
 
-typedef _Clock = DateTime Function();
+typedef Clock = DateTime Function();
 
 /// 유저 검색 API 호출과 TTL 캐시를 책임지는 리포지토리 구현.
 class UserDirectoryRepositoryImpl implements UserDirectoryRepository {
@@ -20,7 +21,7 @@ class UserDirectoryRepositoryImpl implements UserDirectoryRepository {
     required UserDirectoryMapper mapper,
     required PaginationMetaMapper metaMapper,
     Duration cacheTtl = const Duration(seconds: 30),
-    _Clock clock = DateTime.now,
+    Clock clock = DateTime.now,
   })  : _remoteDataSource = remoteDataSource,
         _mapper = mapper,
         _metaMapper = metaMapper,
@@ -31,7 +32,7 @@ class UserDirectoryRepositoryImpl implements UserDirectoryRepository {
   final UserDirectoryMapper _mapper;
   final PaginationMetaMapper _metaMapper;
   final Duration _cacheTtl;
-  final _Clock _now;
+  final Clock _now;
   final Map<String, _CacheEntry> _cache = <String, _CacheEntry>{};
 
   @override

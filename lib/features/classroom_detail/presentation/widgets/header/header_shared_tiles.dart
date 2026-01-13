@@ -1,3 +1,4 @@
+// 헤더 공통 타일 UI 컴포넌트를 모아둔다.
 import 'package:flutter/material.dart';
 import 'package:web_dashboard/common/widgets/custom_card.dart';
 
@@ -16,7 +17,7 @@ class HeaderLoadingTile extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(16)),
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
       child: const CircularProgressIndicator(strokeWidth: 2),
     );

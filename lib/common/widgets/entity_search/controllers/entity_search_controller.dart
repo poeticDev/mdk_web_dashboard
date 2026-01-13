@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// 엔티티 검색 상태를 관리하고 조회 결과를 조합한다.
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 import 'package:web_dashboard/common/search/entity_search_result.dart';
@@ -140,10 +140,11 @@ class EntitySearchController extends _$EntitySearchController {
     required _SearchPayload payload,
     required bool reset,
   }) {
+    final EntitySearchState? current = state.asData?.value;
     final List<EntityOption> options = reset
         ? payload.options
         : <EntityOption>[
-            ...(state.asData?.value?.options ?? const <EntityOption>[]),
+            ...(current?.options ?? const <EntityOption>[]),
             ...payload.options,
           ];
     return EntitySearchState(
@@ -151,7 +152,7 @@ class EntitySearchController extends _$EntitySearchController {
       page: payload.meta.page,
       options: options,
       hasMore: payload.meta.hasNext,
-      selected: state.asData?.value?.selected,
+      selected: current?.selected,
     );
   }
 }

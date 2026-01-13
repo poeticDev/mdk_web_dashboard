@@ -1,3 +1,4 @@
+// 강의실 상세 조회에 캐시/예외 처리를 적용한 리포지토리 구현체다.
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
 import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
@@ -7,7 +8,7 @@ import 'package:web_dashboard/domains/foundation/data/mappers/classroom_detail_m
 import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
 import 'package:web_dashboard/domains/foundation/domain/repositories/classroom_repository.dart';
 
-typedef _Clock = DateTime Function();
+typedef Clock = DateTime Function();
 
 /// 강의실 상세 정보를 서버에서 조회하고 TTL 캐시를 적용하는 리포지토리 구현.
 class ClassroomDetailRepositoryImpl
@@ -16,7 +17,7 @@ class ClassroomDetailRepositoryImpl
     required ClassroomDetailRemoteDataSource remoteDataSource,
     required ClassroomDetailMapper mapper,
     Duration cacheTtl = const Duration(minutes: 1),
-    _Clock clock = DateTime.now,
+    Clock clock = DateTime.now,
   })  : _remoteDataSource = remoteDataSource,
         _mapper = mapper,
         _cacheTtl = cacheTtl,
@@ -25,19 +26,31 @@ class ClassroomDetailRepositoryImpl
   final ClassroomDetailRemoteDataSource _remoteDataSource;
   final ClassroomDetailMapper _mapper;
   final Duration _cacheTtl;
-  final _Clock _now;
+  final Clock _now;
   final Map<String, _CacheEntry> _cache = <String, _CacheEntry>{};
 
   @override
   Future<ClassroomEntity> fetchById(String classroomId) async {
     final ClassroomDetailResponseDto dto = await _fetchDto(classroomId);
-    return _mapper.toClassroom(dto);
+    try {
+      return _mapper.toClassroom(dto);
+    } on FormatException catch (error) {
+      throw ClassroomDetailUnexpectedException(error);
+    } on TypeError catch (error) {
+      throw ClassroomDetailUnexpectedException(error);
+    }
   }
 
   @override
   Future<List<DeviceEntity>> fetchDevices(String classroomId) async {
     final ClassroomDetailResponseDto dto = await _fetchDto(classroomId);
-    return _mapper.toDevices(dto);
+    try {
+      return _mapper.toDevices(dto);
+    } on FormatException catch (error) {
+      throw ClassroomDetailUnexpectedException(error);
+    } on TypeError catch (error) {
+      throw ClassroomDetailUnexpectedException(error);
+    }
   }
 
   Future<ClassroomDetailResponseDto> _fetchDto(String classroomId) async {

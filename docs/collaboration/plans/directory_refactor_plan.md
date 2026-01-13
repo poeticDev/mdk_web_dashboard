@@ -55,16 +55,16 @@
 - [x] 계획용 폴더 미생성 원칙 재확인
 
 ### 단계 4. DI 및 Provider 정리
-- [ ] 도메인별 provider 등록 위치 정리
-- [ ] `getIt` 등록 경로 업데이트
-- [ ] provider import 경로 정리
-- [ ] build_runner 재생성 필요 여부 확인 및 수행(필요 시)
+- [x] 도메인별 provider 등록 위치 점검(도메인/application, feature/application 준수 확인)
+- [x] `getIt` 등록 경로 업데이트(현 DI 경로 점검 및 유지)
+- [x] provider import 경로 정리(기존 경로 점검, 수정 불필요)
+- [x] build_runner 재생성 필요 여부 확인(현 변경 범위는 비생성 코드)
 
 ### 단계 5. 테스트 및 정리
-- [ ] 기존 테스트 import 경로 업데이트
-- [ ] `flutter analyze` 실행
-- [ ] `flutter test` 실행(필요 범위 명시)
-- [ ] 기능 회귀 여부 확인
+- [x] 기존 테스트 import 경로 업데이트(잔존 경로 점검 완료)
+- [x] `flutter analyze` 실행(재실행 후 0건)
+- [x] `flutter test` 실행(전체 1건 실패 후, 해당 테스트 재실행 통과)
+- [ ] 기능 회귀 여부 확인(테스트 실패 원인 정리 후 진행)
 
 ## 5. 파일 이동 매핑(핵심)
 > 실제 이동 전, 해당 모듈의 책임을 확정한 뒤 최종 목록 작성.

@@ -1,3 +1,4 @@
+// 강의실 시간표 섹션 UI와 상호작용을 제공한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
@@ -432,11 +433,6 @@ class _ClassroomTimetableSectionState
       return;
     }
     AppSnackBar.show(context, message: message, type: type);
-  }
-
-  /// 공통 스낵바 메시지를 노출한다.
-  void _showPendingFeature(String message) {
-    _showSnackBar(message, AppSnackBarType.info);
   }
 
   void _openCreateDialog(
