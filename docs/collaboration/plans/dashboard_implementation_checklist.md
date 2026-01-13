@@ -21,12 +21,12 @@
   - [x] `GET /api/v1/stream/occurrences/now?subscriptionId=...` SSE 파서 준비
 
 ## 2. ViewModel/State 정의
-- [ ] `DashboardClassroomCardVM` 정의
-  - [ ] `usageStatus`/`currentLecture`/`roomState` 구조 반영
-- [ ] `DashboardMetricsVM` 정의
-  - [ ] `scheduleSummary` + `occupancySummary.notLinked` 기준 반영
-- [ ] `DashboardFilterState` 정의
-- [ ] `DashboardState` 정의
+- [x] `DashboardClassroomCardVM` 정의
+  - [x] `usageStatus`/`currentLecture`/`roomState` 구조 반영
+- [x] `DashboardMetricsVM` 정의
+  - [x] `scheduleSummary` + `occupancySummary.notLinked` 기준 반영
+- [x] `DashboardFilterState` 정의
+- [x] `DashboardState` 정의
 
 ## 3. SSE 매핑 로직 구현
 - [ ] RoomState snapshot → ViewModel 매핑
