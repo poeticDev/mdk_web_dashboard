@@ -70,6 +70,12 @@ class DashboardController extends _$DashboardController {
     _updateFilters(state.filters.copyWith(query: query));
   }
 
+  void clearUsageFilters() {
+    _updateFilters(
+      state.filters.copyWith(usageStatuses: <DashboardUsageStatus>{}),
+    );
+  }
+
   void toggleUsageStatus(DashboardUsageStatus status) {
     final Set<DashboardUsageStatus> next = Set<DashboardUsageStatus>.from(
       state.filters.usageStatuses,

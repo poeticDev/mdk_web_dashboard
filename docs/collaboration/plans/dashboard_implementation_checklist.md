@@ -40,13 +40,13 @@
 - [x] 필터/검색 로컬 적용 로직 구현
 
 ## 5. UI 구현
-- [ ] `DashboardHeader` (KPI + 검색) 구현
-  - [ ] KST 기준 날짜+시각 표시
-  - [ ] KPI 카드 클릭 시 필터 토글
-- [ ] `ClassroomCard` 구현
-  - [ ] usageStatus/재실/장비 상태 배지 표시
-  - [ ] 휴강 표시(`(휴강)` prefix)
-- [ ] 그리드 레이아웃/반응형 적용
+- [x] `DashboardHeader` (KPI + 검색) 구현
+  - [x] KST 기준 날짜+시각 표시
+  - [x] KPI 카드 클릭 시 필터 토글
+- [x] `ClassroomCard` 구현
+  - [x] usageStatus/재실/장비 상태 배지 표시
+  - [x] 휴강 표시(`(휴강)` prefix)
+- [x] 그리드 레이아웃/반응형 적용
 
 ## 6. 테스트
 - [ ] ViewModel/매핑 로직 단위 테스트
