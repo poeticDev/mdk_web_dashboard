@@ -42,7 +42,7 @@
 - `AuthRepository` 인터페이스 + `AuthRepositoryImpl`
 - DTO는 `/api/login`, `/api/me` 응답 스펙(`docs/architecture/frontend_api.md`) 기준
 
-## 3. 대시보드 도메인 (설계안)
+## 3. 대시보드 도메인 (설계안, 2026-01-13 기준)
 
 ### 3.1 공통 타입
 
@@ -54,30 +54,30 @@
 
 ### 3.2 강의실 요약 (전체 화면)
 
-- **ClassroomSummary**
-  - `id`: String (예: building-room)
-  - `building`: Building
-  - `roomNumber`: String
-  - `department`: Department
-  - `status`: `ClassroomUsageStatus` (enum: `inUse`, `idle`, `maintenance`)
+- **ClassroomSummary** (대시보드 카드 합성 기준)
+  - `id`: String (UUID)
+  - `name`: String
+  - `code`: String?
+  - `building`: Building?
+  - `department`: Department?
+  - `status`: `ClassroomUsageStatus` (enum: `inUse`, `idle`, `unlinked`)
   - `currentCourse`: `CourseSlot?`
-  - `nextSlot`: `CourseSlot?`
-  - `capacity`: int?
-  - `occupancy`: int?
+  - `roomState`: `RoomStateSnapshot?`
 
 - **CourseSlot**
   - `title`
-  - `professor`: Professor
-  - `startTime`, `endTime`
+  - `professorName`
+  - `startAt`, `endAt`
 
 - **DashboardMetrics**
-  - `totalRooms`, `inUseCount`, `idleCount`, `maintenanceCount`
+  - `totalRooms`, `inUseCount`, `idleCount`, `unlinkedCount`
   - `timestamp`: DateTime (현재 시각)
 
 - **DashboardFilter**
-  - `query`: String? (건물/호수/학과)
+  - `query`: String? (건물/호수/학과 name/code)
   - `status`: Set\<ClassroomUsageStatus\>
-  - `departmentIds`: List\<String\>
+  - `departmentIds?`: List\<String\>
+  - `buildingIds?`: List\<String\>
 
 ### 3.3 강의실 상세
 
@@ -89,14 +89,21 @@
   - `cameraUrl`: String?
 
 - **EquipmentState**
-  - `lighting`: bool
-  - `devices`: bool
+  - `isEquipmentOn`: bool
   - `lastUpdated`: DateTime
 
 - **EnvironmentSnapshot**
   - `temperature`: double
   - `humidity`: double
   - `measuredAt`: DateTime
+
+- **RoomStateSnapshot** (room_states)
+  - `classroomId`: String
+  - `isOccupied`: bool
+  - `isEquipmentOn`: bool
+  - `temperature`: double?
+  - `humidity`: double?
+  - `lastSensorUpdate`: DateTime?
 
 - **ScheduleEvent**
   - `id`
@@ -123,12 +130,12 @@
 
 | 엔드포인트 | 설명 |
 | --- | --- |
-| `GET /api/classrooms` | 요약 정보 목록 (필터/검색 지원) |
-| `GET /api/classrooms/{id}` | 단일 강의실 상세 (환경, 장비, 스케줄 포함) |
-| `GET /api/classrooms/{id}/schedule` | 주간/월간 이벤트 |
-| `POST /api/classrooms/{id}/schedule` | 일정 등록 |
-| `PATCH /api/classrooms/{id}/equipment` | 전등/장비 상태 토글 |
-| `GET /api/metrics/classrooms` | 전체/사용중/미사용 카운트 |
+| `GET /api/v1/classrooms` | 요약 정보 목록 (필터/검색 지원) |
+| `POST /api/v1/classrooms/batch` | 강의실 배치 상세 (건물/학과/디바이스 포함) |
+| `GET /api/v1/classrooms/{id}` | 단일 강의실 상세 |
+| `GET /api/v1/dashboards/now` | 현재 진행 강의(강의실 배열) |
+| `GET /api/v1/occurrences` | 특정 강의실 기간 일정 |
+| `PATCH /api/v1/occurrences/{occurrenceId}` | occurrence 시간 수정 |
 
 *위 endpoint들은 추후 백엔드 API와 협의 후 `docs/architecture/frontend_api.md`에 통합 예정.*
 

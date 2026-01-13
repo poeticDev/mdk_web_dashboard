@@ -17,23 +17,55 @@
    - 공통 앱바 구현 완료(lib/common/app_bar)
    - 페이지 타이틀 : `관리 강의실 전체 보기`
 2. **상단 메트릭 카드 영역**
-   - 1. 현재 시각/날짜 표시(실시간) : 앱 공통 카드 위젯 활용
-   - 2. 전체 강의실 수, 사용 중, 미사용, 미연동 카드 : 각각을 앱 공통 카드 위젯을 활용하여 재사용 가능한 `StatusMetricCard` 위젯으로 만든다. 클릭(터치) 시, 각 사용 상태에 해당하는 하단 강의실 카드 그리드에 표시
-   - 3. 검색 필드(건물/호수/학과명).
+   - 1. 현재 시각/날짜 표시(실시간, KST timezone) : 앱 공통 카드 위젯 활용. 판단의 기준 시점 명확화.
+   - 2. 전체 강의실 수, 사용 중, 미사용, 미연동 카드 : 각각을 앱 공통 카드 위젯을 활용하여 재사용 가능한 `StatusMetricCard` 위젯으로 만든다.  각각 '전체 관리 대상 강의실 수', '실시간 사용 중인 강의실 수', '실시간 미사용 강의실 수', '관제 시스템 미연동 강의실 수'를 표시. 클릭(터치) 시, 각 사용 상태에 해당하는 하단 강의실 카드 그리드에 표시.
+   - 3. 검색 필드(건물, 강의실, 학과의 name, code를 기준으로 검색).
    - 이 영역은 `ResponsiveGrid`로 구현하되 1, 2, 3 각 항목을 하나의 자식으로 가지게 한다. 
 3. **강의실 카드 그리드**
-   - 강의실별 정보 카드: 강의실명, 학과, 현재 강의명, 현재 강의자, 현재 강의 시작/종료시간, 상태 뱃지(사용 중/미사용).
+   - 강의실별 정보 카드: (정적 정보) 강의실명, 학과, (동적 정보) 현재 강의명, 현재 강의자, 현재 강의 시작/종료시간, 상태 뱃지(사용 중/미사용).
    - 카드 상단 상태 뱃지: 좌측 2개(재실 상태-boolean, 장비 상태-boolean), 우측 1개(사용중/미사용-boolean, 미연동 = null)
    - 카드 내 액션 버튼(자세히 보기) → 개별 화면으로 라우트.
    - 그리드는 `SliverGrid` or `GridView`로 구현하고, 반응형 레이아웃(열 수) 조정 필요.
 
 ### 1.2 데이터 모델 및 상태
 
-- 
+#### 1) 데이터 소스 기준(현 시점, `/api/v1`)
+- **Classroom 목록**: `GET /api/v1/classrooms` (items + meta)
+- **Classroom 상세/배치**: `POST /api/v1/classrooms/batch` (building/department/config/devices 포함)
+- **현재 진행 강의**: `GET /api/v1/dashboards/now` (classroomId 기준, `occurrence` 또는 `isIdle`)
+- **실시간 상태(RoomState)**: `foundation.room_states` 기반 **실시간 스트림**
 
-- `ClassroomNow` 모델: `classroomId`, `classroomName`, `classroomCode`, `buildingName`, `buildingCode`, `departmentName`, `status`, `courseName`, `professor`, `startAt`, `endAt`, `isOccupied`, `isOn`.
-- 상단 메트릭은 `List<ClassroomNow>` 기반 계산.
-- 검색 및 필터 상태는 Riverpod `StateNotifier`로 관리.
+> RoomState는 실시간 스트림으로 확정. **SSE(A안) 기본**, WebSocket(B안) 보조로 기록하고, 폴링(C안)은 fallback으로 유지한다.
+
+#### 2) 대시보드 ViewModel (합성 결과)
+- `DashboardClassroomCardVM`
+  - `id`, `name`, `code`
+  - `buildingName`, `departmentName`
+  - `usageStatus`: `inUse | idle | unlinked`
+  - `currentLecture`: `title`, `instructorName`, `startAt`, `endAt`
+  - `roomState`(실시간): `isOccupied`, `isEquipmentOn`, `temperature`, `humidity`, `updatedAt`
+
+- `DashboardMetricsVM`
+  - `totalCount`, `inUseCount`, `idleCount`, `unlinkedCount`
+  - `timestamp`
+
+#### 3) 필터/상태 모델
+- `DashboardFilterState`
+  - `query`(건물/강의실/학과 name+code)
+  - `usageStatus` (Set)
+  - `departmentIds?`, `buildingIds?`
+- `DashboardState`
+  - `cards: List<DashboardClassroomCardVM>`
+  - `metrics: DashboardMetricsVM`
+  - `filters: DashboardFilterState`
+  - `isLoading`, `errorMessage`, `lastUpdatedAt`
+
+#### 4) 합성 플로우(초안)
+1. `GET /classrooms` → 기본 목록
+2. `POST /classrooms/batch` → building/department 등 상세 보강
+3. `GET /dashboards/now` → 현재 진행 강의 합성
+4. **RoomState 스트림(SSE 기본, WS 보조)** → 실시간 재실/장비/환경 상태 반영
+5. 위 결과를 합성해 카드/메트릭 계산
 
 ### 1.3 컴포넌트 설계
 
