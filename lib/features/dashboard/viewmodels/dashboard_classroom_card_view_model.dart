@@ -21,8 +21,12 @@ class DashboardClassroomCardViewModel {
     required this.usageStatus,
     this.code,
     this.siteId,
+    this.buildingId,
     this.buildingName,
+    this.buildingCode,
+    this.departmentId,
     this.departmentName,
+    this.departmentCode,
     this.currentLecture,
     this.roomState,
   });
@@ -31,8 +35,12 @@ class DashboardClassroomCardViewModel {
   final String name;
   final String? code;
   final String? siteId;
+  final String? buildingId;
   final String? buildingName;
+  final String? buildingCode;
+  final String? departmentId;
   final String? departmentName;
+  final String? departmentCode;
   final DashboardUsageStatus usageStatus;
   final DashboardCurrentLectureViewModel? currentLecture;
   final DashboardRoomStateViewModel? roomState;

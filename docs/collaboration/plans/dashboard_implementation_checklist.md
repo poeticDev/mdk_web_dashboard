@@ -29,15 +29,15 @@
 - [x] `DashboardState` 정의
 
 ## 3. SSE 매핑 로직 구현
-- [ ] RoomState snapshot → ViewModel 매핑
-- [ ] RoomState delta → ViewModel 부분 갱신
-- [ ] Occurrence snapshot → ViewModel 매핑
-- [ ] `unlinked` 처리(초기 snapshot 전 포함)
+- [x] RoomState snapshot → ViewModel 매핑
+- [x] RoomState delta → ViewModel 부분 갱신
+- [x] Occurrence snapshot → ViewModel 매핑
+- [x] `unlinked` 처리(초기 snapshot 전 포함)
 
 ## 4. Controller/Provider 설계
-- [ ] `dashboardController` 설계 (Riverpod + Controller 패턴)
-- [ ] 로딩/에러/스트리밍 상태 전이 구현
-- [ ] 필터/검색 로컬 적용 로직 구현
+- [x] `dashboardController` 설계 (Riverpod + Controller 패턴)
+- [x] 로딩/에러/스트리밍 상태 전이 구현
+- [x] 필터/검색 로컬 적용 로직 구현
 
 ## 5. UI 구현
 - [ ] `DashboardHeader` (KPI + 검색) 구현
