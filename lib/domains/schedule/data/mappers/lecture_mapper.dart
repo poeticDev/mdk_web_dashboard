@@ -1,3 +1,19 @@
+/// ROLE
+/// - DTO와 엔티티 변환을 담당한다
+///
+/// RESPONSIBILITY
+/// - DTO를 도메인 모델로 변환한다
+/// - 요청 모델을 구성한다
+///
+/// DEPENDS ON
+/// - lecture_dto
+/// - lecture_request_dtos
+/// - lecture_entity
+/// - lecture_status
+/// - lecture_type
+/// - lecture_origin_repository
+library;
+
 import 'package:web_dashboard/domains/schedule/data/dtos/lecture_dto.dart';
 import 'package:web_dashboard/domains/schedule/data/dtos/lecture_request_dtos.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_entity.dart';

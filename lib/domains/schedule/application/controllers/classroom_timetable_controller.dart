@@ -1,3 +1,19 @@
+/// ROLE
+/// - 상태 컨트롤러를 제공한다
+///
+/// RESPONSIBILITY
+/// - 상태를 갱신한다
+/// - 도메인 로직을 실행한다
+///
+/// DEPENDS ON
+/// - math
+/// - riverpod_annotation
+/// - classroom_timetable_state
+/// - timetable_providers
+/// - save_lecture_usecase
+/// - lecture_occurrence_entity
+library;
+
 import 'dart:math' as math;
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';

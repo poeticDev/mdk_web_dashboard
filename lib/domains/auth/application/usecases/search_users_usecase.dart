@@ -1,3 +1,14 @@
+/// ROLE
+/// - 유저 검색 유즈케이스를 구현한다
+///
+/// RESPONSIBILITY
+/// - 검색 요청을 리포지토리에 위임한다
+///
+/// DEPENDS ON
+/// - user_directory_repository
+/// - entity_search_query
+library;
+
 import 'package:web_dashboard/domains/auth/domain/entities/user_directory_entity.dart';
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 import 'package:web_dashboard/common/search/entity_search_result.dart';

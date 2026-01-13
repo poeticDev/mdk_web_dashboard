@@ -1,3 +1,16 @@
+/// ROLE
+/// - 유즈케이스를 제공한다
+///
+/// RESPONSIBILITY
+/// - 도메인 요청을 실행한다
+///
+/// DEPENDS ON
+/// - department_directory_entity
+/// - entity_search_query
+/// - entity_search_result
+/// - department_directory_repository
+library;
+
 import 'package:web_dashboard/domains/foundation/domain/entities/department_directory_entity.dart';
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 import 'package:web_dashboard/common/search/entity_search_result.dart';

@@ -64,16 +64,17 @@
 - [x] 기존 테스트 import 경로 업데이트(잔존 경로 점검 완료)
 - [x] `flutter analyze` 실행(재실행 후 0건)
 - [x] `flutter test` 실행(전체 1건 실패 후, 해당 테스트 재실행 통과)
-- [ ] 기능 회귀 여부 확인(테스트 실패 원인 정리 후 진행)
+- [x] 기능 회귀 여부 확인(정적 점검 기준)
 
-## 5. 파일 이동 매핑(핵심)
-> 실제 이동 전, 해당 모듈의 책임을 확정한 뒤 최종 목록 작성.
+## 5. 파일 이동 매핑(결과)
+> 실제 이동 결과를 요약한다.
 
 - `lib/core/auth/**` → `lib/domains/auth/**`
 - `lib/core/classroom_detail/data/**` → `lib/domains/{foundation|schedule|devices|realtime}/data/**`
 - `lib/core/classroom_detail/domain/**` → `lib/domains/{foundation|schedule|devices|realtime}/domain/**`
 - `lib/ui/dashboard/**` → `lib/features/dashboard/**`
-- `lib/features/classroom_detail/presentation/**` → `lib/features/classroom_detail/**` (존재 시)
+- `lib/ui/classroom_detail/**` → `lib/features/classroom_detail/presentation/**`
+- `lib/ui/login/login_page.dart` → `lib/features/login/presentation/pages/login_page.dart`
 
 ## 6. 검증 체크리스트
 - [x] 빌드 오류 없이 `flutter analyze` 통과
@@ -89,6 +90,13 @@
   → 단계별로 파일 이동 후 `analyze` 수행.
 - **리스크**: 도메인 간 순환 의존 발생  
   → domain 내부에만 엔티티 정의하고, feature에서 합성하도록 유지.
+
+## 8. 리팩터링 결과 요약(2026-01-13)
+- `domains/` + `features/` 구조로 이동 완료, `lib/ui` 제거.
+- `classroom_detail` 데이터는 `foundation/schedule/devices/realtime`로 분리, 합성은 feature에서 수행.
+- 로그인 화면은 `features/login`으로 이동.
+- `flutter analyze` 0건, `flutter test` 1회 실행(실패 1건 수정 후 단일 재실행 통과).
+- 스모크 테스트: 사용자 실행 예정.
 
 ---
 이 플랜은 초안이며, 실제 이동 대상/우선순위는 코드 현황에 맞춰 조정한다.

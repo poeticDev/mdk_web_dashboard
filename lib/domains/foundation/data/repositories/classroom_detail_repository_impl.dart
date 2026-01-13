@@ -1,3 +1,19 @@
+/// ROLE
+/// - 리포지토리 구현체를 제공한다
+///
+/// RESPONSIBILITY
+/// - 데이터 소스를 통해 데이터를 조회한다
+/// - 도메인 모델로 변환한다
+///
+/// DEPENDS ON
+/// - dio
+/// - device_entity
+/// - classroom_device_repository
+/// - classroom_detail_remote_data_source
+/// - classroom_detail_dto
+/// - classroom_detail_mapper
+library;
+
 // 강의실 상세 조회에 캐시/예외 처리를 적용한 리포지토리 구현체다.
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';

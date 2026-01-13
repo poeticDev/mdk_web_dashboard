@@ -1,3 +1,15 @@
+/// ROLE
+/// - 도메인 리포지토리 계약을 정의한다
+///
+/// RESPONSIBILITY
+/// - 데이터 접근 인터페이스를 제공한다
+///
+/// DEPENDS ON
+/// - lecture_occurrence_entity
+/// - lecture_occurrence_query
+/// - lecture_status
+library;
+
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_query.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';

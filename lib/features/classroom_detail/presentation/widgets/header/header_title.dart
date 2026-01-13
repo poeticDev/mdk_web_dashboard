@@ -1,3 +1,4 @@
+// 헤더 타이틀 영역을 구성한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';

@@ -1,3 +1,18 @@
+/// ROLE
+/// - provider 모음을 제공한다
+///
+/// RESPONSIBILITY
+/// - 의존성을 주입한다
+///
+/// DEPENDS ON
+/// - flutter_riverpod
+/// - delete_lecture_usecase
+/// - delete_lecture_occurrence_usecase
+/// - get_lecture_occurrences_usecase
+/// - get_lectures_usecase
+/// - create_lecture_occurrence_usecase
+library;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/domains/schedule/application/usecases/delete_lecture_usecase.dart';
 import 'package:web_dashboard/domains/schedule/application/usecases/delete_lecture_occurrence_usecase.dart';

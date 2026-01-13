@@ -1,3 +1,4 @@
+// 시간표 상세 다이얼로그를 제공한다.
 import 'package:flutter/material.dart';
 import 'package:web_dashboard/common/widgets/app_dialog.dart';
 import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';

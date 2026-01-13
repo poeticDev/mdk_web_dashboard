@@ -1,3 +1,4 @@
+// 시간표 생성/수정 모달을 구성한다.
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

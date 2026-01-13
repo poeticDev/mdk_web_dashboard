@@ -1,3 +1,13 @@
+/// ROLE
+/// - 인증 관련 예외 모델을 정의한다
+///
+/// RESPONSIBILITY
+/// - 인증 실패 원인을 표준 메시지로 제공한다
+///
+/// DEPENDS ON
+/// - 없음
+library;
+
 class AuthException implements Exception {
   const AuthException(this.message, {this.code});
 

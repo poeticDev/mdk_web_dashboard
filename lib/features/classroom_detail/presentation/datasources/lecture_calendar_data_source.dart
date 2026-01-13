@@ -1,3 +1,15 @@
+/// ROLE
+/// - UI 데이터 소스를 제공한다
+///
+/// RESPONSIBILITY
+/// - 외부 위젯 데이터 소스와 연결한다
+///
+/// DEPENDS ON
+/// - flutter
+/// - syncfusion_flutter_calendar
+/// - lecture_view_model
+library;
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:web_dashboard/features/classroom_detail/viewmodels/lecture_view_model.dart';

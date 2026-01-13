@@ -1,3 +1,4 @@
+// 대시보드 화면을 구성한다.
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,3 +1,4 @@
+// 시간표 편집 옵션 UI를 제공한다.
 import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart';
 
 enum LectureEditScopeOption {

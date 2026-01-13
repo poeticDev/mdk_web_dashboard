@@ -1,3 +1,14 @@
+/// ROLE
+/// - API DTO를 정의한다
+///
+/// RESPONSIBILITY
+/// - 응답/요청 필드를 모델링한다
+/// - JSON 변환을 제공한다
+///
+/// DEPENDS ON
+/// - 없음
+library;
+
 /// 학과 API 응답을 파싱하는 DTO.
 class DepartmentDirectoryDto {
   const DepartmentDirectoryDto({

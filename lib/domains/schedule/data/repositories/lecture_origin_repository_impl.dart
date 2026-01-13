@@ -1,3 +1,18 @@
+/// ROLE
+/// - 리포지토리 구현체를 제공한다
+///
+/// RESPONSIBILITY
+/// - 데이터 소스를 통해 데이터를 조회한다
+/// - 도메인 모델로 변환한다
+///
+/// DEPENDS ON
+/// - lecture_origin_remote_data_source
+/// - lecture_request_dtos
+/// - lecture_mapper
+/// - lecture_entity
+/// - lecture_origin_repository
+library;
+
 import 'package:web_dashboard/domains/schedule/data/datasources/lecture_origin_remote_data_source.dart';
 import 'package:web_dashboard/domains/schedule/data/dtos/lecture_request_dtos.dart';
 import 'package:web_dashboard/domains/schedule/data/mappers/lecture_mapper.dart';

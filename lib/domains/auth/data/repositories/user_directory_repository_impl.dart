@@ -1,3 +1,16 @@
+/// ROLE
+/// - 유저 디렉터리 검색 리포지토리 구현체다
+///
+/// RESPONSIBILITY
+/// - 검색 요청을 원격 데이터 소스로 전달한다
+/// - DTO를 엔티티로 매핑하고 캐시한다
+///
+/// DEPENDS ON
+/// - user_directory_remote_data_source
+/// - user_directory_mapper
+/// - pagination_meta_mapper
+library;
+
 // 유저 검색 캐시 전략을 적용한 리포지토리 구현체다.
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/domains/auth/data/datasources/user_directory_remote_data_source.dart';

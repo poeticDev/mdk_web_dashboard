@@ -1,3 +1,19 @@
+/// ROLE
+/// - DTO와 엔티티 변환을 담당한다
+///
+/// RESPONSIBILITY
+/// - DTO를 도메인 모델로 변환한다
+/// - 요청 모델을 구성한다
+///
+/// DEPENDS ON
+/// - device_entity
+/// - classroom_detail_dto
+/// - building_entity
+/// - classroom_entity
+/// - classroom_type
+/// - department_directory_entity
+library;
+
 import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
 import 'package:web_dashboard/domains/foundation/data/dtos/classroom_detail_dto.dart';
 import 'package:web_dashboard/domains/foundation/domain/entities/building_entity.dart';

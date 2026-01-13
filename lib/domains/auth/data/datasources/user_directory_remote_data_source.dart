@@ -1,3 +1,15 @@
+/// ROLE
+/// - 유저 디렉터리 원격 데이터 소스를 제공한다
+///
+/// RESPONSIBILITY
+/// - 검색 API 호출과 페이지네이션 DTO 반환을 담당한다
+///
+/// DEPENDS ON
+/// - dio
+/// - api_constants
+/// - pagination_meta_dto
+library;
+
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
 import 'package:web_dashboard/common/search/pagination_meta_dto.dart';

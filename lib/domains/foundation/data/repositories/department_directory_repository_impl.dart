@@ -1,3 +1,19 @@
+/// ROLE
+/// - 리포지토리 구현체를 제공한다
+///
+/// RESPONSIBILITY
+/// - 데이터 소스를 통해 데이터를 조회한다
+/// - 도메인 모델로 변환한다
+///
+/// DEPENDS ON
+/// - dio
+/// - department_directory_remote_data_source
+/// - department_directory_dto
+/// - pagination_meta_dto
+/// - department_directory_mapper
+/// - pagination_meta_mapper
+library;
+
 // 학과 검색 캐시 전략을 적용한 리포지토리 구현체다.
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/department_directory_remote_data_source.dart';

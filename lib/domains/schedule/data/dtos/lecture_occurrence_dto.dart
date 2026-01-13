@@ -1,3 +1,14 @@
+/// ROLE
+/// - API DTO를 정의한다
+///
+/// RESPONSIBILITY
+/// - 응답/요청 필드를 모델링한다
+/// - JSON 변환을 제공한다
+///
+/// DEPENDS ON
+/// - date_time_utils
+library;
+
 import 'package:web_dashboard/common/utils/date_time_utils.dart';
 
 class LectureOccurrenceDto {

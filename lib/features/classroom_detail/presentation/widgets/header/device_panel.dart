@@ -1,3 +1,4 @@
+// 장비 상태 패널을 구성한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/common/widgets/custom_card.dart';

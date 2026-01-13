@@ -1,3 +1,4 @@
+// 환경 센서 패널을 구성한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/features/classroom_detail/application/realtime/classroom_sensor_providers.dart';

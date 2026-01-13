@@ -1,3 +1,17 @@
+/// ROLE
+/// - provider 모음을 제공한다
+///
+/// RESPONSIBILITY
+/// - 의존성을 주입한다
+///
+/// DEPENDS ON
+/// - flutter_riverpod
+/// - fetch_departments_by_ids_usecase
+/// - search_departments_usecase
+/// - department_directory_repository
+/// - service_locator
+library;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/domains/foundation/application/usecases/fetch_departments_by_ids_usecase.dart';
 import 'package:web_dashboard/domains/foundation/application/usecases/search_departments_usecase.dart';

@@ -1,3 +1,16 @@
+/// ROLE
+/// - provider 모음을 제공한다
+///
+/// RESPONSIBILITY
+/// - 의존성을 주입한다
+///
+/// DEPENDS ON
+/// - async
+/// - flutter_riverpod
+/// - classroom_sensor_mock_data_source
+/// - classroom_sensor_snapshot
+library;
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';

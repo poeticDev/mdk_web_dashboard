@@ -1,3 +1,17 @@
+/// ROLE
+/// - 인증 API 원격 데이터 소스를 구현한다
+///
+/// RESPONSIBILITY
+/// - Dio로 인증 관련 요청을 수행한다
+/// - 응답에서 사용자 정보를 파싱한다
+/// - 오류를 도메인 예외로 매핑한다
+///
+/// DEPENDS ON
+/// - dio
+/// - api_constants
+/// - auth_exception
+library;
+
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
 import 'package:web_dashboard/domains/auth/data/datasources/auth_remote_data_source.dart';

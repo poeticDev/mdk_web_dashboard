@@ -1,3 +1,15 @@
+/// ROLE
+/// - 상태 모델을 정의한다
+///
+/// RESPONSIBILITY
+/// - 상태 필드를 보관한다
+///
+/// DEPENDS ON
+/// - freezed_annotation
+/// - lecture_occurrence_entity
+/// - lecture_type
+library;
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';

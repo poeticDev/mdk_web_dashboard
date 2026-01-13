@@ -1,3 +1,14 @@
+/// ROLE
+/// - API DTO를 정의한다
+///
+/// RESPONSIBILITY
+/// - 응답/요청 필드를 모델링한다
+/// - JSON 변환을 제공한다
+///
+/// DEPENDS ON
+/// - 없음
+library;
+
 /// 조회 API에 전달할 쿼리 파라미터 묶음.
 class LectureOriginQueryRequest {
   const LectureOriginQueryRequest({

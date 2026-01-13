@@ -1,3 +1,15 @@
+/// ROLE
+/// - 상태 컨트롤러를 제공한다
+///
+/// RESPONSIBILITY
+/// - 상태를 갱신한다
+/// - 도메인 로직을 실행한다
+///
+/// DEPENDS ON
+/// - flutter_riverpod
+/// - classroom_detail_providers
+library;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
 

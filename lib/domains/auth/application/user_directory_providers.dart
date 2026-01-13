@@ -1,3 +1,16 @@
+/// ROLE
+/// - 유저 디렉터리 provider 모음을 제공한다
+///
+/// RESPONSIBILITY
+/// - UserDirectoryRepository provider를 제공한다
+/// - 유저 검색 유즈케이스 provider를 제공한다
+///
+/// DEPENDS ON
+/// - get_it
+/// - user_directory_repository
+/// - search_users_usecase
+library;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/domains/auth/application/usecases/search_users_usecase.dart';
 import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';

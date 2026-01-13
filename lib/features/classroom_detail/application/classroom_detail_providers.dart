@@ -1,3 +1,18 @@
+/// ROLE
+/// - provider 모음을 제공한다
+///
+/// RESPONSIBILITY
+/// - 의존성을 주입한다
+///
+/// DEPENDS ON
+/// - flutter_riverpod
+/// - device_entity
+/// - classroom_device_repository
+/// - classroom_entity
+/// - classroom_type
+/// - classroom_repository
+library;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';
 import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';

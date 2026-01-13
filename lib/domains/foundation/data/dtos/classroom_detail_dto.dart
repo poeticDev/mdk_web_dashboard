@@ -1,3 +1,14 @@
+/// ROLE
+/// - API DTO를 정의한다
+///
+/// RESPONSIBILITY
+/// - 응답/요청 필드를 모델링한다
+/// - JSON 변환을 제공한다
+///
+/// DEPENDS ON
+/// - flutter
+library;
+
 import 'package:flutter/foundation.dart';
 
 /// 강의실 상세 API 응답을 옮겨 담는 루트 DTO.

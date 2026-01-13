@@ -1,3 +1,17 @@
+/// ROLE
+/// - 로그인 폼 입력과 제출을 관리하는 컨트롤러
+///
+/// RESPONSIBILITY
+/// - 입력값과 에러 상태를 갱신한다
+/// - 로그인 요청을 실행한다
+/// - 세션 만료 메시지를 노출한다
+///
+/// DEPENDS ON
+/// - auth_controller
+/// - login_form_state
+/// - auth_exception
+library;
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_dashboard/domains/auth/application/auth_controller.dart';
 import 'package:web_dashboard/domains/auth/domain/errors/auth_exception.dart';

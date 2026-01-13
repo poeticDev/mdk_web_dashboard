@@ -1,3 +1,19 @@
+/// ROLE
+/// - 리포지토리 구현체를 제공한다
+///
+/// RESPONSIBILITY
+/// - 데이터 소스를 통해 데이터를 조회한다
+/// - 도메인 모델로 변환한다
+///
+/// DEPENDS ON
+/// - async
+/// - device_entity
+/// - classroom_device_repository
+/// - building_entity
+/// - classroom_entity
+/// - classroom_type
+library;
+
 import 'dart:async';
 
 import 'package:web_dashboard/domains/devices/domain/entities/device_entity.dart';

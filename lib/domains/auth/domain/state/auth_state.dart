@@ -1,3 +1,14 @@
+/// ROLE
+/// - 인증 상태 모델을 정의한다
+///
+/// RESPONSIBILITY
+/// - 현재 사용자/로딩/오류 상태를 보관한다
+///
+/// DEPENDS ON
+/// - freezed_annotation
+/// - auth_user
+library;
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:web_dashboard/domains/auth/domain/entities/auth_user.dart';
 

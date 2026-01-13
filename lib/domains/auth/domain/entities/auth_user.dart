@@ -1,3 +1,14 @@
+/// ROLE
+/// - 인증 사용자 정보를 표현하는 엔티티다
+///
+/// RESPONSIBILITY
+/// - 사용자 식별/표시 정보를 보관한다
+/// - 역직렬화 생성자를 제공한다
+///
+/// DEPENDS ON
+/// - freezed_annotation
+library;
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_user.freezed.dart';

@@ -1,3 +1,15 @@
+/// ROLE
+/// - 뷰모델을 정의한다
+///
+/// RESPONSIBILITY
+/// - UI 출력용 데이터를 구성한다
+///
+/// DEPENDS ON
+/// - flutter
+/// - lecture_occurrence_entity
+/// - lecture_type
+library;
+
 import 'package:flutter/material.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_type.dart';

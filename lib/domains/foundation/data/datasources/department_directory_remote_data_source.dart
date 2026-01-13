@@ -1,3 +1,17 @@
+/// ROLE
+/// - 원격 데이터 소스를 제공한다
+///
+/// RESPONSIBILITY
+/// - API 호출을 수행한다
+/// - 응답을 DTO로 변환한다
+///
+/// DEPENDS ON
+/// - dio
+/// - api_constants
+/// - department_directory_dto
+/// - pagination_meta_dto
+library;
+
 import 'package:dio/dio.dart';
 import 'package:web_dashboard/common/constants/api_constants.dart';
 import 'package:web_dashboard/domains/foundation/data/dtos/department_directory_dto.dart';

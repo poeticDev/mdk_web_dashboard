@@ -1,3 +1,18 @@
+/// ROLE
+/// - UI 유틸리티를 제공한다
+///
+/// RESPONSIBILITY
+/// - 표현용 계산/색상 로직을 제공한다
+///
+/// DEPENDS ON
+/// - math
+/// - flutter
+/// - mdk_app_theme
+/// - lecture_entity
+/// - lecture_occurrence_entity
+/// - lecture_status
+library;
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';

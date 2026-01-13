@@ -1,3 +1,17 @@
+/// ROLE
+/// - 인증 상태를 관리하는 컨트롤러
+///
+/// RESPONSIBILITY
+/// - 현재 사용자 정보를 로드한다
+/// - 로그인/로그아웃 흐름을 처리한다
+/// - 세션 만료 및 오류 상태를 반영한다
+///
+/// DEPENDS ON
+/// - auth_repository
+/// - auth_state
+/// - login_credentials
+library;
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_dashboard/domains/auth/application/auth_providers.dart';
 import 'package:web_dashboard/domains/auth/domain/entities/auth_user.dart';
