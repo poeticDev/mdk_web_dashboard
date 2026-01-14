@@ -69,7 +69,7 @@ class OccurrenceNowSseRemoteDataSourceImpl
     String? lastEventId,
   }) {
     final Uri url = _buildStreamUri(subscriptionId, lastEventId);
-    return _sseClient
+    final Stream<OccurrenceNowSseEvent?> mapped = _sseClient
         .connect(
           url: url,
           eventTypes: const <String>[
@@ -78,8 +78,10 @@ class OccurrenceNowSseRemoteDataSourceImpl
           ],
           lastEventId: lastEventId,
         )
-        .map(_mapEvent)
-        .whereType<OccurrenceNowSseEvent>();
+        .map(_mapEvent);
+    return mapped
+        .where((OccurrenceNowSseEvent? event) => event != null)
+        .cast<OccurrenceNowSseEvent>();
   }
 
   @override

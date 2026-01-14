@@ -10,10 +10,10 @@ import 'package:web_dashboard/common/widgets/entity_search/entity_search_field.d
 import 'package:web_dashboard/common/widgets/entity_search/viewmodels/entity_option.dart';
 import 'package:web_dashboard/domains/auth/application/user_directory_providers.dart';
 import 'package:web_dashboard/domains/auth/domain/entities/user_directory_entity.dart';
-import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';
+import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_read_repository.dart';
 import 'package:web_dashboard/domains/foundation/application/foundation_providers.dart';
 import 'package:web_dashboard/domains/foundation/domain/entities/department_directory_entity.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_read_repository.dart';
 
 void main() {
   final _FakeDepartmentRepository fakeDepartmentRepository =
@@ -23,10 +23,12 @@ void main() {
   ProviderScope buildScope(Widget child) {
     return ProviderScope(
       overrides: <Override>[
-        departmentDirectoryRepositoryProvider.overrideWithValue(
+        departmentDirectoryReadRepositoryProvider.overrideWithValue(
           fakeDepartmentRepository,
         ),
-        userDirectoryRepositoryProvider.overrideWithValue(fakeUserRepository),
+        userDirectoryReadRepositoryProvider.overrideWithValue(
+          fakeUserRepository,
+        ),
       ],
       child: child,
     );
@@ -124,7 +126,7 @@ void main() {
   });
 }
 
-class _FakeDepartmentRepository implements DepartmentDirectoryRepository {
+class _FakeDepartmentRepository implements DepartmentDirectoryReadRepository {
   EntitySearchResult<DepartmentDirectoryEntity>? result;
 
   @override
@@ -154,7 +156,7 @@ class _FakeDepartmentRepository implements DepartmentDirectoryRepository {
   }
 }
 
-class _FakeUserRepository implements UserDirectoryRepository {
+class _FakeUserRepository implements UserDirectoryReadRepository {
   EntitySearchResult<UserDirectoryEntity>? result;
 
   @override

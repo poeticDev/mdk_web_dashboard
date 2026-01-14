@@ -23,13 +23,13 @@ import 'package:web_dashboard/domains/auth/domain/entities/user_directory_entity
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 import 'package:web_dashboard/common/search/entity_search_result.dart';
 import 'package:web_dashboard/common/search/pagination_meta.dart';
-import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';
+import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_read_repository.dart';
 
 typedef Clock = DateTime Function();
 
 /// 유저 검색 API 호출과 TTL 캐시를 책임지는 리포지토리 구현.
-class UserDirectoryRepositoryImpl implements UserDirectoryRepository {
-  UserDirectoryRepositoryImpl({
+class UserDirectoryReadRepositoryImpl implements UserDirectoryReadRepository {
+  UserDirectoryReadRepositoryImpl({
     required UserDirectoryRemoteDataSource remoteDataSource,
     required UserDirectoryMapper mapper,
     required PaginationMetaMapper metaMapper,

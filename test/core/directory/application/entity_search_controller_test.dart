@@ -10,8 +10,8 @@ import 'package:web_dashboard/domains/auth/domain/entities/user_directory_entity
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 import 'package:web_dashboard/common/search/entity_search_result.dart';
 import 'package:web_dashboard/common/search/pagination_meta.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_repository.dart';
-import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_read_repository.dart';
+import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_read_repository.dart';
 import 'package:web_dashboard/domains/foundation/application/usecases/search_departments_usecase.dart';
 import 'package:web_dashboard/domains/auth/application/usecases/search_users_usecase.dart';
 
@@ -100,7 +100,7 @@ void main() {
   });
 }
 
-class _FakeDepartmentRepository implements DepartmentDirectoryRepository {
+class _FakeDepartmentRepository implements DepartmentDirectoryReadRepository {
   final List<EntitySearchResult<DepartmentDirectoryEntity>> _queue =
       <EntitySearchResult<DepartmentDirectoryEntity>>[];
 
@@ -127,7 +127,7 @@ class _FakeDepartmentRepository implements DepartmentDirectoryRepository {
   }
 }
 
-class _FakeUserRepository implements UserDirectoryRepository {
+class _FakeUserRepository implements UserDirectoryReadRepository {
   final List<EntitySearchResult<UserDirectoryEntity>> _queue =
       <EntitySearchResult<UserDirectoryEntity>>[];
 

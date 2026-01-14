@@ -6,7 +6,7 @@ import 'package:web_dashboard/domains/auth/data/dtos/user_directory_dto.dart';
 import 'package:web_dashboard/common/search/pagination_meta_mapper.dart';
 import 'package:web_dashboard/domains/auth/data/mappers/user_directory_mapper.dart';
 import 'package:web_dashboard/common/search/directory_repository_exception.dart';
-import 'package:web_dashboard/domains/auth/data/repositories/user_directory_repository_impl.dart';
+import 'package:web_dashboard/domains/auth/data/repositories/user_directory_read_repository_impl.dart';
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 
 void main() {
@@ -14,12 +14,12 @@ void main() {
   const UserDirectoryMapper mapper = UserDirectoryMapper();
   const PaginationMetaMapper metaMapper = PaginationMetaMapper();
   late _TestClock clock;
-  late UserDirectoryRepositoryImpl repository;
+  late UserDirectoryReadRepositoryImpl repository;
 
   setUp(() {
     remote = _FakeUserRemote();
     clock = _TestClock();
-    repository = UserDirectoryRepositoryImpl(
+    repository = UserDirectoryReadRepositoryImpl(
       remoteDataSource: remote,
       mapper: mapper,
       metaMapper: metaMapper,

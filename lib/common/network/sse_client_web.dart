@@ -6,17 +6,21 @@
 ///
 /// DEPENDS ON
 /// - dart:async
-/// - dart:html
+/// - package:web
 library;
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
+
+import 'package:web/web.dart' as web;
 
 import 'package:web_dashboard/common/network/sse_client.dart';
 
 class WebSseClient implements SseClient {
-  html.EventSource? _eventSource;
+  web.EventSource? _eventSource;
   StreamController<SseClientEvent>? _controller;
+  web.EventListener? _eventListener;
+  web.EventListener? _errorListener;
 
   @override
   Stream<SseClientEvent> connect({
@@ -26,22 +30,22 @@ class WebSseClient implements SseClient {
   }) {
     close();
     final Uri resolved = _appendLastEventId(url, lastEventId);
-    final html.EventSource eventSource = html.EventSource(
+    final web.EventSource eventSource = web.EventSource(
       resolved.toString(),
-      withCredentials: true,
+      web.EventSourceInit(withCredentials: true),
     );
     _eventSource = eventSource;
+    _eventListener ??= _handleEvent.toJS;
+    _errorListener ??= _handleError.toJS;
     final StreamController<SseClientEvent> controller =
         StreamController<SseClientEvent>.broadcast();
     _controller = controller;
     final List<String> targets =
         eventTypes.isEmpty ? <String>['message'] : eventTypes;
     for (final String type in targets) {
-      eventSource.addEventListener(type, _handleEvent);
+      eventSource.addEventListener(type, _eventListener);
     }
-    eventSource.onError.listen((_) {
-      controller.addError(StateError('SSE 연결 오류'));
-    });
+    eventSource.addEventListener('error', _errorListener);
     controller.onCancel = close;
     return controller.stream;
   }
@@ -52,23 +56,29 @@ class WebSseClient implements SseClient {
     _eventSource = null;
     _controller?.close();
     _controller = null;
+    _eventListener = null;
+    _errorListener = null;
   }
 
-  void _handleEvent(html.Event event) {
+  void _handleEvent(web.Event event) {
     if (_controller == null) {
       return;
     }
-    if (event is html.MessageEvent) {
-      _controller?.add(
-        SseClientEvent(
-          type: event.type,
-          data: event.data?.toString() ?? '',
-          lastEventId: event.lastEventId?.isEmpty == true
-              ? null
-              : event.lastEventId,
-        ),
-      );
+    final web.MessageEvent message = event as web.MessageEvent;
+    _controller?.add(
+      SseClientEvent(
+        type: message.type,
+        data: message.data?.toString() ?? '',
+        lastEventId: message.lastEventId.isEmpty ? null : message.lastEventId,
+      ),
+    );
+  }
+
+  void _handleError(web.Event event) {
+    if (_controller == null) {
+      return;
     }
+    _controller?.addError(StateError('SSE 연결 오류'));
   }
 
   Uri _appendLastEventId(Uri url, String? lastEventId) {

@@ -68,7 +68,7 @@ class RoomStateSseRemoteDataSourceImpl implements RoomStateSseRemoteDataSource {
     String? lastEventId,
   }) {
     final Uri url = _buildStreamUri(subscriptionId, lastEventId);
-    return _sseClient
+    final Stream<RoomStateSseEvent?> mapped = _sseClient
         .connect(
           url: url,
           eventTypes: const <String>[
@@ -77,8 +77,10 @@ class RoomStateSseRemoteDataSourceImpl implements RoomStateSseRemoteDataSource {
           ],
           lastEventId: lastEventId,
         )
-        .map(_mapEvent)
-        .whereType<RoomStateSseEvent>();
+        .map(_mapEvent);
+    return mapped
+        .where((RoomStateSseEvent? event) => event != null)
+        .cast<RoomStateSseEvent>();
   }
 
   @override

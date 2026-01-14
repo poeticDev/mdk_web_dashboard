@@ -6,10 +6,21 @@
 
 | 계층 | 설명 | 관련 폴더 |
 | --- | --- | --- |
-| Domain Entities | 비즈니스 규칙에 종속된 불변 객체 | `lib/core/**/domain/entities` |
-| Value Objects | 입력 값 검증/불변 책임 | `lib/core/**/domain/value_objects` |
-| Application State | Riverpod Notifier가 관리하는 UI 상태 | `lib/core/**/domain/state` |
-| DTO/Data Source | API와의 입출력 모델 | `lib/core/**/data` 및 추후 `lib/common/network` |
+| Domain Entities | 비즈니스 규칙에 종속된 불변 객체 | `lib/domains/**/domain/entities` |
+| Value Objects | 입력 값 검증/불변 책임 | `lib/domains/**/domain/value_objects` |
+| Application State | Riverpod Notifier가 관리하는 UI 상태 | `lib/features/**/application/state` |
+| DTO/Data Source | API와의 입출력 모델 | `lib/domains/**/data` 및 `lib/common/network` |
+
+## 1.1 ReadModel / ReadRepository 규칙
+
+- **ReadModel**: 화면/조회 전용 스키마(조인/요약/캐시 결과).  
+  - 위치: `lib/domains/**/application/read_models`
+- **ReadRepository**: ReadModel 전용 조회 계약.  
+  - 네이밍: `*ReadRepository`  
+  - 위치: `lib/domains/**/domain/repositories`
+- **Domain Entity**: 핵심 개념을 대표하는 도메인 모델. CRUD/정합성 중심.
+- 공통 요약 타입은 `lib/common/models`에 배치한다.  
+  - 예: `IdNameCode`
 
 ## 2. 인증 도메인 (현 구현)
 
@@ -48,21 +59,16 @@
 
 | 모델 | 속성 | 설명 |
 | --- | --- | --- |
-| `Building` | `id`, `name`, `alias` | 건물 메타데이터 |
-| `Department` | `id`, `name` | 학과 정보 (필터용) |
-| `Professor` | `id`, `name`, `email`? | 강의자 정보 |
+| `IdNameCode` | `id`, `name`, `code?` | 공통 요약 타입 |
+| `ClassroomSummary` | `id`, `name`, `code?`, `building?`, `department?` | 대시보드용 강의실 요약(ReadModel) |
+| `FoundationSummaryReadModel` | `type`, `summary(IdNameCode)` | foundation 요약 정보 |
+| `FoundationClassroomsReadModel` | `foundation`, `classrooms`, `count` | foundation 기준 강의실 목록 응답 |
 
 ### 3.2 강의실 요약 (전체 화면)
 
 - **ClassroomSummary** (대시보드 카드 합성 기준)
-  - `id`: String (UUID)
-  - `name`: String
-  - `code`: String?
-  - `building`: Building?
-  - `department`: Department?
-  - `status`: `ClassroomUsageStatus` (enum: `inUse`, `idle`, `unlinked`)
-  - `currentCourse`: `CourseSlot?`
-  - `roomState`: `RoomStateSnapshot?`
+  - foundation 목록에서 받은 요약 필드만 포함
+  - 상세/필터는 앱 내부 ViewModel에서 파생
 
 - **CourseSlot**
   - `title`
@@ -126,16 +132,15 @@
 | `DashboardState` | `List<ClassroomSummary>`, `DashboardMetrics`, `DashboardFilter`, `isLoading`, `errorMessage` |
 | `ClassroomDetailState` | `ClassroomDetail?`, `isLoading`, `errorMessage`, `selectedDateRange` |
 
-## 4. API/스토리지 설계 초안
+## 4. API/스토리지 설계 (대시보드 핵심)
 
 | 엔드포인트 | 설명 |
 | --- | --- |
-| `GET /api/v1/classrooms` | 요약 정보 목록 (필터/검색 지원) |
-| `POST /api/v1/classrooms/batch` | 강의실 배치 상세 (건물/학과/디바이스 포함) |
-| `GET /api/v1/classrooms/{id}` | 단일 강의실 상세 |
-| `GET /api/v1/dashboards/now` | 현재 진행 강의(강의실 배열) |
-| `GET /api/v1/occurrences` | 특정 강의실 기간 일정 |
-| `PATCH /api/v1/occurrences/{occurrenceId}` | occurrence 시간 수정 |
+| `GET /api/v1/foundations/{type}/{id}/classrooms` | 대시보드 기준 강의실 목록(ReadModel) |
+| `POST /api/v1/stream/room-states/subscriptions` | RoomState 구독 생성 |
+| `GET /api/v1/stream/room-states` | RoomState SSE 스트림 |
+| `POST /api/v1/stream/occurrences/now/subscriptions` | 현재 강의 구독 생성 |
+| `GET /api/v1/stream/occurrences/now` | 현재 강의 SSE 스트림 |
 
 *위 endpoint들은 추후 백엔드 API와 협의 후 `docs/architecture/frontend_api.md`에 통합 예정.*
 

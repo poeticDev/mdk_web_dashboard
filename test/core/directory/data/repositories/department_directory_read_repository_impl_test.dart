@@ -5,7 +5,7 @@ import 'package:web_dashboard/domains/foundation/data/dtos/department_directory_
 import 'package:web_dashboard/common/search/pagination_meta_dto.dart';
 import 'package:web_dashboard/domains/foundation/data/mappers/department_directory_mapper.dart';
 import 'package:web_dashboard/common/search/pagination_meta_mapper.dart';
-import 'package:web_dashboard/domains/foundation/data/repositories/department_directory_repository_impl.dart';
+import 'package:web_dashboard/domains/foundation/data/repositories/department_directory_read_repository_impl.dart';
 import 'package:web_dashboard/common/search/directory_repository_exception.dart';
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 
@@ -14,12 +14,12 @@ void main() {
   const DepartmentDirectoryMapper mapper = DepartmentDirectoryMapper();
   const PaginationMetaMapper metaMapper = PaginationMetaMapper();
   late _TestClock clock;
-  late DepartmentDirectoryRepositoryImpl repository;
+  late DepartmentDirectoryReadRepositoryImpl repository;
 
   setUp(() {
     remote = _FakeDepartmentRemote();
     clock = _TestClock();
-    repository = DepartmentDirectoryRepositoryImpl(
+    repository = DepartmentDirectoryReadRepositoryImpl(
       remoteDataSource: remote,
       mapper: mapper,
       metaMapper: metaMapper,

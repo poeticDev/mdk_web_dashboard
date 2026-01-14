@@ -10,7 +10,7 @@
 /// - auth_controller
 /// - dashboard_state
 /// - dashboard_sse_mapper
-/// - foundation_classrooms_repository
+/// - foundation_classrooms_read_repository
 /// - room_state_sse_remote_data_source
 /// - occurrence_now_sse_remote_data_source
 /// - room_state_sse_dto
@@ -28,8 +28,9 @@ import 'package:web_dashboard/domains/realtime/data/dtos/occurrence_now_sse_dto.
 import 'package:web_dashboard/domains/realtime/data/dtos/occurrence_now_sse_event.dart';
 import 'package:web_dashboard/domains/realtime/data/dtos/room_state_sse_dto.dart';
 import 'package:web_dashboard/domains/realtime/data/dtos/room_state_sse_event.dart';
-import 'package:web_dashboard/domains/foundation/domain/entities/foundation_classrooms_entity.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_repository.dart';
+import 'package:web_dashboard/domains/foundation/application/read_models/classroom_summary.dart';
+import 'package:web_dashboard/domains/foundation/application/read_models/foundation_classrooms_read_model.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_read_repository.dart';
 import 'package:web_dashboard/features/dashboard/application/dashboard_providers.dart';
 import 'package:web_dashboard/features/dashboard/application/mappers/dashboard_sse_mapper.dart';
 import 'package:web_dashboard/features/dashboard/application/state/dashboard_state.dart';
@@ -58,8 +59,8 @@ class DashboardController extends _$DashboardController {
   String? _lastOccurrenceEventId;
 
   DashboardSseMapper get _mapper => ref.read(dashboardSseMapperProvider);
-  FoundationClassroomsRepository get _foundationRepository =>
-      ref.read(foundationClassroomsRepositoryProvider);
+  FoundationClassroomsReadRepository get _foundationRepository =>
+      ref.read(foundationClassroomsReadRepositoryProvider);
   RoomStateSseRemoteDataSource get _roomStateDataSource =>
       ref.read(roomStateSseRemoteDataSourceProvider);
   OccurrenceNowSseRemoteDataSource get _occurrenceDataSource =>
@@ -84,7 +85,7 @@ class DashboardController extends _$DashboardController {
       return;
     }
     try {
-      final FoundationClassroomsEntity response =
+      final FoundationClassroomsReadModel response =
           await _foundationRepository.fetchClassrooms(
         FoundationClassroomsQuery(
           type: selection.type,
@@ -223,7 +224,7 @@ class DashboardController extends _$DashboardController {
   }
 
   Future<void> _connectRoomState(
-    List<FoundationClassroomSummaryEntity> classrooms,
+    List<ClassroomSummary> classrooms,
   ) async {
     final List<String> ids = _extractClassroomIds(classrooms);
     if (ids.isEmpty) {
@@ -246,7 +247,7 @@ class DashboardController extends _$DashboardController {
   }
 
   Future<void> _connectOccurrences(
-    List<FoundationClassroomSummaryEntity> classrooms,
+    List<ClassroomSummary> classrooms,
   ) async {
     final List<String> ids = _extractClassroomIds(classrooms);
     if (ids.isEmpty) {
@@ -322,12 +323,12 @@ class DashboardController extends _$DashboardController {
   }
 
   void _applyFoundationCards(
-    List<FoundationClassroomSummaryEntity> classrooms,
+    List<ClassroomSummary> classrooms,
     FoundationSelection selection,
   ) {
     final List<DashboardClassroomCardViewModel> cards = classrooms
         .map(
-          (FoundationClassroomSummaryEntity classroom) => _mapToCard(
+          (ClassroomSummary classroom) => _mapToCard(
             classroom,
             selection,
           ),
@@ -338,10 +339,10 @@ class DashboardController extends _$DashboardController {
   }
 
   List<String> _extractClassroomIds(
-    List<FoundationClassroomSummaryEntity> classrooms,
+    List<ClassroomSummary> classrooms,
   ) {
     return classrooms
-        .map((FoundationClassroomSummaryEntity entity) => entity.id)
+        .map((ClassroomSummary entity) => entity.id)
         .toList();
   }
 
@@ -394,7 +395,7 @@ class DashboardController extends _$DashboardController {
   }
 
   DashboardClassroomCardViewModel _mapToCard(
-    FoundationClassroomSummaryEntity classroom,
+    ClassroomSummary classroom,
     FoundationSelection selection,
   ) {
     return DashboardClassroomCardViewModel(

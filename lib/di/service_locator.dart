@@ -12,18 +12,18 @@ import 'package:web_dashboard/domains/foundation/data/mappers/classroom_detail_m
 import 'package:web_dashboard/domains/foundation/data/mappers/foundation_classrooms_mapper.dart';
 import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
 import 'package:web_dashboard/domains/foundation/data/repositories/classroom_detail_repository_impl.dart';
-import 'package:web_dashboard/domains/foundation/data/repositories/foundation_classrooms_repository_impl.dart';
+import 'package:web_dashboard/domains/foundation/data/repositories/foundation_classrooms_read_repository_impl.dart';
 import 'package:web_dashboard/domains/foundation/domain/repositories/classroom_repository.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/department_directory_remote_data_source.dart';
 import 'package:web_dashboard/domains/auth/data/datasources/user_directory_remote_data_source.dart';
 import 'package:web_dashboard/domains/foundation/data/mappers/department_directory_mapper.dart';
 import 'package:web_dashboard/common/search/pagination_meta_mapper.dart';
 import 'package:web_dashboard/domains/auth/data/mappers/user_directory_mapper.dart';
-import 'package:web_dashboard/domains/foundation/data/repositories/department_directory_repository_impl.dart';
-import 'package:web_dashboard/domains/auth/data/repositories/user_directory_repository_impl.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_repository.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_repository.dart';
-import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';
+import 'package:web_dashboard/domains/foundation/data/repositories/department_directory_read_repository_impl.dart';
+import 'package:web_dashboard/domains/auth/data/repositories/user_directory_read_repository_impl.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_read_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_read_repository.dart';
+import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_read_repository.dart';
 import 'package:web_dashboard/domains/realtime/data/datasources/occurrence_now_sse_remote_data_source.dart';
 import 'package:web_dashboard/domains/realtime/data/datasources/room_state_sse_remote_data_source.dart';
 import 'package:web_dashboard/domains/schedule/data/datasources/lecture_origin_remote_data_source.dart';
@@ -119,9 +119,9 @@ Future<void> initDependencies() async {
       ),
     );
   }
-  if (!di.isRegistered<FoundationClassroomsRepository>()) {
-    di.registerLazySingleton<FoundationClassroomsRepository>(
-      () => FoundationClassroomsRepositoryImpl(
+  if (!di.isRegistered<FoundationClassroomsReadRepository>()) {
+    di.registerLazySingleton<FoundationClassroomsReadRepository>(
+      () => FoundationClassroomsReadRepositoryImpl(
         remoteDataSource: di(),
         mapper: di(),
       ),
@@ -183,18 +183,18 @@ Future<void> initDependencies() async {
       () => UserDirectoryRemoteDataSourceImpl(dio: di()),
     );
   }
-  if (!di.isRegistered<DepartmentDirectoryRepository>()) {
-    di.registerLazySingleton<DepartmentDirectoryRepository>(
-      () => DepartmentDirectoryRepositoryImpl(
+  if (!di.isRegistered<DepartmentDirectoryReadRepository>()) {
+    di.registerLazySingleton<DepartmentDirectoryReadRepository>(
+      () => DepartmentDirectoryReadRepositoryImpl(
         remoteDataSource: di(),
         mapper: di(),
         metaMapper: di(),
       ),
     );
   }
-  if (!di.isRegistered<UserDirectoryRepository>()) {
-    di.registerLazySingleton<UserDirectoryRepository>(
-      () => UserDirectoryRepositoryImpl(
+  if (!di.isRegistered<UserDirectoryReadRepository>()) {
+    di.registerLazySingleton<UserDirectoryReadRepository>(
+      () => UserDirectoryReadRepositoryImpl(
         remoteDataSource: di(),
         mapper: di(),
         metaMapper: di(),

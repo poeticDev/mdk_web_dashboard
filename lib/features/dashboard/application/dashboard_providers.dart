@@ -7,7 +7,7 @@
 /// DEPENDS ON
 /// - riverpod_annotation
 /// - dashboard_sse_mapper
-/// - foundation_classrooms_repository
+/// - foundation_classrooms_read_repository
 /// - room_state_sse_remote_data_source
 /// - occurrence_now_sse_remote_data_source
 /// - service_locator
@@ -15,7 +15,7 @@ library;
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:web_dashboard/di/service_locator.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_read_repository.dart';
 import 'package:web_dashboard/domains/realtime/data/datasources/occurrence_now_sse_remote_data_source.dart';
 import 'package:web_dashboard/domains/realtime/data/datasources/room_state_sse_remote_data_source.dart';
 import 'package:web_dashboard/features/dashboard/application/mappers/dashboard_sse_mapper.dart';
@@ -28,8 +28,8 @@ DashboardSseMapper dashboardSseMapper(Ref ref) {
 }
 
 @riverpod
-FoundationClassroomsRepository foundationClassroomsRepository(Ref ref) {
-  return di<FoundationClassroomsRepository>();
+FoundationClassroomsReadRepository foundationClassroomsReadRepository(Ref ref) {
+  return di<FoundationClassroomsReadRepository>();
 }
 
 @riverpod

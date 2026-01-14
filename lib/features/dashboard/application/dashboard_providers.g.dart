@@ -57,56 +57,57 @@ final class DashboardSseMapperProvider
 String _$dashboardSseMapperHash() =>
     r'038df2acadb3be2717808633e6c85f12a577e84e';
 
-@ProviderFor(foundationClassroomsRepository)
-const foundationClassroomsRepositoryProvider =
-    FoundationClassroomsRepositoryProvider._();
+@ProviderFor(foundationClassroomsReadRepository)
+const foundationClassroomsReadRepositoryProvider =
+    FoundationClassroomsReadRepositoryProvider._();
 
-final class FoundationClassroomsRepositoryProvider
+final class FoundationClassroomsReadRepositoryProvider
     extends
         $FunctionalProvider<
-          FoundationClassroomsRepository,
-          FoundationClassroomsRepository,
-          FoundationClassroomsRepository
+          FoundationClassroomsReadRepository,
+          FoundationClassroomsReadRepository,
+          FoundationClassroomsReadRepository
         >
-    with $Provider<FoundationClassroomsRepository> {
-  const FoundationClassroomsRepositoryProvider._()
+    with $Provider<FoundationClassroomsReadRepository> {
+  const FoundationClassroomsReadRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'foundationClassroomsRepositoryProvider',
+        name: r'foundationClassroomsReadRepositoryProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$foundationClassroomsRepositoryHash();
+  String debugGetCreateSourceHash() =>
+      _$foundationClassroomsReadRepositoryHash();
 
   @$internal
   @override
-  $ProviderElement<FoundationClassroomsRepository> $createElement(
+  $ProviderElement<FoundationClassroomsReadRepository> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  FoundationClassroomsRepository create(Ref ref) {
-    return foundationClassroomsRepository(ref);
+  FoundationClassroomsReadRepository create(Ref ref) {
+    return foundationClassroomsReadRepository(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(FoundationClassroomsRepository value) {
+  Override overrideWithValue(FoundationClassroomsReadRepository value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<FoundationClassroomsRepository>(
+      providerOverride: $SyncValueProvider<FoundationClassroomsReadRepository>(
         value,
       ),
     );
   }
 }
 
-String _$foundationClassroomsRepositoryHash() =>
-    r'ca76626e995c4b3374403ed04b2c98bf2e86759b';
+String _$foundationClassroomsReadRepositoryHash() =>
+    r'ef18bf89970aaa6a57b1d7b102ca90ed60e7cf1d';
 
 @ProviderFor(roomStateSseRemoteDataSource)
 const roomStateSseRemoteDataSourceProvider =

@@ -3,25 +3,25 @@
 ///
 /// RESPONSIBILITY
 /// - 데이터 소스를 통해 데이터를 조회한다
-/// - 도메인 모델로 변환한다
+/// - 읽기 모델로 변환한다
 ///
 /// DEPENDS ON
 /// - foundation_classrooms_remote_data_source
 /// - foundation_classrooms_request
 /// - foundation_classrooms_mapper
-/// - foundation_classrooms_entity
+/// - foundation_classrooms_read_model
 library;
 
+import 'package:web_dashboard/domains/foundation/application/read_models/foundation_classrooms_read_model.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/foundation_classrooms_remote_data_source.dart';
 import 'package:web_dashboard/domains/foundation/data/dtos/foundation_classrooms_dto.dart';
 import 'package:web_dashboard/domains/foundation/data/dtos/foundation_classrooms_request.dart';
 import 'package:web_dashboard/domains/foundation/data/mappers/foundation_classrooms_mapper.dart';
-import 'package:web_dashboard/domains/foundation/domain/entities/foundation_classrooms_entity.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_read_repository.dart';
 
-class FoundationClassroomsRepositoryImpl
-    implements FoundationClassroomsRepository {
-  FoundationClassroomsRepositoryImpl({
+class FoundationClassroomsReadRepositoryImpl
+    implements FoundationClassroomsReadRepository {
+  FoundationClassroomsReadRepositoryImpl({
     required FoundationClassroomsRemoteDataSource remoteDataSource,
     required FoundationClassroomsMapper mapper,
   })  : _remoteDataSource = remoteDataSource,
@@ -31,7 +31,7 @@ class FoundationClassroomsRepositoryImpl
   final FoundationClassroomsMapper _mapper;
 
   @override
-  Future<FoundationClassroomsEntity> fetchClassrooms(
+  Future<FoundationClassroomsReadModel> fetchClassrooms(
     FoundationClassroomsQuery query,
   ) async {
     final FoundationClassroomsRequest request = FoundationClassroomsRequest(
@@ -40,6 +40,6 @@ class FoundationClassroomsRepositoryImpl
     );
     final FoundationClassroomsResponseDto dto =
         await _remoteDataSource.fetchClassrooms(request);
-    return _mapper.toEntity(dto);
+    return _mapper.toReadModel(dto);
   }
 }

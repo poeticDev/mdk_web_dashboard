@@ -26,14 +26,14 @@ import 'package:web_dashboard/domains/foundation/domain/entities/department_dire
 import 'package:web_dashboard/common/search/entity_search_query.dart';
 import 'package:web_dashboard/common/search/entity_search_result.dart';
 import 'package:web_dashboard/common/search/pagination_meta.dart';
-import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_read_repository.dart';
 
 typedef Clock = DateTime Function();
 
 /// 학과 검색 API + 캐시 전략을 통합한 리포지토리 구현.
-class DepartmentDirectoryRepositoryImpl
-    implements DepartmentDirectoryRepository {
-  DepartmentDirectoryRepositoryImpl({
+class DepartmentDirectoryReadRepositoryImpl
+    implements DepartmentDirectoryReadRepository {
+  DepartmentDirectoryReadRepositoryImpl({
     required DepartmentDirectoryRemoteDataSource remoteDataSource,
     required DepartmentDirectoryMapper mapper,
     required PaginationMetaMapper metaMapper,
