@@ -69,7 +69,6 @@ class _DashboardBody extends StatelessWidget {
           DashboardHeader(
             metrics: state.metrics,
             filters: state.filters,
-            totalFallbackCount: state.cards.length,
             isStreaming: state.isStreaming,
             onQueryChanged: controller.updateQuery,
             onToggleStatus: controller.toggleUsageStatus,

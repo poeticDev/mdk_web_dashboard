@@ -33,7 +33,6 @@ class DashboardHeader extends StatelessWidget {
   const DashboardHeader({
     required this.metrics,
     required this.filters,
-    required this.totalFallbackCount,
     required this.isStreaming,
     required this.onQueryChanged,
     required this.onToggleStatus,
@@ -43,7 +42,6 @@ class DashboardHeader extends StatelessWidget {
 
   final DashboardMetricsViewModel? metrics;
   final DashboardFilterState filters;
-  final int totalFallbackCount;
   final bool isStreaming;
   final ValueChanged<String> onQueryChanged;
   final ValueChanged<DashboardUsageStatus> onToggleStatus;
@@ -56,7 +54,7 @@ class DashboardHeader extends StatelessWidget {
         ? AppColors.dark(ThemeBrand.defaultBrand)
         : AppColors.light(ThemeBrand.defaultBrand);
     final DashboardHeaderCounts counts = _resolveCounts(metrics);
-    final int totalCount = counts.total ?? totalFallbackCount;
+    final int totalCount = counts.total ?? 0;
     final bool isTotalSelected = filters.usageStatuses.isEmpty;
 
     return Column(

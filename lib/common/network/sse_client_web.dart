@@ -30,6 +30,11 @@ class WebSseClient implements SseClient {
   }) {
     close();
     final Uri resolved = _appendLastEventId(url, lastEventId);
+    _log('SSE connect', <String, Object?>{
+      'url': resolved.toString(),
+      'eventTypes': eventTypes,
+      'lastEventId': lastEventId,
+    });
     final web.EventSource eventSource = web.EventSource(
       resolved.toString(),
       web.EventSourceInit(withCredentials: true),
@@ -52,6 +57,7 @@ class WebSseClient implements SseClient {
 
   @override
   void close() {
+    _log('SSE close', null);
     _eventSource?.close();
     _eventSource = null;
     _controller?.close();
@@ -65,6 +71,10 @@ class WebSseClient implements SseClient {
       return;
     }
     final web.MessageEvent message = event as web.MessageEvent;
+    _log('SSE event', <String, Object?>{
+      'type': message.type,
+      'lastEventId': message.lastEventId,
+    });
     _controller?.add(
       SseClientEvent(
         type: message.type,
@@ -78,7 +88,16 @@ class WebSseClient implements SseClient {
     if (_controller == null) {
       return;
     }
+    _log('SSE error', null);
     _controller?.addError(StateError('SSE 연결 오류'));
+  }
+
+  void _log(String message, Map<String, Object?>? payload) {
+    if (payload == null) {
+      print('[SSE] $message');
+      return;
+    }
+    print('[SSE] $message: $payload');
   }
 
   Uri _appendLastEventId(Uri url, String? lastEventId) {
