@@ -59,11 +59,15 @@ class _DashboardSearchFieldState extends State<DashboardSearchField> {
 
   @override
   Widget build(BuildContext context) {
+final ThemeData theme = Theme.of(context);
+
+
     return TextField(
       controller: _controller,
       onChanged: _onChanged,
       decoration: InputDecoration(
-        hintText: widget.hintText,
+        labelText: widget.hintText,
+        labelStyle: theme.textTheme.labelLarge!.copyWith(color: theme.hintColor),
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _controller.text.isEmpty
             ? null

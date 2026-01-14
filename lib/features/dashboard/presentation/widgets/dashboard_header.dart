@@ -24,7 +24,8 @@ const Duration _clockTick = Duration(seconds: 1);
 const Duration _kstOffset = Duration(hours: 9);
 const double _headerGap = 16;
 const double _metricMinWidth = 180;
-const double _searchMinWidth = 240;
+const double _searchMinWidth = _metricMinWidth;
+const double _searchMaxWidth = 240;
 const double _clockMinWidth = 260;
 const double _headerCardRadius = 18;
 const double _headerCardPadding = 18;
@@ -82,7 +83,10 @@ class DashboardHeader extends StatelessWidget {
               onClearStatusFilters: onClearStatusFilters,
             ),
             ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: _searchMinWidth),
+              constraints: const BoxConstraints(
+                minWidth: _searchMinWidth,
+                maxWidth: _searchMaxWidth,
+              ),
               child: DashboardSearchField(
                 initialValue: filters.query,
                 onQueryChanged: onQueryChanged,
