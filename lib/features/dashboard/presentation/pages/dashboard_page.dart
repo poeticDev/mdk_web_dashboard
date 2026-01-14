@@ -7,7 +7,7 @@ import 'package:web_dashboard/features/dashboard/application/dashboard_controlle
 import 'package:web_dashboard/features/dashboard/application/state/dashboard_state.dart';
 import 'package:web_dashboard/features/dashboard/presentation/widgets/dashboard_classroom_card.dart';
 import 'package:web_dashboard/features/dashboard/presentation/widgets/dashboard_empty_state.dart';
-import 'package:web_dashboard/features/dashboard/presentation/widgets/dashboard_header.dart';
+import 'package:web_dashboard/features/dashboard/presentation/widgets/header/dashboard_header.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_classroom_card_view_model.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
 
