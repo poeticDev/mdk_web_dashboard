@@ -1,6 +1,7 @@
 // 대시보드 화면을 구성한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:web_dashboard/common/app_bar/common_app_bar.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/features/dashboard/application/dashboard_controller.dart';
@@ -10,6 +11,7 @@ import 'package:web_dashboard/features/dashboard/presentation/widgets/dashboard_
 import 'package:web_dashboard/features/dashboard/presentation/widgets/header/dashboard_header.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_classroom_card_view_model.dart';
 import 'package:web_dashboard/routes/page_meta.dart';
+import 'package:web_dashboard/routes/route_paths.dart';
 
 const double _gridSpacing = 20;
 const double _headerBottomSpacing = 24;
@@ -129,7 +131,13 @@ class _DashboardGrid extends StatelessWidget {
     BuildContext context,
     DashboardClassroomCardViewModel card,
   ) {
-    // TODO: classroom_detail 라우팅 연결
+    if (card.id.isEmpty) {
+      return;
+    }
+    context.pushNamed(
+      RouteNames.classroomDetail,
+      pathParameters: <String, String>{'roomId': card.id},
+    );
   }
 }
 
