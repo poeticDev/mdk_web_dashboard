@@ -71,8 +71,9 @@ class _DashboardBody extends StatelessWidget {
             filters: state.filters,
             isStreaming: state.isStreaming,
             onQueryChanged: controller.updateQuery,
-            onToggleStatus: controller.toggleUsageStatus,
-            onClearUsageFilters: controller.clearUsageFilters,
+            onToggleActivityStatus: controller.toggleActivityStatus,
+            onToggleLinkStatus: controller.toggleLinkStatus,
+            onClearStatusFilters: controller.clearStatusFilters,
           ),
           const SizedBox(height: _headerBottomSpacing),
           if (state.cards.isEmpty && !state.isLoading)

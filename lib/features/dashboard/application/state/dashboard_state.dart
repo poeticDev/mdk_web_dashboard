@@ -12,7 +12,7 @@ library;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_classroom_card_view_model.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_metrics_view_model.dart';
-import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_usage_status.dart';
+import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_status.dart';
 
 part 'dashboard_state.freezed.dart';
 
@@ -24,8 +24,8 @@ abstract class DashboardFilterState with _$DashboardFilterState {
 
   const factory DashboardFilterState({
     @Default(_emptyQuery) String query,
-    @Default(<DashboardUsageStatus>{})
-    Set<DashboardUsageStatus> usageStatuses,
+    DashboardActivityStatus? activityStatus,
+    DashboardLinkStatus? linkStatus,
     @Default(<String>{}) Set<String> departmentIds,
     @Default(<String>{}) Set<String> buildingIds,
   }) = _DashboardFilterState;

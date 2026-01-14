@@ -17,7 +17,7 @@ import 'package:web_dashboard/domains/realtime/data/dtos/room_state_sse_dto.dart
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_classroom_card_view_model.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_metrics_view_model.dart';
-import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_usage_status.dart';
+import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_status.dart';
 
 const String _presenceSensorKey = 'presence';
 const String _powerEquipmentKey = 'power';
@@ -86,21 +86,27 @@ class DashboardSseMapper {
     );
   }
 
-  DashboardUsageStatus resolveUsageStatus({
+  DashboardLinkStatus resolveLinkStatus({
     required bool hasRoomStateSnapshot,
     required DashboardRoomStateViewModel? roomState,
-    required DashboardCurrentLectureViewModel? currentLecture,
   }) {
     if (!hasRoomStateSnapshot || roomState == null) {
-      return DashboardUsageStatus.unlinked;
+      return DashboardLinkStatus.unlinked;
     }
     if (roomState.status.isStale) {
-      return DashboardUsageStatus.unlinked;
+      return DashboardLinkStatus.unlinked;
     }
+    return DashboardLinkStatus.linked;
+  }
+
+  DashboardActivityStatus? resolveActivityStatus({
+    required DashboardLinkStatus linkStatus,
+    required DashboardCurrentLectureViewModel? currentLecture,
+  }) {
     if (currentLecture == null || currentLecture.isCanceled) {
-      return DashboardUsageStatus.idle;
+      return DashboardActivityStatus.idle;
     }
-    return DashboardUsageStatus.inUse;
+    return DashboardActivityStatus.inUse;
   }
 
   DashboardRoomStateStatusViewModel _mapRoomStateStatus(

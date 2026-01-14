@@ -36,7 +36,7 @@ import 'package:web_dashboard/features/dashboard/application/mappers/dashboard_s
 import 'package:web_dashboard/features/dashboard/application/state/dashboard_state.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_classroom_card_view_model.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_metrics_view_model.dart';
-import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_usage_status.dart';
+import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_status.dart';
 
 part 'dashboard_controller.g.dart';
 
@@ -134,22 +134,26 @@ class DashboardController extends _$DashboardController {
     _updateFilters(state.filters.copyWith(query: query));
   }
 
-  void clearUsageFilters() {
+  void clearStatusFilters() {
     _updateFilters(
-      state.filters.copyWith(usageStatuses: <DashboardUsageStatus>{}),
+      state.filters.copyWith(activityStatus: null, linkStatus: null),
     );
   }
 
-  void toggleUsageStatus(DashboardUsageStatus status) {
-    final Set<DashboardUsageStatus> next = Set<DashboardUsageStatus>.from(
-      state.filters.usageStatuses,
+  void toggleActivityStatus(DashboardActivityStatus status) {
+    final DashboardActivityStatus? next =
+        state.filters.activityStatus == status ? null : status;
+    _updateFilters(
+      state.filters.copyWith(activityStatus: next, linkStatus: null),
     );
-    if (next.contains(status)) {
-      next.remove(status);
-    } else {
-      next.add(status);
-    }
-    _updateFilters(state.filters.copyWith(usageStatuses: next));
+  }
+
+  void toggleLinkStatus(DashboardLinkStatus status) {
+    final DashboardLinkStatus? next =
+        state.filters.linkStatus == status ? null : status;
+    _updateFilters(
+      state.filters.copyWith(linkStatus: next, activityStatus: null),
+    );
   }
 
   void updateBuildingFilters(Set<String> buildingIds) {
@@ -175,7 +179,7 @@ class DashboardController extends _$DashboardController {
       );
     }
     _updateMetricsFromRoomState(payload.occupancySummary);
-    _refreshUsageStatuses();
+    _refreshStatuses();
     _emitFilteredState(state.filters);
   }
 
@@ -191,7 +195,7 @@ class DashboardController extends _$DashboardController {
       _cardsById[update.classroomId] = _withRoomState(current, merged);
     }
     _updateMetricsFromRoomState(payload.occupancySummary);
-    _refreshUsageStatuses();
+    _refreshStatuses();
     _emitFilteredState(state.filters);
   }
 
@@ -200,7 +204,7 @@ class DashboardController extends _$DashboardController {
     _clearMissingCurrents(currentIds);
     _applyCurrentLectures(payload.currents);
     _updateMetricsFromSchedule(payload.scheduleSummary);
-    _refreshUsageStatuses();
+    _refreshStatuses();
     _emitFilteredState(state.filters);
   }
 
@@ -219,7 +223,7 @@ class DashboardController extends _$DashboardController {
       );
     }
     _updateMetricsFromSchedule(payload.scheduleSummary);
-    _refreshUsageStatuses();
+    _refreshStatuses();
     _emitFilteredState(state.filters);
   }
 
@@ -411,7 +415,8 @@ class DashboardController extends _$DashboardController {
       departmentId: classroom.department?.id,
       departmentName: classroom.department?.name,
       departmentCode: classroom.department?.code,
-      usageStatus: DashboardUsageStatus.unlinked,
+      linkStatus: DashboardLinkStatus.unlinked,
+      activityStatus: null,
     );
   }
 
@@ -502,18 +507,22 @@ class DashboardController extends _$DashboardController {
     return current?.timestamp ?? DateTime.now();
   }
 
-  void _refreshUsageStatuses() {
+  void _refreshStatuses() {
     for (final String id in _cardOrder) {
       final DashboardClassroomCardViewModel? card = _cardsById[id];
       if (card == null) {
         continue;
       }
-      final DashboardUsageStatus status = _mapper.resolveUsageStatus(
+      final DashboardLinkStatus linkStatus = _mapper.resolveLinkStatus(
         hasRoomStateSnapshot: _roomStateSnapshotIds.contains(id),
         roomState: card.roomState,
+      );
+      final DashboardActivityStatus? activityStatus =
+          _mapper.resolveActivityStatus(
+        linkStatus: linkStatus,
         currentLecture: card.currentLecture,
       );
-      _cardsById[id] = _withUsageStatus(card, status);
+      _cardsById[id] = _withStatuses(card, linkStatus, activityStatus);
     }
   }
   List<DashboardClassroomCardViewModel> _orderedCards() {
@@ -531,7 +540,10 @@ class DashboardController extends _$DashboardController {
       if (!_matchesQuery(card, filters.query)) {
         return false;
       }
-      if (!_matchesUsageStatus(card, filters.usageStatuses)) {
+      if (!_matchesActivityStatus(card, filters.activityStatus)) {
+        return false;
+      }
+      if (!_matchesLinkStatus(card, filters.linkStatus)) {
         return false;
       }
       if (!_matchesIdFilter(card.buildingId, filters.buildingIds)) {
@@ -564,14 +576,24 @@ class DashboardController extends _$DashboardController {
     return value.toLowerCase().contains(keyword);
   }
 
-  bool _matchesUsageStatus(
+  bool _matchesActivityStatus(
     DashboardClassroomCardViewModel card,
-    Set<DashboardUsageStatus> statuses,
+    DashboardActivityStatus? status,
   ) {
-    if (statuses.isEmpty) {
+    if (status == null) {
       return true;
     }
-    return statuses.contains(card.usageStatus);
+    return card.activityStatus == status;
+  }
+
+  bool _matchesLinkStatus(
+    DashboardClassroomCardViewModel card,
+    DashboardLinkStatus? status,
+  ) {
+    if (status == null) {
+      return true;
+    }
+    return card.linkStatus == status;
   }
 
   bool _matchesIdFilter(String? id, Set<String> filters) {
@@ -587,7 +609,11 @@ class DashboardController extends _$DashboardController {
   DashboardClassroomCardViewModel _normalizeInitialCard(
     DashboardClassroomCardViewModel card,
   ) {
-    return _cloneCard(card, usageStatus: DashboardUsageStatus.unlinked);
+    return _cloneCard(
+      card,
+      linkStatus: DashboardLinkStatus.unlinked,
+      activityStatus: null,
+    );
   }
 
   DashboardClassroomCardViewModel _withRoomState(
@@ -600,14 +626,21 @@ class DashboardController extends _$DashboardController {
     DashboardCurrentLectureViewModel? currentLecture,
   ) => _cloneCard(card, currentLecture: currentLecture);
 
-  DashboardClassroomCardViewModel _withUsageStatus(
+  DashboardClassroomCardViewModel _withStatuses(
     DashboardClassroomCardViewModel card,
-    DashboardUsageStatus usageStatus,
-  ) => _cloneCard(card, usageStatus: usageStatus);
+    DashboardLinkStatus linkStatus,
+    DashboardActivityStatus? activityStatus,
+  ) =>
+      _cloneCard(
+        card,
+        linkStatus: linkStatus,
+        activityStatus: activityStatus,
+      );
 
   DashboardClassroomCardViewModel _cloneCard(
     DashboardClassroomCardViewModel card, {
-    DashboardUsageStatus? usageStatus,
+    DashboardLinkStatus? linkStatus,
+    DashboardActivityStatus? activityStatus,
     DashboardCurrentLectureViewModel? currentLecture,
     DashboardRoomStateViewModel? roomState,
   }) =>
@@ -622,7 +655,8 @@ class DashboardController extends _$DashboardController {
         departmentId: card.departmentId,
         departmentName: card.departmentName,
         departmentCode: card.departmentCode,
-        usageStatus: usageStatus ?? card.usageStatus,
+        linkStatus: linkStatus ?? card.linkStatus,
+        activityStatus: activityStatus ?? card.activityStatus,
         currentLecture: currentLecture ?? card.currentLecture,
         roomState: roomState ?? card.roomState,
       );
@@ -691,7 +725,8 @@ class DashboardController extends _$DashboardController {
     return DashboardClassroomCardViewModel(
       id: id,
       name: id,
-      usageStatus: DashboardUsageStatus.unlinked,
+      linkStatus: DashboardLinkStatus.unlinked,
+      activityStatus: null,
       roomState: roomState,
     );
   }

@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_classroom_card_view_model.dart';
-import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_usage_status.dart';
+import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_status.dart';
 
 const double _cardRadius = 20;
 const double _cardPadding = 16;
@@ -65,7 +65,7 @@ class DashboardClassroomCard extends StatelessWidget {
                 palette: palette,
                 isOccupied: viewModel.roomState?.isOccupied,
                 isEquipmentOn: viewModel.roomState?.isEquipmentOn,
-                statusLabel: _resolveStatusLabel(viewModel.usageStatus),
+                statusLabel: _resolveStatusLabel(viewModel),
               ),
               const SizedBox(height: _sectionSpacing),
               Text(
@@ -244,8 +244,17 @@ DashboardStatusPalette _resolvePalette(
   DashboardClassroomCardViewModel viewModel,
   AppColors colors,
 ) {
-  switch (viewModel.usageStatus) {
-    case DashboardUsageStatus.inUse:
+  if (viewModel.linkStatus == DashboardLinkStatus.unlinked) {
+    return DashboardStatusPalette(
+      badgeColor: colors.warning,
+      occupancyColor: colors.warning,
+      equipmentColor: colors.warning,
+      background: colors.surface,
+      titleColor: colors.textPrimary,
+    );
+  }
+  switch (viewModel.activityStatus) {
+    case DashboardActivityStatus.inUse:
       return DashboardStatusPalette(
         badgeColor: colors.success,
         occupancyColor: colors.success,
@@ -253,7 +262,8 @@ DashboardStatusPalette _resolvePalette(
         background: colors.surface,
         titleColor: colors.textPrimary,
       );
-    case DashboardUsageStatus.idle:
+    case DashboardActivityStatus.idle:
+    default:
       return DashboardStatusPalette(
         badgeColor: colors.textSecondary,
         occupancyColor: colors.textSecondary,
@@ -261,25 +271,19 @@ DashboardStatusPalette _resolvePalette(
         background: colors.surfaceElevated,
         titleColor: colors.textPrimary,
       );
-    case DashboardUsageStatus.unlinked:
-      return DashboardStatusPalette(
-        badgeColor: colors.warning,
-        occupancyColor: colors.warning,
-        equipmentColor: colors.warning,
-        background: colors.surface,
-        titleColor: colors.textPrimary,
-      );
   }
 }
 
-String _resolveStatusLabel(DashboardUsageStatus status) {
-  switch (status) {
-    case DashboardUsageStatus.inUse:
+String _resolveStatusLabel(DashboardClassroomCardViewModel viewModel) {
+  if (viewModel.linkStatus == DashboardLinkStatus.unlinked) {
+    return '미연동';
+  }
+  switch (viewModel.activityStatus) {
+    case DashboardActivityStatus.inUse:
       return '사용 중';
-    case DashboardUsageStatus.idle:
+    case DashboardActivityStatus.idle:
+    default:
       return '미사용';
-    case DashboardUsageStatus.unlinked:
-      return '미연동';
   }
 }
 

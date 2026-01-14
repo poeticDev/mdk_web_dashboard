@@ -17,7 +17,7 @@ import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/features/dashboard/presentation/widgets/dashboard_metric_card.dart';
 import 'package:web_dashboard/features/dashboard/presentation/widgets/dashboard_search_field.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_metrics_view_model.dart';
-import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_usage_status.dart';
+import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_status.dart';
 import 'package:web_dashboard/features/dashboard/application/state/dashboard_state.dart';
 
 const Duration _clockTick = Duration(seconds: 1);
@@ -35,8 +35,9 @@ class DashboardHeader extends StatelessWidget {
     required this.filters,
     required this.isStreaming,
     required this.onQueryChanged,
-    required this.onToggleStatus,
-    required this.onClearUsageFilters,
+    required this.onToggleActivityStatus,
+    required this.onToggleLinkStatus,
+    required this.onClearStatusFilters,
     super.key,
   });
 
@@ -44,8 +45,9 @@ class DashboardHeader extends StatelessWidget {
   final DashboardFilterState filters;
   final bool isStreaming;
   final ValueChanged<String> onQueryChanged;
-  final ValueChanged<DashboardUsageStatus> onToggleStatus;
-  final VoidCallback onClearUsageFilters;
+  final ValueChanged<DashboardActivityStatus> onToggleActivityStatus;
+  final ValueChanged<DashboardLinkStatus> onToggleLinkStatus;
+  final VoidCallback onClearStatusFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,8 @@ class DashboardHeader extends StatelessWidget {
         : AppColors.light(ThemeBrand.defaultBrand);
     final DashboardHeaderCounts counts = _resolveCounts(metrics);
     final int totalCount = counts.total ?? 0;
-    final bool isTotalSelected = filters.usageStatuses.isEmpty;
+    final bool isTotalSelected =
+        filters.activityStatus == null && filters.linkStatus == null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,8 +77,9 @@ class DashboardHeader extends StatelessWidget {
               isTotalSelected: isTotalSelected,
               filters: filters,
               colors: colors,
-              onToggleStatus: onToggleStatus,
-              onClearUsageFilters: onClearUsageFilters,
+              onToggleActivityStatus: onToggleActivityStatus,
+              onToggleLinkStatus: onToggleLinkStatus,
+              onClearStatusFilters: onClearStatusFilters,
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(minWidth: _searchMinWidth),
@@ -101,8 +105,9 @@ class _MetricGroup extends StatelessWidget {
     required this.isTotalSelected,
     required this.filters,
     required this.colors,
-    required this.onToggleStatus,
-    required this.onClearUsageFilters,
+    required this.onToggleActivityStatus,
+    required this.onToggleLinkStatus,
+    required this.onClearStatusFilters,
   });
 
   final int totalCount;
@@ -112,8 +117,9 @@ class _MetricGroup extends StatelessWidget {
   final bool isTotalSelected;
   final DashboardFilterState filters;
   final AppColors colors;
-  final ValueChanged<DashboardUsageStatus> onToggleStatus;
-  final VoidCallback onClearUsageFilters;
+  final ValueChanged<DashboardActivityStatus> onToggleActivityStatus;
+  final ValueChanged<DashboardLinkStatus> onToggleLinkStatus;
+  final VoidCallback onClearStatusFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +134,7 @@ class _MetricGroup extends StatelessWidget {
             value: totalCount,
             isSelected: isTotalSelected,
             accentColor: colors.primaryVariant,
-            onTap: onClearUsageFilters,
+            onTap: onClearStatusFilters,
           ),
         ),
         ConstrainedBox(
@@ -136,11 +142,9 @@ class _MetricGroup extends StatelessWidget {
           child: DashboardMetricCard(
             label: '사용 중',
             value: inUseCount,
-            isSelected: filters.usageStatuses.contains(
-              DashboardUsageStatus.inUse,
-            ),
+            isSelected: filters.activityStatus == DashboardActivityStatus.inUse,
             accentColor: colors.success,
-            onTap: () => onToggleStatus(DashboardUsageStatus.inUse),
+            onTap: () => onToggleActivityStatus(DashboardActivityStatus.inUse),
           ),
         ),
         ConstrainedBox(
@@ -148,11 +152,9 @@ class _MetricGroup extends StatelessWidget {
           child: DashboardMetricCard(
             label: '미사용',
             value: idleCount,
-            isSelected: filters.usageStatuses.contains(
-              DashboardUsageStatus.idle,
-            ),
+            isSelected: filters.activityStatus == DashboardActivityStatus.idle,
             accentColor: colors.textSecondary,
-            onTap: () => onToggleStatus(DashboardUsageStatus.idle),
+            onTap: () => onToggleActivityStatus(DashboardActivityStatus.idle),
           ),
         ),
         ConstrainedBox(
@@ -160,11 +162,9 @@ class _MetricGroup extends StatelessWidget {
           child: DashboardMetricCard(
             label: '미연동',
             value: unlinkedCount,
-            isSelected: filters.usageStatuses.contains(
-              DashboardUsageStatus.unlinked,
-            ),
+            isSelected: filters.linkStatus == DashboardLinkStatus.unlinked,
             accentColor: colors.warning,
-            onTap: () => onToggleStatus(DashboardUsageStatus.unlinked),
+            onTap: () => onToggleLinkStatus(DashboardLinkStatus.unlinked),
           ),
         ),
       ],

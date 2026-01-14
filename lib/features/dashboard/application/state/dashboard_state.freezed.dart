@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DashboardFilterState {
 
- String get query; Set<DashboardUsageStatus> get usageStatuses; Set<String> get departmentIds; Set<String> get buildingIds;
+ String get query; DashboardActivityStatus? get activityStatus; DashboardLinkStatus? get linkStatus; Set<String> get departmentIds; Set<String> get buildingIds;
 /// Create a copy of DashboardFilterState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $DashboardFilterStateCopyWith<DashboardFilterState> get copyWith => _$DashboardF
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardFilterState&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other.usageStatuses, usageStatuses)&&const DeepCollectionEquality().equals(other.departmentIds, departmentIds)&&const DeepCollectionEquality().equals(other.buildingIds, buildingIds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardFilterState&&(identical(other.query, query) || other.query == query)&&(identical(other.activityStatus, activityStatus) || other.activityStatus == activityStatus)&&(identical(other.linkStatus, linkStatus) || other.linkStatus == linkStatus)&&const DeepCollectionEquality().equals(other.departmentIds, departmentIds)&&const DeepCollectionEquality().equals(other.buildingIds, buildingIds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,query,const DeepCollectionEquality().hash(usageStatuses),const DeepCollectionEquality().hash(departmentIds),const DeepCollectionEquality().hash(buildingIds));
+int get hashCode => Object.hash(runtimeType,query,activityStatus,linkStatus,const DeepCollectionEquality().hash(departmentIds),const DeepCollectionEquality().hash(buildingIds));
 
 @override
 String toString() {
-  return 'DashboardFilterState(query: $query, usageStatuses: $usageStatuses, departmentIds: $departmentIds, buildingIds: $buildingIds)';
+  return 'DashboardFilterState(query: $query, activityStatus: $activityStatus, linkStatus: $linkStatus, departmentIds: $departmentIds, buildingIds: $buildingIds)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $DashboardFilterStateCopyWith<$Res>  {
   factory $DashboardFilterStateCopyWith(DashboardFilterState value, $Res Function(DashboardFilterState) _then) = _$DashboardFilterStateCopyWithImpl;
 @useResult
 $Res call({
- String query, Set<DashboardUsageStatus> usageStatuses, Set<String> departmentIds, Set<String> buildingIds
+ String query, DashboardActivityStatus? activityStatus, DashboardLinkStatus? linkStatus, Set<String> departmentIds, Set<String> buildingIds
 });
 
 
@@ -62,11 +62,12 @@ class _$DashboardFilterStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardFilterState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? query = null,Object? usageStatuses = null,Object? departmentIds = null,Object? buildingIds = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? query = null,Object? activityStatus = freezed,Object? linkStatus = freezed,Object? departmentIds = null,Object? buildingIds = null,}) {
   return _then(_self.copyWith(
 query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
-as String,usageStatuses: null == usageStatuses ? _self.usageStatuses : usageStatuses // ignore: cast_nullable_to_non_nullable
-as Set<DashboardUsageStatus>,departmentIds: null == departmentIds ? _self.departmentIds : departmentIds // ignore: cast_nullable_to_non_nullable
+as String,activityStatus: freezed == activityStatus ? _self.activityStatus : activityStatus // ignore: cast_nullable_to_non_nullable
+as DashboardActivityStatus?,linkStatus: freezed == linkStatus ? _self.linkStatus : linkStatus // ignore: cast_nullable_to_non_nullable
+as DashboardLinkStatus?,departmentIds: null == departmentIds ? _self.departmentIds : departmentIds // ignore: cast_nullable_to_non_nullable
 as Set<String>,buildingIds: null == buildingIds ? _self.buildingIds : buildingIds // ignore: cast_nullable_to_non_nullable
 as Set<String>,
   ));
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  Set<DashboardUsageStatus> usageStatuses,  Set<String> departmentIds,  Set<String> buildingIds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  DashboardActivityStatus? activityStatus,  DashboardLinkStatus? linkStatus,  Set<String> departmentIds,  Set<String> buildingIds)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardFilterState() when $default != null:
-return $default(_that.query,_that.usageStatuses,_that.departmentIds,_that.buildingIds);case _:
+return $default(_that.query,_that.activityStatus,_that.linkStatus,_that.departmentIds,_that.buildingIds);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.query,_that.usageStatuses,_that.departmentIds,_that.buildi
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  Set<DashboardUsageStatus> usageStatuses,  Set<String> departmentIds,  Set<String> buildingIds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  DashboardActivityStatus? activityStatus,  DashboardLinkStatus? linkStatus,  Set<String> departmentIds,  Set<String> buildingIds)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardFilterState():
-return $default(_that.query,_that.usageStatuses,_that.departmentIds,_that.buildingIds);case _:
+return $default(_that.query,_that.activityStatus,_that.linkStatus,_that.departmentIds,_that.buildingIds);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.query,_that.usageStatuses,_that.departmentIds,_that.buildi
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  Set<DashboardUsageStatus> usageStatuses,  Set<String> departmentIds,  Set<String> buildingIds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  DashboardActivityStatus? activityStatus,  DashboardLinkStatus? linkStatus,  Set<String> departmentIds,  Set<String> buildingIds)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardFilterState() when $default != null:
-return $default(_that.query,_that.usageStatuses,_that.departmentIds,_that.buildingIds);case _:
+return $default(_that.query,_that.activityStatus,_that.linkStatus,_that.departmentIds,_that.buildingIds);case _:
   return null;
 
 }
@@ -209,17 +210,12 @@ return $default(_that.query,_that.usageStatuses,_that.departmentIds,_that.buildi
 
 
 class _DashboardFilterState extends DashboardFilterState {
-  const _DashboardFilterState({this.query = _emptyQuery, final  Set<DashboardUsageStatus> usageStatuses = const <DashboardUsageStatus>{}, final  Set<String> departmentIds = const <String>{}, final  Set<String> buildingIds = const <String>{}}): _usageStatuses = usageStatuses,_departmentIds = departmentIds,_buildingIds = buildingIds,super._();
+  const _DashboardFilterState({this.query = _emptyQuery, this.activityStatus, this.linkStatus, final  Set<String> departmentIds = const <String>{}, final  Set<String> buildingIds = const <String>{}}): _departmentIds = departmentIds,_buildingIds = buildingIds,super._();
   
 
 @override@JsonKey() final  String query;
- final  Set<DashboardUsageStatus> _usageStatuses;
-@override@JsonKey() Set<DashboardUsageStatus> get usageStatuses {
-  if (_usageStatuses is EqualUnmodifiableSetView) return _usageStatuses;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableSetView(_usageStatuses);
-}
-
+@override final  DashboardActivityStatus? activityStatus;
+@override final  DashboardLinkStatus? linkStatus;
  final  Set<String> _departmentIds;
 @override@JsonKey() Set<String> get departmentIds {
   if (_departmentIds is EqualUnmodifiableSetView) return _departmentIds;
@@ -245,16 +241,16 @@ _$DashboardFilterStateCopyWith<_DashboardFilterState> get copyWith => __$Dashboa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardFilterState&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other._usageStatuses, _usageStatuses)&&const DeepCollectionEquality().equals(other._departmentIds, _departmentIds)&&const DeepCollectionEquality().equals(other._buildingIds, _buildingIds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardFilterState&&(identical(other.query, query) || other.query == query)&&(identical(other.activityStatus, activityStatus) || other.activityStatus == activityStatus)&&(identical(other.linkStatus, linkStatus) || other.linkStatus == linkStatus)&&const DeepCollectionEquality().equals(other._departmentIds, _departmentIds)&&const DeepCollectionEquality().equals(other._buildingIds, _buildingIds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,query,const DeepCollectionEquality().hash(_usageStatuses),const DeepCollectionEquality().hash(_departmentIds),const DeepCollectionEquality().hash(_buildingIds));
+int get hashCode => Object.hash(runtimeType,query,activityStatus,linkStatus,const DeepCollectionEquality().hash(_departmentIds),const DeepCollectionEquality().hash(_buildingIds));
 
 @override
 String toString() {
-  return 'DashboardFilterState(query: $query, usageStatuses: $usageStatuses, departmentIds: $departmentIds, buildingIds: $buildingIds)';
+  return 'DashboardFilterState(query: $query, activityStatus: $activityStatus, linkStatus: $linkStatus, departmentIds: $departmentIds, buildingIds: $buildingIds)';
 }
 
 
@@ -265,7 +261,7 @@ abstract mixin class _$DashboardFilterStateCopyWith<$Res> implements $DashboardF
   factory _$DashboardFilterStateCopyWith(_DashboardFilterState value, $Res Function(_DashboardFilterState) _then) = __$DashboardFilterStateCopyWithImpl;
 @override @useResult
 $Res call({
- String query, Set<DashboardUsageStatus> usageStatuses, Set<String> departmentIds, Set<String> buildingIds
+ String query, DashboardActivityStatus? activityStatus, DashboardLinkStatus? linkStatus, Set<String> departmentIds, Set<String> buildingIds
 });
 
 
@@ -282,11 +278,12 @@ class __$DashboardFilterStateCopyWithImpl<$Res>
 
 /// Create a copy of DashboardFilterState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? query = null,Object? usageStatuses = null,Object? departmentIds = null,Object? buildingIds = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? query = null,Object? activityStatus = freezed,Object? linkStatus = freezed,Object? departmentIds = null,Object? buildingIds = null,}) {
   return _then(_DashboardFilterState(
 query: null == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
-as String,usageStatuses: null == usageStatuses ? _self._usageStatuses : usageStatuses // ignore: cast_nullable_to_non_nullable
-as Set<DashboardUsageStatus>,departmentIds: null == departmentIds ? _self._departmentIds : departmentIds // ignore: cast_nullable_to_non_nullable
+as String,activityStatus: freezed == activityStatus ? _self.activityStatus : activityStatus // ignore: cast_nullable_to_non_nullable
+as DashboardActivityStatus?,linkStatus: freezed == linkStatus ? _self.linkStatus : linkStatus // ignore: cast_nullable_to_non_nullable
+as DashboardLinkStatus?,departmentIds: null == departmentIds ? _self._departmentIds : departmentIds // ignore: cast_nullable_to_non_nullable
 as Set<String>,buildingIds: null == buildingIds ? _self._buildingIds : buildingIds // ignore: cast_nullable_to_non_nullable
 as Set<String>,
   ));

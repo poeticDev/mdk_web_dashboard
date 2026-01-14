@@ -6,19 +6,19 @@
 ///
 /// DEPENDS ON
 /// - lecture_status
-/// - dashboard_usage_status
+/// - dashboard_status
 library;
 
 import 'package:flutter/foundation.dart';
 import 'package:web_dashboard/domains/schedule/domain/entities/lecture_status.dart';
-import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_usage_status.dart';
+import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_status.dart';
 
 @immutable
 class DashboardClassroomCardViewModel {
   const DashboardClassroomCardViewModel({
     required this.id,
     required this.name,
-    required this.usageStatus,
+    required this.linkStatus,
     this.code,
     this.siteId,
     this.buildingId,
@@ -27,6 +27,7 @@ class DashboardClassroomCardViewModel {
     this.departmentId,
     this.departmentName,
     this.departmentCode,
+    this.activityStatus,
     this.currentLecture,
     this.roomState,
   });
@@ -41,7 +42,8 @@ class DashboardClassroomCardViewModel {
   final String? departmentId;
   final String? departmentName;
   final String? departmentCode;
-  final DashboardUsageStatus usageStatus;
+  final DashboardLinkStatus linkStatus;
+  final DashboardActivityStatus? activityStatus;
   final DashboardCurrentLectureViewModel? currentLecture;
   final DashboardRoomStateViewModel? roomState;
 }
