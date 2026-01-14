@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthUser {
 
- String get id; String get username; String? get displayName; List<UserRole> get roles;
+ String get id; String get username; String? get displayName; String? get siteId; String? get buildingId; String? get departmentId; List<UserRole> get roles;
 /// Create a copy of AuthUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AuthUserCopyWith<AuthUser> get copyWith => _$AuthUserCopyWithImpl<AuthUser>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&const DeepCollectionEquality().equals(other.roles, roles));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.siteId, siteId) || other.siteId == siteId)&&(identical(other.buildingId, buildingId) || other.buildingId == buildingId)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&const DeepCollectionEquality().equals(other.roles, roles));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,username,displayName,const DeepCollectionEquality().hash(roles));
+int get hashCode => Object.hash(runtimeType,id,username,displayName,siteId,buildingId,departmentId,const DeepCollectionEquality().hash(roles));
 
 @override
 String toString() {
-  return 'AuthUser(id: $id, username: $username, displayName: $displayName, roles: $roles)';
+  return 'AuthUser(id: $id, username: $username, displayName: $displayName, siteId: $siteId, buildingId: $buildingId, departmentId: $departmentId, roles: $roles)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AuthUserCopyWith<$Res>  {
   factory $AuthUserCopyWith(AuthUser value, $Res Function(AuthUser) _then) = _$AuthUserCopyWithImpl;
 @useResult
 $Res call({
- String id, String username, String? displayName, List<UserRole> roles
+ String id, String username, String? displayName, String? siteId, String? buildingId, String? departmentId, List<UserRole> roles
 });
 
 
@@ -65,11 +65,14 @@ class _$AuthUserCopyWithImpl<$Res>
 
 /// Create a copy of AuthUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? username = null,Object? displayName = freezed,Object? roles = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? username = null,Object? displayName = freezed,Object? siteId = freezed,Object? buildingId = freezed,Object? departmentId = freezed,Object? roles = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String?,siteId: freezed == siteId ? _self.siteId : siteId // ignore: cast_nullable_to_non_nullable
+as String?,buildingId: freezed == buildingId ? _self.buildingId : buildingId // ignore: cast_nullable_to_non_nullable
+as String?,departmentId: freezed == departmentId ? _self.departmentId : departmentId // ignore: cast_nullable_to_non_nullable
 as String?,roles: null == roles ? _self.roles : roles // ignore: cast_nullable_to_non_nullable
 as List<UserRole>,
   ));
@@ -156,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String username,  String? displayName,  List<UserRole> roles)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String username,  String? displayName,  String? siteId,  String? buildingId,  String? departmentId,  List<UserRole> roles)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthUser() when $default != null:
-return $default(_that.id,_that.username,_that.displayName,_that.roles);case _:
+return $default(_that.id,_that.username,_that.displayName,_that.siteId,_that.buildingId,_that.departmentId,_that.roles);case _:
   return orElse();
 
 }
@@ -177,10 +180,10 @@ return $default(_that.id,_that.username,_that.displayName,_that.roles);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String username,  String? displayName,  List<UserRole> roles)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String username,  String? displayName,  String? siteId,  String? buildingId,  String? departmentId,  List<UserRole> roles)  $default,) {final _that = this;
 switch (_that) {
 case _AuthUser():
-return $default(_that.id,_that.username,_that.displayName,_that.roles);case _:
+return $default(_that.id,_that.username,_that.displayName,_that.siteId,_that.buildingId,_that.departmentId,_that.roles);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +200,10 @@ return $default(_that.id,_that.username,_that.displayName,_that.roles);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String username,  String? displayName,  List<UserRole> roles)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String username,  String? displayName,  String? siteId,  String? buildingId,  String? departmentId,  List<UserRole> roles)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthUser() when $default != null:
-return $default(_that.id,_that.username,_that.displayName,_that.roles);case _:
+return $default(_that.id,_that.username,_that.displayName,_that.siteId,_that.buildingId,_that.departmentId,_that.roles);case _:
   return null;
 
 }
@@ -212,12 +215,15 @@ return $default(_that.id,_that.username,_that.displayName,_that.roles);case _:
 @JsonSerializable()
 
 class _AuthUser implements AuthUser {
-  const _AuthUser({required this.id, required this.username, this.displayName, final  List<UserRole> roles = const <UserRole>[]}): _roles = roles;
+  const _AuthUser({required this.id, required this.username, this.displayName, this.siteId, this.buildingId, this.departmentId, final  List<UserRole> roles = const <UserRole>[]}): _roles = roles;
   factory _AuthUser.fromJson(Map<String, dynamic> json) => _$AuthUserFromJson(json);
 
 @override final  String id;
 @override final  String username;
 @override final  String? displayName;
+@override final  String? siteId;
+@override final  String? buildingId;
+@override final  String? departmentId;
  final  List<UserRole> _roles;
 @override@JsonKey() List<UserRole> get roles {
   if (_roles is EqualUnmodifiableListView) return _roles;
@@ -239,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&const DeepCollectionEquality().equals(other._roles, _roles));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthUser&&(identical(other.id, id) || other.id == id)&&(identical(other.username, username) || other.username == username)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.siteId, siteId) || other.siteId == siteId)&&(identical(other.buildingId, buildingId) || other.buildingId == buildingId)&&(identical(other.departmentId, departmentId) || other.departmentId == departmentId)&&const DeepCollectionEquality().equals(other._roles, _roles));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,username,displayName,const DeepCollectionEquality().hash(_roles));
+int get hashCode => Object.hash(runtimeType,id,username,displayName,siteId,buildingId,departmentId,const DeepCollectionEquality().hash(_roles));
 
 @override
 String toString() {
-  return 'AuthUser(id: $id, username: $username, displayName: $displayName, roles: $roles)';
+  return 'AuthUser(id: $id, username: $username, displayName: $displayName, siteId: $siteId, buildingId: $buildingId, departmentId: $departmentId, roles: $roles)';
 }
 
 
@@ -259,7 +265,7 @@ abstract mixin class _$AuthUserCopyWith<$Res> implements $AuthUserCopyWith<$Res>
   factory _$AuthUserCopyWith(_AuthUser value, $Res Function(_AuthUser) _then) = __$AuthUserCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String username, String? displayName, List<UserRole> roles
+ String id, String username, String? displayName, String? siteId, String? buildingId, String? departmentId, List<UserRole> roles
 });
 
 
@@ -276,11 +282,14 @@ class __$AuthUserCopyWithImpl<$Res>
 
 /// Create a copy of AuthUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? username = null,Object? displayName = freezed,Object? roles = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? username = null,Object? displayName = freezed,Object? siteId = freezed,Object? buildingId = freezed,Object? departmentId = freezed,Object? roles = null,}) {
   return _then(_AuthUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,username: null == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
+as String?,siteId: freezed == siteId ? _self.siteId : siteId // ignore: cast_nullable_to_non_nullable
+as String?,buildingId: freezed == buildingId ? _self.buildingId : buildingId // ignore: cast_nullable_to_non_nullable
+as String?,departmentId: freezed == departmentId ? _self.departmentId : departmentId // ignore: cast_nullable_to_non_nullable
 as String?,roles: null == roles ? _self._roles : roles // ignore: cast_nullable_to_non_nullable
 as List<UserRole>,
   ));

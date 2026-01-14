@@ -48,13 +48,27 @@
   - [x] 휴강 표시(`(휴강)` prefix)
 - [x] 그리드 레이아웃/반응형 적용
 
-## 6. 테스트
+## 6. 데이터 소스/스트림 연동
+- [x] Foundation 목록 API 데이터소스/리포지토리 구현
+- [x] RoomState SSE 구독/스트림 데이터소스 구현
+- [x] Occurrence SSE 구독/스트림 데이터소스 구현
+- [x] Dashboard 컨트롤러 초기 로드/구독 연결
+- [ ] 연동 검증 체크리스트 반영
+  - [ ] Foundation 목록 API 200 확인 + 카드 수 일치
+  - [ ] RoomState 구독 생성/연결 성공
+  - [ ] roomState.snapshot 수신 후 카드 상태 갱신 확인
+  - [ ] roomState.delta 수신 시 해당 카드만 갱신 확인
+  - [ ] occurrence.now.snapshot 수신 후 강의 정보 표시 확인
+  - [ ] scheduleSummary/occupancySummary 기반 KPI 반영 확인
+  - [ ] SSE 재연결 시 Last-Event-ID 동작 확인(가능 시)
+
+## 7. 테스트
 - [ ] ViewModel/매핑 로직 단위 테스트
 - [ ] 필터/검색 단위 테스트
 - [ ] 위젯 테스트 (KPI/카드/빈 상태)
 - [ ] SSE 수신 시 갱신 시나리오 통합 테스트(선택)
 
-## 7. 검증
+## 8. 검증
 - [ ] `flutter analyze` 통과
 - [ ] `flutter test` 통과
 - [ ] 런타임 스모크 테스트(대시보드 진입/카드 렌더링)

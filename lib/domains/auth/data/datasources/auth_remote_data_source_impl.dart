@@ -74,7 +74,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final Map<String, dynamic> normalized = <String, dynamic>{
       'id': '${source['id']}',
       'username': _extractUsername(source),
-      'displayName': source['displayName'] as String?, 
+      'displayName': source['displayName'] as String?,
+      'siteId': _extractNestedId(source, 'site'),
+      'buildingId': _extractNestedId(source, 'building'),
+      'departmentId': _extractNestedId(source, 'department'),
       'roles': _extractRoles(source['roles']),
     };
 
@@ -98,6 +101,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .toList();
     }
     return <String>[];
+  }
+
+  String? _extractNestedId(Map<String, dynamic> source, String key) {
+    final Object? node = source[key];
+    if (node is Map<String, dynamic>) {
+      final Object? id = node['id'];
+      if (id != null) {
+        return id.toString();
+      }
+    }
+    return null;
   }
 
   AuthException _mapLoginException(DioException error) {

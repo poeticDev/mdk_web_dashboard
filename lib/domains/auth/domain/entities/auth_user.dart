@@ -33,6 +33,9 @@ abstract class AuthUser with _$AuthUser {
     required String id,
     required String username,
     String? displayName,
+    String? siteId,
+    String? buildingId,
+    String? departmentId,
     @Default(<UserRole>[]) List<UserRole> roles,
   }) = _AuthUser;
 

@@ -6,10 +6,13 @@ import 'package:web_dashboard/domains/auth/data/datasources/auth_remote_data_sou
 import 'package:web_dashboard/domains/auth/data/repositories/auth_repository_impl.dart';
 import 'package:web_dashboard/domains/auth/domain/repositories/auth_repository.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/classroom_detail_remote_data_source.dart';
+import 'package:web_dashboard/domains/foundation/data/datasources/foundation_classrooms_remote_data_source.dart';
 import 'package:web_dashboard/domains/schedule/data/datasources/classroom_now_remote_data_source.dart';
 import 'package:web_dashboard/domains/foundation/data/mappers/classroom_detail_mapper.dart';
+import 'package:web_dashboard/domains/foundation/data/mappers/foundation_classrooms_mapper.dart';
 import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
 import 'package:web_dashboard/domains/foundation/data/repositories/classroom_detail_repository_impl.dart';
+import 'package:web_dashboard/domains/foundation/data/repositories/foundation_classrooms_repository_impl.dart';
 import 'package:web_dashboard/domains/foundation/domain/repositories/classroom_repository.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/department_directory_remote_data_source.dart';
 import 'package:web_dashboard/domains/auth/data/datasources/user_directory_remote_data_source.dart';
@@ -19,7 +22,10 @@ import 'package:web_dashboard/domains/auth/data/mappers/user_directory_mapper.da
 import 'package:web_dashboard/domains/foundation/data/repositories/department_directory_repository_impl.dart';
 import 'package:web_dashboard/domains/auth/data/repositories/user_directory_repository_impl.dart';
 import 'package:web_dashboard/domains/foundation/domain/repositories/department_directory_repository.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_repository.dart';
 import 'package:web_dashboard/domains/auth/domain/repositories/user_directory_repository.dart';
+import 'package:web_dashboard/domains/realtime/data/datasources/occurrence_now_sse_remote_data_source.dart';
+import 'package:web_dashboard/domains/realtime/data/datasources/room_state_sse_remote_data_source.dart';
 import 'package:web_dashboard/domains/schedule/data/datasources/lecture_origin_remote_data_source.dart';
 import 'package:web_dashboard/domains/schedule/data/datasources/lecture_origin_remote_data_source.dart'
     as timetable_remote;
@@ -32,6 +38,7 @@ import 'package:web_dashboard/domains/schedule/data/repositories/lecture_occurre
 import 'package:web_dashboard/domains/schedule/data/repositories/lecture_origin_repository_impl.dart';
 import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_occurrence_repository.dart';
 import 'package:web_dashboard/domains/schedule/domain/repositories/lecture_origin_repository.dart';
+import 'package:web_dashboard/common/network/sse_client.dart';
 
 final GetIt di = GetIt.instance;
 
@@ -49,6 +56,9 @@ Future<void> initDependencies() async {
   }
   if (!di.isRegistered<LectureMapper>()) {
     di.registerLazySingleton<LectureMapper>(() => const LectureMapper());
+  }
+  if (!di.isRegistered<SseClient>()) {
+    di.registerFactory<SseClient>(() => createSseClient());
   }
   if (!di.isRegistered<LectureOccurrenceMapper>()) {
     di.registerLazySingleton<LectureOccurrenceMapper>(
@@ -86,14 +96,32 @@ Future<void> initDependencies() async {
       () => const ClassroomDetailMapper(),
     );
   }
+  if (!di.isRegistered<FoundationClassroomsMapper>()) {
+    di.registerLazySingleton<FoundationClassroomsMapper>(
+      () => const FoundationClassroomsMapper(),
+    );
+  }
   if (!di.isRegistered<ClassroomDetailRemoteDataSource>()) {
     di.registerLazySingleton<ClassroomDetailRemoteDataSource>(
       () => ClassroomDetailRemoteDataSourceImpl(dio: di()),
     );
   }
+  if (!di.isRegistered<FoundationClassroomsRemoteDataSource>()) {
+    di.registerLazySingleton<FoundationClassroomsRemoteDataSource>(
+      () => FoundationClassroomsRemoteDataSourceImpl(dio: di()),
+    );
+  }
   if (!di.isRegistered<ClassroomDetailRepositoryImpl>()) {
     di.registerLazySingleton<ClassroomDetailRepositoryImpl>(
       () => ClassroomDetailRepositoryImpl(
+        remoteDataSource: di(),
+        mapper: di(),
+      ),
+    );
+  }
+  if (!di.isRegistered<FoundationClassroomsRepository>()) {
+    di.registerLazySingleton<FoundationClassroomsRepository>(
+      () => FoundationClassroomsRepositoryImpl(
         remoteDataSource: di(),
         mapper: di(),
       ),
@@ -112,6 +140,22 @@ Future<void> initDependencies() async {
   if (!di.isRegistered<ClassroomNowRemoteDataSource>()) {
     di.registerLazySingleton<ClassroomNowRemoteDataSource>(
       () => ClassroomNowRemoteDataSourceImpl(dio: di()),
+    );
+  }
+  if (!di.isRegistered<RoomStateSseRemoteDataSource>()) {
+    di.registerLazySingleton<RoomStateSseRemoteDataSource>(
+      () => RoomStateSseRemoteDataSourceImpl(
+        dio: di(),
+        sseClient: di(),
+      ),
+    );
+  }
+  if (!di.isRegistered<OccurrenceNowSseRemoteDataSource>()) {
+    di.registerLazySingleton<OccurrenceNowSseRemoteDataSource>(
+      () => OccurrenceNowSseRemoteDataSourceImpl(
+        dio: di(),
+        sseClient: di(),
+      ),
     );
   }
   if (!di.isRegistered<PaginationMetaMapper>()) {

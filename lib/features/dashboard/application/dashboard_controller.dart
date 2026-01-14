@@ -7,15 +7,29 @@
 ///
 /// DEPENDS ON
 /// - riverpod_annotation
+/// - auth_controller
 /// - dashboard_state
 /// - dashboard_sse_mapper
+/// - foundation_classrooms_repository
+/// - room_state_sse_remote_data_source
+/// - occurrence_now_sse_remote_data_source
 /// - room_state_sse_dto
 /// - occurrence_now_sse_dto
 library;
 
+import 'dart:async';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:web_dashboard/domains/auth/application/auth_controller.dart';
+import 'package:web_dashboard/domains/auth/domain/entities/auth_user.dart';
+import 'package:web_dashboard/domains/realtime/data/datasources/occurrence_now_sse_remote_data_source.dart';
+import 'package:web_dashboard/domains/realtime/data/datasources/room_state_sse_remote_data_source.dart';
 import 'package:web_dashboard/domains/realtime/data/dtos/occurrence_now_sse_dto.dart';
+import 'package:web_dashboard/domains/realtime/data/dtos/occurrence_now_sse_event.dart';
 import 'package:web_dashboard/domains/realtime/data/dtos/room_state_sse_dto.dart';
+import 'package:web_dashboard/domains/realtime/data/dtos/room_state_sse_event.dart';
+import 'package:web_dashboard/domains/foundation/domain/entities/foundation_classrooms_entity.dart';
+import 'package:web_dashboard/domains/foundation/domain/repositories/foundation_classrooms_repository.dart';
 import 'package:web_dashboard/features/dashboard/application/dashboard_providers.dart';
 import 'package:web_dashboard/features/dashboard/application/mappers/dashboard_sse_mapper.dart';
 import 'package:web_dashboard/features/dashboard/application/state/dashboard_state.dart';
@@ -27,15 +41,64 @@ part 'dashboard_controller.g.dart';
 
 @riverpod
 class DashboardController extends _$DashboardController {
+  static const List<String> _roomStateSensors = <String>['presence'];
+  static const List<String> _roomStateEquipment = <String>['power'];
+  static const List<String> _occurrenceInclude = <String>['scheduleSummary'];
+
   final Map<String, DashboardClassroomCardViewModel> _cardsById =
       <String, DashboardClassroomCardViewModel>{};
   final Set<String> _roomStateSnapshotIds = <String>{};
   final List<String> _cardOrder = <String>[];
+  StreamSubscription<RoomStateSseEvent>? _roomStateSubscription;
+  StreamSubscription<OccurrenceNowSseEvent>? _occurrenceSubscription;
+  bool _hasInitialized = false;
+  bool _roomStateStreaming = false;
+  bool _occurrenceStreaming = false;
+  String? _lastRoomStateEventId;
+  String? _lastOccurrenceEventId;
 
   DashboardSseMapper get _mapper => ref.read(dashboardSseMapperProvider);
+  FoundationClassroomsRepository get _foundationRepository =>
+      ref.read(foundationClassroomsRepositoryProvider);
+  RoomStateSseRemoteDataSource get _roomStateDataSource =>
+      ref.read(roomStateSseRemoteDataSourceProvider);
+  OccurrenceNowSseRemoteDataSource get _occurrenceDataSource =>
+      ref.read(occurrenceNowSseRemoteDataSourceProvider);
 
   @override
-  DashboardState build() => DashboardState.initial();
+  DashboardState build() {
+    ref.onDispose(() => _disposeStreams(notify: false));
+    return DashboardState.initial();
+  }
+
+  Future<void> initialize() async {
+    if (!_markInitialized()) {
+      return;
+    }
+    startLoading();
+    final FoundationSelection? selection = _resolveFoundationSelection(
+      ref.read(authControllerProvider).currentUser,
+    );
+    if (selection == null) {
+      _finishWithError('기본 foundation 정보를 찾을 수 없습니다.');
+      return;
+    }
+    try {
+      final FoundationClassroomsEntity response =
+          await _foundationRepository.fetchClassrooms(
+        FoundationClassroomsQuery(
+          type: selection.type,
+          foundationId: selection.foundationId,
+        ),
+      );
+      _applyFoundationCards(response.classrooms, selection);
+      await _connectRoomState(response.classrooms);
+      await _connectOccurrences(response.classrooms);
+    } catch (_) {
+      _disposeStreams();
+      _finishWithError('대시보드 데이터를 불러오지 못했습니다.');
+    }
+  }
 
   void setBaseCards(List<DashboardClassroomCardViewModel> cards) {
     _cardsById
@@ -159,6 +222,210 @@ class DashboardController extends _$DashboardController {
     _emitFilteredState(state.filters);
   }
 
+  Future<void> _connectRoomState(
+    List<FoundationClassroomSummaryEntity> classrooms,
+  ) async {
+    final List<String> ids = _extractClassroomIds(classrooms);
+    if (ids.isEmpty) {
+      return;
+    }
+    final RoomStateSubscriptionResponseDto subscription =
+        await _createRoomStateSubscription(ids);
+    _roomStateSubscription?.cancel();
+    _roomStateSubscription = _roomStateDataSource
+        .connect(
+          subscriptionId: subscription.subscriptionId,
+          lastEventId: _lastRoomStateEventId,
+        )
+        .listen(
+          _handleRoomStateEvent,
+          onError: (_) => _handleRoomStateError(),
+        );
+    _roomStateStreaming = true;
+    _updateStreamingState();
+  }
+
+  Future<void> _connectOccurrences(
+    List<FoundationClassroomSummaryEntity> classrooms,
+  ) async {
+    final List<String> ids = _extractClassroomIds(classrooms);
+    if (ids.isEmpty) {
+      return;
+    }
+    final OccurrenceNowSubscriptionResponseDto subscription =
+        await _createOccurrenceSubscription(ids);
+    _occurrenceSubscription?.cancel();
+    _occurrenceSubscription = _occurrenceDataSource
+        .connect(
+          subscriptionId: subscription.subscriptionId,
+          lastEventId: _lastOccurrenceEventId,
+        )
+        .listen(
+          _handleOccurrenceEvent,
+          onError: (_) => _handleOccurrenceError(),
+        );
+    _occurrenceStreaming = true;
+    _updateStreamingState();
+  }
+
+  void _handleRoomStateEvent(RoomStateSseEvent event) {
+    _lastRoomStateEventId = event.eventId ?? _lastRoomStateEventId;
+    if (event.type == RoomStateSseEventType.snapshot &&
+        event.snapshotPayload != null) {
+      applyRoomStateSnapshot(event.snapshotPayload!);
+      return;
+    }
+    if (event.type == RoomStateSseEventType.delta &&
+        event.deltaPayload != null) {
+      applyRoomStateDelta(event.deltaPayload!);
+    }
+  }
+
+  void _handleOccurrenceEvent(OccurrenceNowSseEvent event) {
+    _lastOccurrenceEventId = event.eventId ?? _lastOccurrenceEventId;
+    if (event.type == OccurrenceNowSseEventType.snapshot &&
+        event.snapshotPayload != null) {
+      applyOccurrenceSnapshot(event.snapshotPayload!);
+      return;
+    }
+    if (event.type == OccurrenceNowSseEventType.delta &&
+        event.deltaPayload != null) {
+      applyOccurrenceDelta(event.deltaPayload!);
+    }
+  }
+
+  void _handleRoomStateError() {
+    _roomStateStreaming = false;
+    _updateStreamingState();
+  }
+
+  void _handleOccurrenceError() {
+    _occurrenceStreaming = false;
+    _updateStreamingState();
+  }
+
+  void _updateStreamingState() {
+    setStreaming(_roomStateStreaming && _occurrenceStreaming);
+  }
+
+  bool _markInitialized() {
+    if (_hasInitialized) {
+      return false;
+    }
+    _hasInitialized = true;
+    return true;
+  }
+
+  void _finishWithError(String message) {
+    setErrorMessage(message);
+    finishLoading();
+  }
+
+  void _applyFoundationCards(
+    List<FoundationClassroomSummaryEntity> classrooms,
+    FoundationSelection selection,
+  ) {
+    final List<DashboardClassroomCardViewModel> cards = classrooms
+        .map(
+          (FoundationClassroomSummaryEntity classroom) => _mapToCard(
+            classroom,
+            selection,
+          ),
+        )
+        .toList();
+    setBaseCards(cards);
+    finishLoading();
+  }
+
+  List<String> _extractClassroomIds(
+    List<FoundationClassroomSummaryEntity> classrooms,
+  ) {
+    return classrooms
+        .map((FoundationClassroomSummaryEntity entity) => entity.id)
+        .toList();
+  }
+
+  Future<RoomStateSubscriptionResponseDto> _createRoomStateSubscription(
+    List<String> classroomIds,
+  ) {
+    return _roomStateDataSource.createSubscription(
+      RoomStateSubscriptionRequestDto(
+        classroomIds: classroomIds,
+        sensors: _roomStateSensors,
+        equipment: _roomStateEquipment,
+      ),
+    );
+  }
+
+  Future<OccurrenceNowSubscriptionResponseDto> _createOccurrenceSubscription(
+    List<String> classroomIds,
+  ) {
+    return _occurrenceDataSource.createSubscription(
+      OccurrenceNowSubscriptionRequestDto(
+        classroomIds: classroomIds,
+        include: _occurrenceInclude,
+      ),
+    );
+  }
+
+  FoundationSelection? _resolveFoundationSelection(AuthUser? user) {
+    if (user == null) {
+      return null;
+    }
+    if (user.buildingId != null && user.buildingId!.isNotEmpty) {
+      return FoundationSelection(
+        type: FoundationType.building,
+        foundationId: user.buildingId!,
+      );
+    }
+    if (user.departmentId != null && user.departmentId!.isNotEmpty) {
+      return FoundationSelection(
+        type: FoundationType.department,
+        foundationId: user.departmentId!,
+      );
+    }
+    if (user.siteId != null && user.siteId!.isNotEmpty) {
+      return FoundationSelection(
+        type: FoundationType.site,
+        foundationId: user.siteId!,
+      );
+    }
+    return null;
+  }
+
+  DashboardClassroomCardViewModel _mapToCard(
+    FoundationClassroomSummaryEntity classroom,
+    FoundationSelection selection,
+  ) {
+    return DashboardClassroomCardViewModel(
+      id: classroom.id,
+      name: classroom.name,
+      code: classroom.code,
+      siteId: selection.type == FoundationType.site
+          ? selection.foundationId
+          : null,
+      buildingId: classroom.building?.id,
+      buildingName: classroom.building?.name,
+      buildingCode: classroom.building?.code,
+      departmentId: classroom.department?.id,
+      departmentName: classroom.department?.name,
+      departmentCode: classroom.department?.code,
+      usageStatus: DashboardUsageStatus.unlinked,
+    );
+  }
+
+  void _disposeStreams({bool notify = true}) {
+    _roomStateSubscription?.cancel();
+    _occurrenceSubscription?.cancel();
+    _roomStateDataSource.disconnect();
+    _occurrenceDataSource.disconnect();
+    _roomStateStreaming = false;
+    _occurrenceStreaming = false;
+    if (notify) {
+      _updateStreamingState();
+    }
+  }
+
   void _updateLoadingState({required bool isLoading}) {
     state = state.copyWith(isLoading: isLoading);
   }
@@ -248,7 +515,6 @@ class DashboardController extends _$DashboardController {
       _cardsById[id] = _withUsageStatus(card, status);
     }
   }
-
   List<DashboardClassroomCardViewModel> _orderedCards() {
     return _cardOrder
         .map((String id) => _cardsById[id])
@@ -350,7 +616,8 @@ class DashboardController extends _$DashboardController {
         code: card.code,
         siteId: card.siteId,
         buildingId: card.buildingId,
-        buildingName: card.buildingName, buildingCode: card.buildingCode,
+        buildingName: card.buildingName,
+        buildingCode: card.buildingCode,
         departmentId: card.departmentId,
         departmentName: card.departmentName,
         departmentCode: card.departmentCode,
@@ -427,4 +694,14 @@ class DashboardController extends _$DashboardController {
       roomState: roomState,
     );
   }
+}
+
+class FoundationSelection {
+  const FoundationSelection({
+    required this.type,
+    required this.foundationId,
+  });
+
+  final FoundationType type;
+  final String foundationId;
 }

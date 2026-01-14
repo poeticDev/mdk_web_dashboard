@@ -19,11 +19,24 @@ const double _tabletAspectRatio = 1.2;
 const double _desktopAspectRatio = 1.1;
 const double _fourKAspectRatio = 1.05;
 
-class DashboardPage extends ConsumerWidget {
+class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends ConsumerState<DashboardPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(dashboardControllerProvider.notifier).initialize();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final DashboardState state = ref.watch(dashboardControllerProvider);
     final DashboardController controller =
         ref.read(dashboardControllerProvider.notifier);
