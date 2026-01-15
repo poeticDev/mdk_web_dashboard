@@ -5,11 +5,11 @@
 /// - 상태별 카운트와 선택 상태를 표시한다
 ///
 /// DEPENDS ON
-/// - theme_utilities
+/// - custom_card
 library;
 
 import 'package:flutter/material.dart';
-import 'package:mdk_app_theme/theme_utilities.dart';
+import 'package:web_dashboard/common/widgets/custom_card.dart';
 
 const double _metricCardRadius = 18;
 const double _metricCardElevation = 1.5;
@@ -36,51 +36,41 @@ class DashboardMetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
-    final AppColors colors = isDark
-        ? AppColors.dark(ThemeBrand.defaultBrand)
-        : AppColors.light(ThemeBrand.defaultBrand);
+    final ColorScheme colors = theme.colorScheme;
     final Color background = isSelected
-        ? accentColor.withValues(alpha: isDark ? 0.18 : 0.12)
+        ? Color.lerp(colors.surface, accentColor, 0.18)!
         : colors.surface;
-    final Color valueColor = isSelected ? accentColor : colors.textPrimary;
-    final Color borderColor = isSelected ? accentColor : colors.surfaceElevated;
+    final Color valueColor = isSelected ? accentColor : colors.onSurface;
+    final Color borderColor = isSelected
+        ? accentColor
+        : colors.surfaceContainerHighest;
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(_metricCardRadius),
+    return CustomCard(
       onTap: onTap,
-      child: Card(
-        elevation: _metricCardElevation,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(_metricCardRadius),
-          side: BorderSide(color: borderColor),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(_metricCardPadding),
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(_metricCardRadius),
+      padding: const EdgeInsets.all(_metricCardPadding),
+      elevation: _metricCardElevation,
+      backgroundColor: background,
+      borderColor: borderColor,
+      radius: _metricCardRadius,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                label,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: colors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                value.toString(),
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: valueColor,
-                  fontSize: _metricValueFontSize,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
+          const SizedBox(height: 10),
+          Text(
+            value.toString(),
+            style: theme.textTheme.headlineMedium?.copyWith(
+              color: valueColor,
+              fontSize: _metricValueFontSize,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

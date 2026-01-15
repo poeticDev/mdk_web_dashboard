@@ -6,7 +6,6 @@
 ///
 /// DEPENDS ON
 /// - intl
-/// - theme_utilities
 /// - dashboard_header_layout
 library;
 
@@ -14,7 +13,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mdk_app_theme/theme_utilities.dart';
+import 'package:web_dashboard/common/widgets/custom_card.dart';
 import 'package:web_dashboard/features/dashboard/presentation/widgets/header/dashboard_header_layout.dart';
 
 class DashboardClockCard extends StatelessWidget {
@@ -25,46 +24,37 @@ class DashboardClockCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-    final AppColors colors = isDark
-        ? AppColors.dark(ThemeBrand.defaultBrand)
-        : AppColors.light(ThemeBrand.defaultBrand);
+    final ColorScheme colors = theme.colorScheme;
 
     return ConstrainedBox(
       constraints: BoxConstraints(minWidth: minWidth),
-      child: Card(
+      child: CustomCard(
+        padding: const EdgeInsets.all(headerCardPadding),
         elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(headerCardRadius),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(headerCardPadding),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(headerCardRadius),
-            color: colors.surface,
+        backgroundColor: theme.cardColor,
+        radius: headerCardRadius,
+        child: StreamBuilder<DateTime>(
+          stream: Stream<DateTime>.periodic(
+            clockTick,
+            (_) => _nowInKst(),
           ),
-          child: StreamBuilder<DateTime>(
-            stream: Stream<DateTime>.periodic(
-              clockTick,
-              (_) => _nowInKst(),
-            ),
-            initialData: _nowInKst(),
-            builder: (BuildContext context, AsyncSnapshot<DateTime> snapshot) {
-              final DateTime now = snapshot.data ?? _nowInKst();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          initialData: _nowInKst(),
+          builder: (BuildContext context, AsyncSnapshot<DateTime> snapshot) {
+            final DateTime now = snapshot.data ?? _nowInKst();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     '현재 시각',
                     style: theme.textTheme.labelLarge?.copyWith(
-                      color: colors.textSecondary,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     _formatKoreanDate(now),
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: colors.primaryVariant,
+                      color: colors.secondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -72,14 +62,13 @@ class DashboardClockCard extends StatelessWidget {
                   Text(
                     _formatClock(now),
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      color: colors.textPrimary,
+                      color: colors.onSurface,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                ],
-              );
-            },
-          ),
+              ],
+            );
+          },
         ),
       ),
     );

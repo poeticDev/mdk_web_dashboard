@@ -25,6 +25,7 @@ class DashboardHeader extends StatelessWidget {
     required this.metrics,
     required this.filters,
     required this.isStreaming,
+    required this.metricColors,
     required this.onQueryChanged,
     required this.onToggleActivityStatus,
     required this.onToggleLinkStatus,
@@ -35,6 +36,7 @@ class DashboardHeader extends StatelessWidget {
   final DashboardMetricsViewModel? metrics;
   final DashboardFilterState filters;
   final bool isStreaming;
+  final AppColors metricColors;
   final ValueChanged<String> onQueryChanged;
   final ValueChanged<DashboardActivityStatus> onToggleActivityStatus;
   final ValueChanged<DashboardLinkStatus> onToggleLinkStatus;
@@ -42,10 +44,6 @@ class DashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final AppColors colors = isDark
-        ? AppColors.dark(ThemeBrand.defaultBrand)
-        : AppColors.light(ThemeBrand.defaultBrand);
     final DashboardHeaderCounts counts = resolveDashboardCounts(metrics);
     final int totalCount = counts.total ?? 0;
     final bool isTotalSelected =
@@ -67,7 +65,7 @@ class DashboardHeader extends StatelessWidget {
               unlinkedCount: counts.unlinked ?? 0,
               isTotalSelected: isTotalSelected,
               filters: filters,
-              colors: colors,
+              colors: metricColors,
               onToggleActivityStatus: onToggleActivityStatus,
               onToggleLinkStatus: onToggleLinkStatus,
               onClearStatusFilters: onClearStatusFilters,

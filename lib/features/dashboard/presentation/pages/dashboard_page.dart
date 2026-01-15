@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mdk_app_theme/theme_utilities.dart';
 import 'package:web_dashboard/common/app_bar/common_app_bar.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
+import 'package:web_dashboard/common/theme/theme_controller_provider.dart';
 import 'package:web_dashboard/features/dashboard/application/dashboard_controller.dart';
 import 'package:web_dashboard/features/dashboard/application/state/dashboard_state.dart';
 import 'package:web_dashboard/features/dashboard/presentation/widgets/dashboard_classroom_card.dart';
@@ -42,6 +44,9 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     final DashboardState state = ref.watch(dashboardControllerProvider);
     final DashboardController controller =
         ref.read(dashboardControllerProvider.notifier);
+    final ThemeController themeController =
+        ref.watch(themeControllerProvider);
+    final AppColors metricColors = themeController.getAppColors(context);
 
     return Scaffold(
       appBar: const CommonAppBar(meta: AppPageMeta.dashboard),
@@ -50,6 +55,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         child: _DashboardBody(
           state: state,
           controller: controller,
+          metricColors: metricColors,
         ),
       ),
     );
@@ -57,10 +63,15 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 }
 
 class _DashboardBody extends StatelessWidget {
-  const _DashboardBody({required this.state, required this.controller});
+  const _DashboardBody({
+    required this.state,
+    required this.controller,
+    required this.metricColors,
+  });
 
   final DashboardState state;
   final DashboardController controller;
+  final AppColors metricColors;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +83,7 @@ class _DashboardBody extends StatelessWidget {
             metrics: state.metrics,
             filters: state.filters,
             isStreaming: state.isStreaming,
+            metricColors: metricColors,
             onQueryChanged: controller.updateQuery,
             onToggleActivityStatus: controller.toggleActivityStatus,
             onToggleLinkStatus: controller.toggleLinkStatus,

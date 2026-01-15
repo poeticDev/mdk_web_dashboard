@@ -706,10 +706,10 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "0e2d4bed681cb91b774a0e14b26143cb692c9071"
+      resolved-ref: "95d83e81006c03de7777694f65be4262db3e0c90"
       url: "git@github.com:poeticDev/mdk_app_theme.git"
     source: git
-    version: "0.1.0-dev.0"
+    version: "0.1.0-dev.1"
   media_kit:
     dependency: "direct main"
     description:

@@ -5,13 +5,13 @@
 /// - 강의실 상태와 현재 강의를 표시한다
 ///
 /// DEPENDS ON
-/// - theme_utilities
+/// - custom_card
 /// - dashboard_viewmodels
 library;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mdk_app_theme/theme_utilities.dart';
+import 'package:web_dashboard/common/widgets/custom_card.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_classroom_card_view_model.dart';
 import 'package:web_dashboard/features/dashboard/viewmodels/dashboard_status.dart';
 
@@ -38,67 +38,48 @@ class DashboardClassroomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-    final AppColors colors = isDark
-        ? AppColors.dark(ThemeBrand.defaultBrand)
-        : AppColors.light(ThemeBrand.defaultBrand);
-    final DashboardStatusPalette palette = _resolvePalette(viewModel, colors);
+    final ColorScheme colors = theme.colorScheme;
+    final DashboardStatusPalette palette = _resolvePalette(
+      viewModel,
+      colors,
+      theme.scaffoldBackgroundColor,
+      theme.cardColor,
+    );
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(_cardRadius),
+    return CustomCard.action(
       onTap: onTap,
-      child: Card(
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(_cardRadius),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(_cardPadding),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(_cardRadius),
-            color: palette.background,
+      padding: const EdgeInsets.all(_cardPadding),
+      elevation: 4,
+      backgroundColor: palette.background,
+      borderColor: colors.outline.withValues(alpha: 0.5),
+      radius: _cardRadius,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _CardTopRow(
+            palette: palette,
+            isOccupied: viewModel.roomState?.isOccupied,
+            isEquipmentOn: viewModel.roomState?.isEquipmentOn,
+            statusLabel: _resolveStatusLabel(viewModel),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _CardTopRow(
-                palette: palette,
-                isOccupied: viewModel.roomState?.isOccupied,
-                isEquipmentOn: viewModel.roomState?.isEquipmentOn,
-                statusLabel: _resolveStatusLabel(viewModel),
-              ),
-              const SizedBox(height: _sectionSpacing),
-              Text(
-                viewModel.name,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: palette.titleColor,
-                ),
-              ),
-              const SizedBox(height: _titleSpacing),
-              Text(
-                viewModel.departmentName ?? '미지정',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: _sectionSpacing),
-              _LectureInfo(viewModel: viewModel),
-              const Spacer(),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: OutlinedButton(
-                  onPressed: onTap,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: palette.badgeColor,
-                    side: BorderSide(color: palette.badgeColor),
-                  ),
-                  child: const Text('자세히 보기'),
-                ),
-              ),
-            ],
+          const SizedBox(height: _sectionSpacing),
+          Text(
+            viewModel.name,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: palette.titleColor,
+            ),
           ),
-        ),
+          const SizedBox(height: _titleSpacing),
+          Text(
+            viewModel.departmentName ?? '미지정',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: _sectionSpacing),
+          _LectureInfo(viewModel: viewModel),
+        ],
       ),
     );
   }
@@ -242,34 +223,36 @@ class _LectureInfo extends StatelessWidget {
 
 DashboardStatusPalette _resolvePalette(
   DashboardClassroomCardViewModel viewModel,
-  AppColors colors,
+  ColorScheme colors,
+  Color surfaceColor,
+  Color elevatedSurfaceColor,
 ) {
   if (viewModel.linkStatus == DashboardLinkStatus.unlinked) {
     return DashboardStatusPalette(
-      badgeColor: colors.warning,
-      occupancyColor: colors.warning,
-      equipmentColor: colors.warning,
-      background: colors.surface,
-      titleColor: colors.textPrimary,
+      badgeColor: colors.error,
+      occupancyColor: colors.error,
+      equipmentColor: colors.error,
+      background: surfaceColor,
+      titleColor: colors.onSurface,
     );
   }
   switch (viewModel.activityStatus) {
     case DashboardActivityStatus.inUse:
       return DashboardStatusPalette(
-        badgeColor: colors.success,
-        occupancyColor: colors.success,
-        equipmentColor: colors.primary,
-        background: colors.surface,
-        titleColor: colors.textPrimary,
+        badgeColor: colors.primary,
+        occupancyColor: colors.primary,
+        equipmentColor: colors.secondary,
+        background: surfaceColor,
+        titleColor: colors.onSurface,
       );
     case DashboardActivityStatus.idle:
     default:
       return DashboardStatusPalette(
-        badgeColor: colors.textSecondary,
-        occupancyColor: colors.textSecondary,
-        equipmentColor: colors.primaryVariant,
-        background: colors.surfaceElevated,
-        titleColor: colors.textPrimary,
+        badgeColor: colors.onSurfaceVariant,
+        occupancyColor: colors.onSurfaceVariant,
+        equipmentColor: colors.secondary,
+        background: elevatedSurfaceColor,
+        titleColor: colors.onSurface,
       );
   }
 }

@@ -5,11 +5,10 @@
 /// - SSE 연결 상태를 시각적으로 표현한다
 ///
 /// DEPENDS ON
-/// - theme_utilities
+/// - flutter
 library;
 
 import 'package:flutter/material.dart';
-import 'package:mdk_app_theme/theme_utilities.dart';
 
 class DashboardStreamingBadge extends StatelessWidget {
   const DashboardStreamingBadge({required this.isStreaming, super.key});
@@ -19,11 +18,9 @@ class DashboardStreamingBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final ColorScheme colors = theme.colorScheme;
     final bool isDark = theme.brightness == Brightness.dark;
-    final AppColors colors = isDark
-        ? AppColors.dark(ThemeBrand.defaultBrand)
-        : AppColors.light(ThemeBrand.defaultBrand);
-    final Color badgeColor = isStreaming ? colors.success : colors.warning;
+    final Color badgeColor = isStreaming ? colors.primary : colors.error;
     final String label = isStreaming ? '연결됨' : '연결 끊김';
 
     return Container(
