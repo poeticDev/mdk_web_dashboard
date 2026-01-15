@@ -64,6 +64,7 @@ class DashboardMetricCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             value.toString(),
+            textAlign: TextAlign.end,
             style: theme.textTheme.headlineMedium?.copyWith(
               color: valueColor,
               fontSize: _metricValueFontSize,

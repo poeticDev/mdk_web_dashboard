@@ -55,7 +55,8 @@ class DashboardHeader extends StatelessWidget {
         Wrap(
           spacing: headerGap,
           runSpacing: headerGap,
-          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.center,
+          // crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
             const DashboardClockCard(minWidth: clockMinWidth),
             DashboardMetricGroup(

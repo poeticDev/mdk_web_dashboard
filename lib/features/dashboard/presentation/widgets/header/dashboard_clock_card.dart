@@ -34,38 +34,34 @@ class DashboardClockCard extends StatelessWidget {
         backgroundColor: theme.cardColor,
         radius: headerCardRadius,
         child: StreamBuilder<DateTime>(
-          stream: Stream<DateTime>.periodic(
-            clockTick,
-            (_) => _nowInKst(),
-          ),
+          stream: Stream<DateTime>.periodic(clockTick, (_) => _nowInKst()),
           initialData: _nowInKst(),
           builder: (BuildContext context, AsyncSnapshot<DateTime> snapshot) {
             final DateTime now = snapshot.data ?? _nowInKst();
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    '현재 시각',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: colors.onSurfaceVariant,
-                    ),
+              spacing: 4,
+              children: <Widget>[
+                Text(
+                  '현재 시각',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: colors.onSurfaceVariant,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _formatKoreanDate(now),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: colors.secondary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                ),
+                Text(
+                  _formatKoreanDate(now),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: colors.tertiaryFixed,
+                    fontWeight: FontWeight.w400,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _formatClock(now),
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      color: colors.onSurface,
-                      fontWeight: FontWeight.w700,
-                    ),
+                ),
+                Text(
+                  _formatClock(now),
+                  style: theme.textTheme.displaySmall?.copyWith(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.w700,
                   ),
+                ),
               ],
             );
           },
