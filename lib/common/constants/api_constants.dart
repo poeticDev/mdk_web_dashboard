@@ -1,7 +1,10 @@
 class ApiConstants {
   const ApiConstants._();
 
-  static const String baseUrl = 'http://localhost:3000/api/v1';
+  static const int serverPort = 3000;
+  // static const int serverPort = 4430;
+
+  static const String baseUrl = 'https://localhost:$serverPort/api/v1';
   static const Duration connectTimeout = Duration(seconds: 8);
   static const Duration receiveTimeout = Duration(seconds: 8);
 

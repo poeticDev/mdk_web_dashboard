@@ -9,6 +9,66 @@
 - Dashboard 메트릭/카드/필터 UI는 아직 본격 개발되지 않았으므로, 아래 설계 항목을 최신 컴포넌트 기준으로 업데이트해 차기 세션에서 착수한다.
 - Responsive 정책과 테마(AppTheme/AppTypography)는 AGENTS.md 및 reference guide에 따라 코드에 반영되어 있으므로, 대시보드 구현 시 동일 정책을 따른다.
 
+## 0. 로그인 이후 랜딩/자동 라우팅 정책
+
+로그인 직후 한 번만 실행되는 “랜딩 스플래시”를 통해 강의실 목록을 선조회하고,
+강의실 개수가 1개면 곧바로 상세 화면으로 이동한다. (대시보드를 건너뜀)
+
+### 0.1 요구사항
+
+- 판단 기준: **전체 강의실 목록 기준**
+- 실행 시점: 로그인 성공 직후 **첫 진입 시점 1회**
+- 라우팅:
+  - 강의실 1개 → `classroom_detail`로 자동 이동
+  - 강의실 2개 이상 → `dashboard`
+  - 강의실 0개 → `dashboard` (빈 상태 안내는 대시보드에서 처리)
+- 사용자 개입 없이 바로 이동
+- 랜딩 페이지에서 진행 상태(메시지 + 로딩) 표시
+
+### 0.2 라우팅 구조 변경
+
+- 신규 라우트: `/landing` (`RouteNames.landing`)
+- 로그인 이후 리다이렉트 경로:
+  - `/login` → `/landing`
+  - `/landing`은 내부 판단 후 `dashboard` 혹은 `classroom_detail`로 이동
+- 로그인되지 않은 사용자는 기존 정책대로 `/login`으로 강제 리다이렉트
+
+### 0.3 데이터 플로우
+
+1. `LandingPage` 진입
+2. `LandingController`가 인증된 사용자 정보를 기반으로 foundation selection 결정
+   - 우선순위: `buildingId` → `departmentId` → `siteId`
+3. `FoundationClassroomsReadRepository.fetchClassrooms(...)` 호출
+4. 결과 개수에 따라 라우팅 결정
+
+### 0.4 상태 모델(예시)
+
+`LandingState`
+- `step`: `checkingSession | loadingClassrooms | decidingRoute | error`
+- `message`: 사용자에게 보여줄 진행 상태 텍스트
+- `errorMessage`: 오류 발생 시 표시 메시지
+- `nextRoute`: 라우팅 결정 결과(내부용)
+
+### 0.5 UI/UX 정책
+
+- 중앙 로딩 인디케이터 + 진행 메시지 표시
+- 오류 발생 시 재시도 버튼 제공
+- 자동 이동은 1회만 수행 (중복 라우팅 방지)
+
+### 0.6 예외 처리
+
+- `foundation` 선택 실패: 에러 메시지 표시 + 재시도
+- API 실패: 에러 메시지 표시 + 재시도
+- 0개 반환: 대시보드로 이동 (빈 상태 안내는 대시보드에서 처리)
+
+### 0.7 책임 분리
+
+- `LandingController`
+  - 랜딩용 단일 책임: “초기 강의실 목록 조회 및 라우팅 결정”
+  - 대시보드 로딩/실시간 스트리밍 등과 분리
+- `DashboardController`
+  - 대시보드 진입 이후에만 초기화/스트리밍 수행
+
 ## 1. 전체 강의실 화면 (docs/reference_media/samples/1.png)
 
 ### 1.1 화면 구조
