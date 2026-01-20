@@ -43,8 +43,13 @@ class _LandingPageState extends ConsumerState<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<LandingState>(landingControllerProvider, (
+      LandingState? previous,
+      LandingState next,
+    ) {
+      _handleNavigation(next);
+    });
     final LandingState state = ref.watch(landingControllerProvider);
-    _handleNavigation(context, state);
     return Scaffold(
       body: Center(
         child: Padding(
@@ -67,17 +72,16 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                 const SizedBox(height: _contentSpacing),
                 Text(
                   state.errorMessage ?? '',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Theme.of(context).colorScheme.error),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: _contentSpacing),
                 OutlinedButton(
                   onPressed: () {
                     _hasNavigated = false;
-                    ref.read(landingControllerProvider.notifier).initialize();
+                    ref.read(landingControllerProvider.notifier).executeRetry();
                   },
                   child: const Text('다시 시도'),
                 ),
@@ -93,6 +97,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     if (state.message != null && state.message!.isNotEmpty) {
       return state.message!;
     }
+
     switch (state.step) {
       case LandingStep.checkingSession:
         return '세션을 확인하고 있습니다.';
@@ -105,11 +110,12 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     }
   }
 
-  void _handleNavigation(BuildContext context, LandingState state) {
+  void _handleNavigation(LandingState state) {
     if (_hasNavigated || state.nextRoute == null || state.hasError) {
       return;
     }
     _hasNavigated = true;
+    ref.read(landingControllerProvider.notifier).clearNextRoute();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final LandingRoute route = state.nextRoute!;
       route.when(

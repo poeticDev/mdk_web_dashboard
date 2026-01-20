@@ -30,6 +30,7 @@ class LandingController extends _$LandingController {
   static const String _errorMissingUser = '로그인 정보가 없습니다.';
   static const String _errorMissingFoundation = '기본 foundation 정보를 찾을 수 없습니다.';
   static const String _errorLoadingClassrooms = '강의실 목록을 불러오지 못했습니다.';
+  static const String _errorEmptyClassrooms = '등록된 강의실이 없습니다.';
 
   static const List<FoundationType> _defaultPriority =
       <FoundationType>[FoundationType.department, FoundationType.site];
@@ -57,6 +58,24 @@ class LandingController extends _$LandingController {
       return;
     }
     await _loadClassrooms(selection);
+  }
+
+  void executeRetry() {
+    _hasInitialized = false;
+    state = LandingState.initial().copyWith(
+      step: LandingStep.checkingSession,
+      message: _messageCheckingSession,
+      errorMessage: null,
+      nextRoute: null,
+    );
+    initialize();
+  }
+
+  void clearNextRoute() {
+    if (state.nextRoute == null) {
+      return;
+    }
+    state = state.copyWith(nextRoute: null);
   }
 
   bool _markInitialized() {
@@ -92,6 +111,10 @@ class LandingController extends _$LandingController {
   }
 
   LandingRoute _resolveNextRoute(FoundationClassroomsReadModel response) {
+    if (response.classrooms.isEmpty) {
+      _setError(_errorEmptyClassrooms);
+      return const LandingRoute.dashboard();
+    }
     if (response.classrooms.length == 1) {
       return LandingRoute.classroomDetail(
         classroomId: response.classrooms.first.id,

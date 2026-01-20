@@ -35,7 +35,6 @@ class DashboardMetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
     final ColorScheme colors = theme.colorScheme;
     final Color background = isSelected
         ? Color.lerp(colors.surface, accentColor, 0.18)!
