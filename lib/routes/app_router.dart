@@ -6,6 +6,7 @@ import 'package:web_dashboard/domains/auth/domain/errors/auth_exception.dart';
 import 'package:web_dashboard/routes/route_paths.dart';
 import 'package:web_dashboard/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/pages/classroom_detail_page.dart';
+import 'package:web_dashboard/features/landing/presentation/pages/landing_page.dart';
 import 'package:web_dashboard/features/login/presentation/pages/login_page.dart';
 
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
@@ -19,6 +20,12 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext context, GoRouterState state) => LoginPage(
           isSessionExpired: state.uri.queryParameters['expired'] == 'true',
         ),
+      ),
+      GoRoute(
+        path: RoutePaths.landing,
+        name: RouteNames.landing,
+        builder: (BuildContext context, GoRouterState state) =>
+            const LandingPage(),
       ),
       GoRoute(
         path: RoutePaths.dashboard,
@@ -52,7 +59,7 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((Ref ref) {
         return RoutePaths.login;
       }
       if (loggingIn) {
-        return RoutePaths.dashboard;
+        return RoutePaths.landing;
       }
       return null;
     },

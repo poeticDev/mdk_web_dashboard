@@ -60,23 +60,23 @@
 
 ## 작업 체크리스트
 
-- [ ] 1. 라우팅 정의 추가
-  - [ ] `RoutePaths`/`RouteNames`에 `landing` 추가
-  - [ ] `GoRouter`에 `/landing` 라우트 등록
-  - [ ] `/login` 로그인 성공 리다이렉트 목적지를 `/landing`으로 변경
-- [ ] 2. Landing 상태 모델 정의 (`LandingState`)
-  - [ ] 진행 단계 enum 정의(`checkingSession | loadingClassrooms | decidingRoute | error`)
-  - [ ] 진행 메시지/에러 메시지 필드 설계
-  - [ ] 라우팅 결과를 보관할 필드 추가
-- [ ] 3. Landing 컨트롤러 구현
-  - [ ] `AuthUser`에서 foundation selection 결정 (우선순위: `departmentId` → `siteId`)
-  - [ ] `FoundationClassroomsReadRepository.fetchClassrooms(...)` 호출
-  - [ ] 결과 count 기준으로 라우팅 결정 로직 구현
-  - [ ] 예외 처리(선택 실패/네트워크 오류) 및 상태 갱신
-- [ ] 4. Landing 페이지 UI 구현
-  - [ ] 중앙 로딩 인디케이터 배치
-  - [ ] 단계별 진행 메시지 표시
-  - [ ] 에러 상태 시 재시도 버튼 제공
+- [x] 1. 라우팅 정의 추가
+  - [x] `RoutePaths`/`RouteNames`에 `landing` 추가
+  - [x] `GoRouter`에 `/landing` 라우트 등록
+  - [x] `/login` 로그인 성공 리다이렉트 목적지를 `/landing`으로 변경
+- [x] 2. Landing 상태 모델 정의 (`LandingState`)
+  - [x] 진행 단계 enum 정의(`checkingSession | loadingClassrooms | decidingRoute | error`)
+  - [x] 진행 메시지/에러 메시지 필드 설계
+  - [x] 라우팅 결과를 보관할 필드 추가
+- [x] 3. Landing 컨트롤러 구현
+  - [x] `AuthUser`에서 foundation selection 결정 (우선순위: `departmentId` → `siteId`)
+  - [x] `FoundationClassroomsReadRepository.fetchClassrooms(...)` 호출
+  - [x] 결과 count 기준으로 라우팅 결정 로직 구현
+  - [x] 예외 처리(선택 실패/네트워크 오류) 및 상태 갱신
+- [x] 4. Landing 페이지 UI 구현
+  - [x] 중앙 로딩 인디케이터 배치
+  - [x] 단계별 진행 메시지 표시
+  - [x] 에러 상태 시 재시도 버튼 제공
 - [ ] 5. 자동 라우팅 1회 실행 보장
   - [ ] 중복 이동 방지 플래그 추가
   - [ ] 라우팅 완료 후 상태 정리
