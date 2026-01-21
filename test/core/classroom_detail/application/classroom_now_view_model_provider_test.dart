@@ -1,79 +1,131 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:web_dashboard/features/classroom_detail/application/classroom_detail_providers.dart';
-import 'package:web_dashboard/domains/schedule/data/datasources/classroom_now_remote_data_source.dart';
-import 'package:web_dashboard/domains/schedule/application/timetable_providers.dart';
-import 'package:web_dashboard/domains/schedule/data/dtos/lecture_occurrence_dto.dart';
-import 'package:web_dashboard/domains/schedule/data/mappers/lecture_occurrence_mapper.dart';
+import 'package:web_dashboard/domains/realtime/data/datasources/occurrence_now_sse_remote_data_source.dart';
+import 'package:web_dashboard/domains/realtime/data/dtos/occurrence_now_sse_dto.dart';
+import 'package:web_dashboard/domains/realtime/data/dtos/occurrence_now_sse_event.dart';
+import 'package:web_dashboard/domains/realtime/data/dtos/sse_envelope_dto.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_now_controller.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_now_providers.dart';
+import 'package:web_dashboard/features/classroom_detail/application/state/classroom_now_state.dart';
 
 void main() {
-  group('classroomNowViewModelProvider', () {
+  group('classroomNowController', () {
     test('returns isInSession=false when no occurrence', () async {
+      final StreamController<OccurrenceNowSseEvent> controller =
+          StreamController<OccurrenceNowSseEvent>.broadcast();
       final ProviderContainer container = ProviderContainer(
-        overrides: <Override>[
-          classroomNowRemoteDataSourceProvider.overrideWithValue(
-            _FakeNowDataSource(
-              const ClassroomNowResponseDto(isIdle: true, occurrence: null),
-            ),
-          ),
-          lectureOccurrenceMapperProvider.overrideWithValue(
-            const LectureOccurrenceMapper(),
+        overrides: [
+          classroomOccurrenceNowSseRemoteDataSourceProvider.overrideWithValue(
+            _FakeOccurrenceNowSseRemoteDataSource(controller.stream),
           ),
         ],
       );
-      addTearDown(container.dispose);
+      addTearDown(() {
+        controller.close();
+        container.dispose();
+      });
 
-      final ClassroomNowViewModel result = await container.read(
-        classroomNowViewModelProvider('room-1').future,
+      final ClassroomNowController notifier = container.read(
+        classroomNowControllerProvider('room-1').notifier,
+      );
+      await notifier.initialize();
+      controller.add(
+        _snapshotEvent(const <OccurrenceNowCurrentDto>[]),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      final ClassroomNowState result = container.read(
+        classroomNowControllerProvider('room-1'),
       );
 
       expect(result.isInSession, isFalse);
     });
 
     test('maps occurrence data to view model', () async {
-      final ClassroomNowViewModel viewModel = await ProviderContainer(
-        overrides: <Override>[
-          classroomNowRemoteDataSourceProvider.overrideWithValue(
-            _FakeNowDataSource(
-              ClassroomNowResponseDto(
-                isIdle: false,
-                occurrence: LectureOccurrenceDto(
-                  id: 'occ-1',
-                  lectureId: 'lec-1',
-                  classroomId: 'room-1',
-                  classroomName: '공학관 room-1',
-                  title: 'AI 개론',
-                  type: 'lecture',
-                  status: 'scheduled',
-                  isOverride: false,
-                  sourceVersion: 1,
-                  startAt: DateTime.utc(2025, 1, 1, 9),
-                  endAt: DateTime.utc(2025, 1, 1, 10),
-                ),
-              ),
-            ),
-          ),
-          lectureOccurrenceMapperProvider.overrideWithValue(
-            const LectureOccurrenceMapper(),
+      final StreamController<OccurrenceNowSseEvent> controller =
+          StreamController<OccurrenceNowSseEvent>.broadcast();
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          classroomOccurrenceNowSseRemoteDataSourceProvider.overrideWithValue(
+            _FakeOccurrenceNowSseRemoteDataSource(controller.stream),
           ),
         ],
-      ).read(classroomNowViewModelProvider('room-1').future);
+      );
+      addTearDown(() {
+        controller.close();
+        container.dispose();
+      });
 
-      expect(viewModel.isInSession, isTrue);
-      expect(viewModel.currentCourseName, 'AI 개론');
+      final ClassroomNowController notifier = container.read(
+        classroomNowControllerProvider('room-1').notifier,
+      );
+      await notifier.initialize();
+      controller.add(
+        _snapshotEvent(
+          <OccurrenceNowCurrentDto>[
+            OccurrenceNowCurrentDto(
+              classroomId: 'room-1',
+              occurrenceId: 'occ-1',
+              lectureId: 'lec-1',
+              title: 'AI 개론',
+              instructorName: '홍길동',
+              startAt: DateTime.utc(2025, 1, 1, 9),
+              endAt: DateTime.utc(2025, 1, 1, 10),
+              status: 'scheduled',
+              departmentName: null,
+              colorHex: null,
+            ),
+          ],
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      final ClassroomNowState result = container.read(
+        classroomNowControllerProvider('room-1'),
+      );
+
+      expect(result.isInSession, isTrue);
+      expect(result.currentCourseName, 'AI 개론');
     });
   });
 }
 
-class _FakeNowDataSource implements ClassroomNowRemoteDataSource {
-  const _FakeNowDataSource(this.response);
+class _FakeOccurrenceNowSseRemoteDataSource
+    implements OccurrenceNowSseRemoteDataSource {
+  _FakeOccurrenceNowSseRemoteDataSource(this.stream);
 
-  final ClassroomNowResponseDto? response;
+  final Stream<OccurrenceNowSseEvent> stream;
 
   @override
-  Future<ClassroomNowResponseDto?> fetchCurrent({
-    required String classroomId,
-  }) async {
-    return response;
+  Future<OccurrenceNowSubscriptionResponseDto> createSubscription(
+    OccurrenceNowSubscriptionRequestDto request,
+  ) async {
+    return const OccurrenceNowSubscriptionResponseDto(
+      subscriptionId: 'sub-1',
+    );
   }
+
+  @override
+  Stream<OccurrenceNowSseEvent> connect({
+    required String subscriptionId,
+    String? lastEventId,
+  }) {
+    return stream;
+  }
+
+  @override
+  void disconnect() {}
+}
+
+OccurrenceNowSseEvent _snapshotEvent(List<OccurrenceNowCurrentDto> currents) {
+  final SseEnvelopeDto<OccurrenceNowSnapshotPayloadDto> envelope =
+      SseEnvelopeDto<OccurrenceNowSnapshotPayloadDto>(
+    eventId: 'event-1',
+    subscriptionId: 'sub-1',
+    timestamp: DateTime.now(),
+    payload: OccurrenceNowSnapshotPayloadDto(currents: currents),
+  );
+  return OccurrenceNowSseEvent.snapshot(envelope);
 }

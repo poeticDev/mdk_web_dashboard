@@ -7,7 +7,6 @@ import 'package:web_dashboard/domains/auth/data/repositories/auth_repository_imp
 import 'package:web_dashboard/domains/auth/domain/repositories/auth_repository.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/classroom_detail_remote_data_source.dart';
 import 'package:web_dashboard/domains/foundation/data/datasources/foundation_classrooms_remote_data_source.dart';
-import 'package:web_dashboard/domains/schedule/data/datasources/classroom_now_remote_data_source.dart';
 import 'package:web_dashboard/domains/foundation/data/mappers/classroom_detail_mapper.dart';
 import 'package:web_dashboard/domains/foundation/data/mappers/foundation_classrooms_mapper.dart';
 import 'package:web_dashboard/domains/devices/domain/repositories/classroom_device_repository.dart';
@@ -135,11 +134,6 @@ Future<void> initDependencies() async {
   if (!di.isRegistered<ClassroomDeviceRepository>()) {
     di.registerLazySingleton<ClassroomDeviceRepository>(
       () => di<ClassroomDetailRepositoryImpl>(),
-    );
-  }
-  if (!di.isRegistered<ClassroomNowRemoteDataSource>()) {
-    di.registerLazySingleton<ClassroomNowRemoteDataSource>(
-      () => ClassroomNowRemoteDataSourceImpl(dio: di()),
     );
   }
   if (!di.isRegistered<RoomStateSseRemoteDataSource>()) {

@@ -13,7 +13,6 @@ class ApiConstants {
   static const String logout = '/logout';
   static const String lectures = '/lectures/origin';
   static const String lectureOccurrences = '/lectures/occurrence';
-  static const String dashboardsNow = '$lectureOccurrences/dashboards/now';
   static const String classrooms = '/classrooms';
   static const String foundations = '/foundations';
   static const String departments = '/departments';

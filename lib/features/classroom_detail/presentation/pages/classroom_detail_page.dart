@@ -11,6 +11,7 @@ import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entit
 import 'package:web_dashboard/routes/page_meta.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_detail_header_section.dart';
 import 'package:web_dashboard/features/classroom_detail/presentation/widgets/classroom_timetable_section.dart';
+import 'package:web_dashboard/features/classroom_detail/application/classroom_now_controller.dart';
 
 class ClassroomDetailPage extends ConsumerStatefulWidget {
   const ClassroomDetailPage({required this.roomId, super.key});
@@ -28,6 +29,9 @@ class _ClassroomDetailPageState extends ConsumerState<ClassroomDetailPage> {
   @override
   void initState() {
     super.initState();
+    ref
+        .read(classroomNowControllerProvider(widget.roomId).notifier)
+        .initialize();
     _deviceErrorSub = ref.listenManual<ClassroomDeviceControllerState>(
       classroomDeviceControllerProvider(widget.roomId),
       (

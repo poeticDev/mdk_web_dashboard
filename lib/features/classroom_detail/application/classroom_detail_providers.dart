@@ -19,10 +19,6 @@ import 'package:web_dashboard/domains/devices/domain/repositories/classroom_devi
 import 'package:web_dashboard/domains/foundation/domain/entities/classroom_entity.dart';
 import 'package:web_dashboard/domains/foundation/domain/entities/classroom_type.dart';
 import 'package:web_dashboard/domains/foundation/domain/repositories/classroom_repository.dart';
-import 'package:web_dashboard/domains/schedule/application/timetable_providers.dart';
-import 'package:web_dashboard/domains/schedule/data/datasources/classroom_now_remote_data_source.dart';
-import 'package:web_dashboard/domains/schedule/data/mappers/lecture_occurrence_mapper.dart';
-import 'package:web_dashboard/domains/schedule/domain/entities/lecture_occurrence_entity.dart';
 import 'package:web_dashboard/di/service_locator.dart';
 
 class ClassroomDetailParams {
@@ -47,11 +43,6 @@ final Provider<ClassroomDeviceRepository> classroomDeviceRepositoryProvider =
       (Ref ref) => di<ClassroomDeviceRepository>(),
     );
 
-final Provider<ClassroomNowRemoteDataSource>
-classroomNowRemoteDataSourceProvider = Provider<ClassroomNowRemoteDataSource>(
-  (Ref ref) => di<ClassroomNowRemoteDataSource>(),
-);
-
 class ClassroomSummaryViewModel {
   const ClassroomSummaryViewModel({
     required this.roomName,
@@ -68,22 +59,6 @@ class ClassroomSummaryViewModel {
   final String? code;
   final int? capacity;
   final ClassroomType type;
-}
-
-class ClassroomNowViewModel {
-  const ClassroomNowViewModel({
-    required this.isInSession,
-    this.currentCourseName,
-    this.instructorName,
-    this.startTime,
-    this.endTime,
-  });
-
-  final bool isInSession;
-  final String? currentCourseName;
-  final String? instructorName;
-  final DateTime? startTime;
-  final DateTime? endTime;
 }
 
 class ClassroomDeviceViewModel {
@@ -116,33 +91,6 @@ final classroomDetailInfoProvider = FutureProvider.autoDispose
         classroomRepositoryProvider,
       );
       return repository.fetchById(classroomId);
-    });
-
-/// 헤더 타이틀 영역에 실시간 강의 상태를 보여주는 provider.
-final classroomNowViewModelProvider = FutureProvider.autoDispose
-    .family<ClassroomNowViewModel, String>((Ref ref, String classroomId) async {
-      final ClassroomNowRemoteDataSource dataSource = ref.read(
-        classroomNowRemoteDataSourceProvider,
-      );
-      final LectureOccurrenceMapper mapper = ref.read(
-        lectureOccurrenceMapperProvider,
-      );
-      final ClassroomNowResponseDto? response = await dataSource.fetchCurrent(
-        classroomId: classroomId,
-      );
-      if (response == null || response.isIdle || response.occurrence == null) {
-        return const ClassroomNowViewModel(isInSession: false);
-      }
-      final LectureOccurrenceEntity entity = mapper.toEntity(
-        response.occurrence!,
-      );
-      return ClassroomNowViewModel(
-        isInSession: true,
-        currentCourseName: entity.title,
-        instructorName: entity.instructorName,
-        startTime: entity.start,
-        endTime: entity.end,
-      );
     });
 
 /// 헤더 타이틀 영역에 필요한 요약 정보만 추려내는 provider.
