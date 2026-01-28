@@ -1,0 +1,52 @@
+name: Release Web
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      define_file:
+        description: 'Path to dart-define JSON file'
+        required: false
+        default: 'assets/env/prod.json'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    env:
+      DEFINE_FILE: ${{ github.event.inputs.define_file || 'assets/env/prod.json' }}
+      BUILD_DIR: build/web
+      ZIP_NAME: mdk_web_dashboard.zip
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release --dart-define-from-file="${DEFINE_FILE}"
+
+      - name: Create artifact
+        run: zip -r "${ZIP_NAME}" "${BUILD_DIR}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: ${{ env.ZIP_NAME }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.ZIP_NAME }}
