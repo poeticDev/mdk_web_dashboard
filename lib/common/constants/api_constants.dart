@@ -1,10 +1,10 @@
+/// API 경로와 공통 네트워크 상수를 정의한다.
+import 'package:web_dashboard/common/constants/app_environment.dart';
+
 class ApiConstants {
   const ApiConstants._();
 
-  static const int serverPort = 3000;
-  // static const int serverPort = 4430;
-
-  static const String baseUrl = 'https://localhost:$serverPort/api/v1';
+  static const String baseUrl = AppEnvironment.baseUrl;
   static const Duration connectTimeout = Duration(seconds: 8);
   static const Duration receiveTimeout = Duration(seconds: 8);
 
