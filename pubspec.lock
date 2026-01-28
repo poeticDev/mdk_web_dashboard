@@ -707,7 +707,7 @@ packages:
       path: "."
       ref: main
       resolved-ref: "95d83e81006c03de7777694f65be4262db3e0c90"
-      url: "git@github.com:poeticDev/mdk_app_theme.git"
+      url: "https://github.com/poeticDev/mdk_app_theme.git"
     source: git
     version: "0.1.0-dev.1"
   media_kit:
