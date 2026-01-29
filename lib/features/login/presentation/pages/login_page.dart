@@ -1,6 +1,7 @@
 // 로그인 화면 UI와 인증 상태 연동을 담당한다.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:web_dashboard/common/constants/app_environment.dart';
 import 'package:web_dashboard/common/responsive/responsive_layout.dart';
 import 'package:web_dashboard/domains/auth/application/login_controller.dart';
 import 'package:web_dashboard/domains/auth/domain/state/login_form_state.dart';
@@ -25,7 +26,7 @@ class LoginViewData {
     required this.isSubmitting,
     required this.feedbackMessage,
     required this.feedbackType,
-    this.versionLabel = 'v0.1.0',
+    this.versionLabel = 'v0.1.2',
   });
 
   factory LoginViewData.fromState(LoginFormState state) => LoginViewData(
@@ -34,6 +35,7 @@ class LoginViewData {
     feedbackType: state.errorMessage == null
         ? LoginFeedbackType.neutral
         : LoginFeedbackType.error,
+        versionLabel: AppEnvironment.appVersion
   );
 
   final bool isSubmitting;

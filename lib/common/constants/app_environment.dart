@@ -8,4 +8,6 @@ class AppEnvironment {
     'BASE_URL',
     defaultValue: 'https://localhost:$defaultServerPort/api/v1',
   );
+
+  static const String appVersion = String.fromEnvironment('APP_VERSION', defaultValue: 'v90.2.12');
 }
